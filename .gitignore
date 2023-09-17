@@ -20,3 +20,4 @@
 # Go workspace file
 go.work
 go/cmd/gongform/gongform
+go/cmd/gongform/__debug_bin*
