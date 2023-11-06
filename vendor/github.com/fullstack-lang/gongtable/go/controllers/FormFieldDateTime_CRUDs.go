@@ -65,6 +65,9 @@ func (controller *Controller) GetFormFieldDateTimes(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormFieldDateTime.GetDB()
 
 	query := db.Find(&formfielddatetimeDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetFormFieldDateTimes(c *gin.Context) {
 
 		// insertion point for updating fields
 		formfielddatetimeAPI.ID = formfielddatetimeDB.ID
-		formfielddatetimeDB.CopyBasicFieldsToFormFieldDateTime(&formfielddatetimeAPI.FormFieldDateTime)
-		formfielddatetimeAPI.FormFieldDateTimePointersEnconding = formfielddatetimeDB.FormFieldDateTimePointersEnconding
+		formfielddatetimeDB.CopyBasicFieldsToFormFieldDateTime_WOP(&formfielddatetimeAPI.FormFieldDateTime_WOP)
+		formfielddatetimeAPI.FormFieldDateTimePointersEncoding = formfielddatetimeDB.FormFieldDateTimePointersEncoding
 		formfielddatetimeAPIs = append(formfielddatetimeAPIs, formfielddatetimeAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostFormFieldDateTime(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormFieldDateTime.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostFormFieldDateTime(c *gin.Context) {
 
 	// Create formfielddatetime
 	formfielddatetimeDB := orm.FormFieldDateTimeDB{}
-	formfielddatetimeDB.FormFieldDateTimePointersEnconding = input.FormFieldDateTimePointersEnconding
-	formfielddatetimeDB.CopyBasicFieldsFromFormFieldDateTime(&input.FormFieldDateTime)
+	formfielddatetimeDB.FormFieldDateTimePointersEncoding = input.FormFieldDateTimePointersEncoding
+	formfielddatetimeDB.CopyBasicFieldsFromFormFieldDateTime_WOP(&input.FormFieldDateTime_WOP)
 
 	query := db.Create(&formfielddatetimeDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetFormFieldDateTime(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormFieldDateTime.GetDB()
 
 	// Get formfielddatetimeDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetFormFieldDateTime(c *gin.Context) {
 
 	var formfielddatetimeAPI orm.FormFieldDateTimeAPI
 	formfielddatetimeAPI.ID = formfielddatetimeDB.ID
-	formfielddatetimeAPI.FormFieldDateTimePointersEnconding = formfielddatetimeDB.FormFieldDateTimePointersEnconding
-	formfielddatetimeDB.CopyBasicFieldsToFormFieldDateTime(&formfielddatetimeAPI.FormFieldDateTime)
+	formfielddatetimeAPI.FormFieldDateTimePointersEncoding = formfielddatetimeDB.FormFieldDateTimePointersEncoding
+	formfielddatetimeDB.CopyBasicFieldsToFormFieldDateTime_WOP(&formfielddatetimeAPI.FormFieldDateTime_WOP)
 
 	c.JSON(http.StatusOK, formfielddatetimeAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateFormFieldDateTime(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormFieldDateTime.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateFormFieldDateTime(c *gin.Context) {
 	}
 
 	// update
-	formfielddatetimeDB.CopyBasicFieldsFromFormFieldDateTime(&input.FormFieldDateTime)
-	formfielddatetimeDB.FormFieldDateTimePointersEnconding = input.FormFieldDateTimePointersEnconding
+	formfielddatetimeDB.CopyBasicFieldsFromFormFieldDateTime_WOP(&input.FormFieldDateTime_WOP)
+	formfielddatetimeDB.FormFieldDateTimePointersEncoding = input.FormFieldDateTimePointersEncoding
 
 	query = db.Model(&formfielddatetimeDB).Updates(formfielddatetimeDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteFormFieldDateTime(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormFieldDateTime.GetDB()
 
 	// Get model if exist

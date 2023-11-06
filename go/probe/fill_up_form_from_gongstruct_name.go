@@ -8,11 +8,11 @@ import (
 )
 
 func FillUpFormFromGongstructName(
-	playground *Playground,
+	probe *Probe,
 	gongstructName string,
 	isNewInstance bool,
 ) {
-	formStage := playground.formStage
+	formStage := probe.formStage
 	formStage.Reset()
 	formStage.Commit()
 
@@ -30,156 +30,156 @@ func FillUpFormFromGongstructName(
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " CheckBox Form",
-			OnSave: NewCheckBoxFormCallback(
+			OnSave: __gong__New__CheckBoxFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		checkbox := new(models.CheckBox)
-		FillUpForm(checkbox, formGroup, playground)
+		FillUpForm(checkbox, formGroup, probe)
 	case "FormDiv":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " FormDiv Form",
-			OnSave: NewFormDivFormCallback(
+			OnSave: __gong__New__FormDivFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		formdiv := new(models.FormDiv)
-		FillUpForm(formdiv, formGroup, playground)
+		FillUpForm(formdiv, formGroup, probe)
 	case "FormEditAssocButton":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " FormEditAssocButton Form",
-			OnSave: NewFormEditAssocButtonFormCallback(
+			OnSave: __gong__New__FormEditAssocButtonFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		formeditassocbutton := new(models.FormEditAssocButton)
-		FillUpForm(formeditassocbutton, formGroup, playground)
+		FillUpForm(formeditassocbutton, formGroup, probe)
 	case "FormField":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " FormField Form",
-			OnSave: NewFormFieldFormCallback(
+			OnSave: __gong__New__FormFieldFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		formfield := new(models.FormField)
-		FillUpForm(formfield, formGroup, playground)
+		FillUpForm(formfield, formGroup, probe)
 	case "FormFieldDate":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " FormFieldDate Form",
-			OnSave: NewFormFieldDateFormCallback(
+			OnSave: __gong__New__FormFieldDateFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		formfielddate := new(models.FormFieldDate)
-		FillUpForm(formfielddate, formGroup, playground)
+		FillUpForm(formfielddate, formGroup, probe)
 	case "FormFieldDateTime":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " FormFieldDateTime Form",
-			OnSave: NewFormFieldDateTimeFormCallback(
+			OnSave: __gong__New__FormFieldDateTimeFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		formfielddatetime := new(models.FormFieldDateTime)
-		FillUpForm(formfielddatetime, formGroup, playground)
+		FillUpForm(formfielddatetime, formGroup, probe)
 	case "FormFieldFloat64":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " FormFieldFloat64 Form",
-			OnSave: NewFormFieldFloat64FormCallback(
+			OnSave: __gong__New__FormFieldFloat64FormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		formfieldfloat64 := new(models.FormFieldFloat64)
-		FillUpForm(formfieldfloat64, formGroup, playground)
+		FillUpForm(formfieldfloat64, formGroup, probe)
 	case "FormFieldInt":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " FormFieldInt Form",
-			OnSave: NewFormFieldIntFormCallback(
+			OnSave: __gong__New__FormFieldIntFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		formfieldint := new(models.FormFieldInt)
-		FillUpForm(formfieldint, formGroup, playground)
+		FillUpForm(formfieldint, formGroup, probe)
 	case "FormFieldSelect":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " FormFieldSelect Form",
-			OnSave: NewFormFieldSelectFormCallback(
+			OnSave: __gong__New__FormFieldSelectFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		formfieldselect := new(models.FormFieldSelect)
-		FillUpForm(formfieldselect, formGroup, playground)
+		FillUpForm(formfieldselect, formGroup, probe)
 	case "FormFieldString":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " FormFieldString Form",
-			OnSave: NewFormFieldStringFormCallback(
+			OnSave: __gong__New__FormFieldStringFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		formfieldstring := new(models.FormFieldString)
-		FillUpForm(formfieldstring, formGroup, playground)
+		FillUpForm(formfieldstring, formGroup, probe)
 	case "FormFieldTime":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " FormFieldTime Form",
-			OnSave: NewFormFieldTimeFormCallback(
+			OnSave: __gong__New__FormFieldTimeFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		formfieldtime := new(models.FormFieldTime)
-		FillUpForm(formfieldtime, formGroup, playground)
+		FillUpForm(formfieldtime, formGroup, probe)
 	case "FormGroup":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " FormGroup Form",
-			OnSave: NewFormGroupFormCallback(
+			OnSave: __gong__New__FormGroupFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		formgroup := new(models.FormGroup)
-		FillUpForm(formgroup, formGroup, playground)
+		FillUpForm(formgroup, formGroup, probe)
 	case "FormSortAssocButton":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " FormSortAssocButton Form",
-			OnSave: NewFormSortAssocButtonFormCallback(
+			OnSave: __gong__New__FormSortAssocButtonFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		formsortassocbutton := new(models.FormSortAssocButton)
-		FillUpForm(formsortassocbutton, formGroup, playground)
+		FillUpForm(formsortassocbutton, formGroup, probe)
 	case "Option":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
 			Label: prefix + " Option Form",
-			OnSave: NewOptionFormCallback(
+			OnSave: __gong__New__OptionFormCallback(
 				nil,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
 		option := new(models.Option)
-		FillUpForm(option, formGroup, playground)
+		FillUpForm(option, formGroup, probe)
 	}
 	formStage.Commit()
 }

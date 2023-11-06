@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { FormFieldIntDB } from './formfieldint-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 
@@ -42,20 +43,27 @@ export class FormFieldIntService {
   }
 
   /** GET formfieldints from the server */
-  getFormFieldInts(GONG__StackPath: string): Observable<FormFieldIntDB[]> {
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldIntDB[]> {
+    return this.getFormFieldInts(GONG__StackPath, frontRepo)
+  }
+  getFormFieldInts(GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldIntDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<FormFieldIntDB[]>(this.formfieldintsUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched formfieldints')),
         catchError(this.handleError<FormFieldIntDB[]>('getFormFieldInts', []))
       );
   }
 
   /** GET formfieldint by id. Will 404 if id not found */
-  getFormFieldInt(id: number, GONG__StackPath: string): Observable<FormFieldIntDB> {
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldIntDB> {
+    return this.getFormFieldInt(id, GONG__StackPath, frontRepo)
+  }
+  getFormFieldInt(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldIntDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -67,7 +75,10 @@ export class FormFieldIntService {
   }
 
   /** POST: add a new formfieldint to the server */
-  postFormFieldInt(formfieldintdb: FormFieldIntDB, GONG__StackPath: string): Observable<FormFieldIntDB> {
+  post(formfieldintdb: FormFieldIntDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldIntDB> {
+    return this.postFormFieldInt(formfieldintdb, GONG__StackPath, frontRepo)
+  }
+  postFormFieldInt(formfieldintdb: FormFieldIntDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldIntDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
@@ -87,6 +98,9 @@ export class FormFieldIntService {
   }
 
   /** DELETE: delete the formfieldintdb from the server */
+  delete(formfieldintdb: FormFieldIntDB | number, GONG__StackPath: string): Observable<FormFieldIntDB> {
+    return this.deleteFormFieldInt(formfieldintdb, GONG__StackPath)
+  }
   deleteFormFieldInt(formfieldintdb: FormFieldIntDB | number, GONG__StackPath: string): Observable<FormFieldIntDB> {
     const id = typeof formfieldintdb === 'number' ? formfieldintdb : formfieldintdb.ID;
     const url = `${this.formfieldintsUrl}/${id}`;
@@ -104,11 +118,15 @@ export class FormFieldIntService {
   }
 
   /** PUT: update the formfieldintdb on the server */
-  updateFormFieldInt(formfieldintdb: FormFieldIntDB, GONG__StackPath: string): Observable<FormFieldIntDB> {
+  update(formfieldintdb: FormFieldIntDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldIntDB> {
+    return this.updateFormFieldInt(formfieldintdb, GONG__StackPath, frontRepo)
+  }
+  updateFormFieldInt(formfieldintdb: FormFieldIntDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldIntDB> {
     const id = typeof formfieldintdb === 'number' ? formfieldintdb : formfieldintdb.ID;
     const url = `${this.formfieldintsUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers (to avoid circular JSON)
+    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -146,6 +164,6 @@ export class FormFieldIntService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

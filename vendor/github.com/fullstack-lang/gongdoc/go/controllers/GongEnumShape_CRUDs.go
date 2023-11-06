@@ -65,6 +65,9 @@ func (controller *Controller) GetGongEnumShapes(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoGongEnumShape.GetDB()
 
 	query := db.Find(&gongenumshapeDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetGongEnumShapes(c *gin.Context) {
 
 		// insertion point for updating fields
 		gongenumshapeAPI.ID = gongenumshapeDB.ID
-		gongenumshapeDB.CopyBasicFieldsToGongEnumShape(&gongenumshapeAPI.GongEnumShape)
-		gongenumshapeAPI.GongEnumShapePointersEnconding = gongenumshapeDB.GongEnumShapePointersEnconding
+		gongenumshapeDB.CopyBasicFieldsToGongEnumShape_WOP(&gongenumshapeAPI.GongEnumShape_WOP)
+		gongenumshapeAPI.GongEnumShapePointersEncoding = gongenumshapeDB.GongEnumShapePointersEncoding
 		gongenumshapeAPIs = append(gongenumshapeAPIs, gongenumshapeAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostGongEnumShape(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoGongEnumShape.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostGongEnumShape(c *gin.Context) {
 
 	// Create gongenumshape
 	gongenumshapeDB := orm.GongEnumShapeDB{}
-	gongenumshapeDB.GongEnumShapePointersEnconding = input.GongEnumShapePointersEnconding
-	gongenumshapeDB.CopyBasicFieldsFromGongEnumShape(&input.GongEnumShape)
+	gongenumshapeDB.GongEnumShapePointersEncoding = input.GongEnumShapePointersEncoding
+	gongenumshapeDB.CopyBasicFieldsFromGongEnumShape_WOP(&input.GongEnumShape_WOP)
 
 	query := db.Create(&gongenumshapeDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetGongEnumShape(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoGongEnumShape.GetDB()
 
 	// Get gongenumshapeDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetGongEnumShape(c *gin.Context) {
 
 	var gongenumshapeAPI orm.GongEnumShapeAPI
 	gongenumshapeAPI.ID = gongenumshapeDB.ID
-	gongenumshapeAPI.GongEnumShapePointersEnconding = gongenumshapeDB.GongEnumShapePointersEnconding
-	gongenumshapeDB.CopyBasicFieldsToGongEnumShape(&gongenumshapeAPI.GongEnumShape)
+	gongenumshapeAPI.GongEnumShapePointersEncoding = gongenumshapeDB.GongEnumShapePointersEncoding
+	gongenumshapeDB.CopyBasicFieldsToGongEnumShape_WOP(&gongenumshapeAPI.GongEnumShape_WOP)
 
 	c.JSON(http.StatusOK, gongenumshapeAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateGongEnumShape(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoGongEnumShape.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateGongEnumShape(c *gin.Context) {
 	}
 
 	// update
-	gongenumshapeDB.CopyBasicFieldsFromGongEnumShape(&input.GongEnumShape)
-	gongenumshapeDB.GongEnumShapePointersEnconding = input.GongEnumShapePointersEnconding
+	gongenumshapeDB.CopyBasicFieldsFromGongEnumShape_WOP(&input.GongEnumShape_WOP)
+	gongenumshapeDB.GongEnumShapePointersEncoding = input.GongEnumShapePointersEncoding
 
 	query = db.Model(&gongenumshapeDB).Updates(gongenumshapeDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteGongEnumShape(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoGongEnumShape.GetDB()
 
 	// Get model if exist

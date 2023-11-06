@@ -12,8 +12,10 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { GongNoteDB } from './gongnote-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
+import { GongLinkDB } from './gonglink-db'
 
 @Injectable({
   providedIn: 'root'
@@ -42,20 +44,27 @@ export class GongNoteService {
   }
 
   /** GET gongnotes from the server */
-  getGongNotes(GONG__StackPath: string): Observable<GongNoteDB[]> {
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongNoteDB[]> {
+    return this.getGongNotes(GONG__StackPath, frontRepo)
+  }
+  getGongNotes(GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongNoteDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<GongNoteDB[]>(this.gongnotesUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched gongnotes')),
         catchError(this.handleError<GongNoteDB[]>('getGongNotes', []))
       );
   }
 
   /** GET gongnote by id. Will 404 if id not found */
-  getGongNote(id: number, GONG__StackPath: string): Observable<GongNoteDB> {
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongNoteDB> {
+    return this.getGongNote(id, GONG__StackPath, frontRepo)
+  }
+  getGongNote(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongNoteDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -67,10 +76,16 @@ export class GongNoteService {
   }
 
   /** POST: add a new gongnote to the server */
-  postGongNote(gongnotedb: GongNoteDB, GONG__StackPath: string): Observable<GongNoteDB> {
+  post(gongnotedb: GongNoteDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongNoteDB> {
+    return this.postGongNote(gongnotedb, GONG__StackPath, frontRepo)
+  }
+  postGongNote(gongnotedb: GongNoteDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongNoteDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let Links = gongnotedb.Links
+    gongnotedb.GongNotePointersEncoding.Links = []
+    for (let _gonglink of gongnotedb.Links) {
+      gongnotedb.GongNotePointersEncoding.Links.push(_gonglink.ID)
+    }
     gongnotedb.Links = []
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -82,7 +97,13 @@ export class GongNoteService {
     return this.http.post<GongNoteDB>(this.gongnotesUrl, gongnotedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-	      gongnotedb.Links = Links
+        gongnotedb.Links = new Array<GongLinkDB>()
+        for (let _id of gongnotedb.GongNotePointersEncoding.Links) {
+          let _gonglink = frontRepo.GongLinks.get(_id)
+          if (_gonglink != undefined) {
+            gongnotedb.Links.push(_gonglink!)
+          }
+        }
         // this.log(`posted gongnotedb id=${gongnotedb.ID}`)
       }),
       catchError(this.handleError<GongNoteDB>('postGongNote'))
@@ -90,6 +111,9 @@ export class GongNoteService {
   }
 
   /** DELETE: delete the gongnotedb from the server */
+  delete(gongnotedb: GongNoteDB | number, GONG__StackPath: string): Observable<GongNoteDB> {
+    return this.deleteGongNote(gongnotedb, GONG__StackPath)
+  }
   deleteGongNote(gongnotedb: GongNoteDB | number, GONG__StackPath: string): Observable<GongNoteDB> {
     const id = typeof gongnotedb === 'number' ? gongnotedb : gongnotedb.ID;
     const url = `${this.gongnotesUrl}/${id}`;
@@ -107,12 +131,19 @@ export class GongNoteService {
   }
 
   /** PUT: update the gongnotedb on the server */
-  updateGongNote(gongnotedb: GongNoteDB, GONG__StackPath: string): Observable<GongNoteDB> {
+  update(gongnotedb: GongNoteDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongNoteDB> {
+    return this.updateGongNote(gongnotedb, GONG__StackPath, frontRepo)
+  }
+  updateGongNote(gongnotedb: GongNoteDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<GongNoteDB> {
     const id = typeof gongnotedb === 'number' ? gongnotedb : gongnotedb.ID;
     const url = `${this.gongnotesUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let Links = gongnotedb.Links
+    // insertion point for reset of pointers (to avoid circular JSON)
+    // and encoding of pointers
+    gongnotedb.GongNotePointersEncoding.Links = []
+    for (let _gonglink of gongnotedb.Links) {
+      gongnotedb.GongNotePointersEncoding.Links.push(_gonglink.ID)
+    }
     gongnotedb.Links = []
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -124,7 +155,13 @@ export class GongNoteService {
     return this.http.put<GongNoteDB>(url, gongnotedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-	      gongnotedb.Links = Links
+        gongnotedb.Links = new Array<GongLinkDB>()
+        for (let _id of gongnotedb.GongNotePointersEncoding.Links) {
+          let _gonglink = frontRepo.GongLinks.get(_id)
+          if (_gonglink != undefined) {
+            gongnotedb.Links.push(_gonglink!)
+          }
+        }
         // this.log(`updated gongnotedb id=${gongnotedb.ID}`)
       }),
       catchError(this.handleError<GongNoteDB>('updateGongNote'))
@@ -152,6 +189,6 @@ export class GongNoteService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

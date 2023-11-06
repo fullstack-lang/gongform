@@ -65,6 +65,9 @@ func (controller *Controller) GetDisplayedColumns(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoDisplayedColumn.GetDB()
 
 	query := db.Find(&displayedcolumnDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetDisplayedColumns(c *gin.Context) {
 
 		// insertion point for updating fields
 		displayedcolumnAPI.ID = displayedcolumnDB.ID
-		displayedcolumnDB.CopyBasicFieldsToDisplayedColumn(&displayedcolumnAPI.DisplayedColumn)
-		displayedcolumnAPI.DisplayedColumnPointersEnconding = displayedcolumnDB.DisplayedColumnPointersEnconding
+		displayedcolumnDB.CopyBasicFieldsToDisplayedColumn_WOP(&displayedcolumnAPI.DisplayedColumn_WOP)
+		displayedcolumnAPI.DisplayedColumnPointersEncoding = displayedcolumnDB.DisplayedColumnPointersEncoding
 		displayedcolumnAPIs = append(displayedcolumnAPIs, displayedcolumnAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostDisplayedColumn(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoDisplayedColumn.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostDisplayedColumn(c *gin.Context) {
 
 	// Create displayedcolumn
 	displayedcolumnDB := orm.DisplayedColumnDB{}
-	displayedcolumnDB.DisplayedColumnPointersEnconding = input.DisplayedColumnPointersEnconding
-	displayedcolumnDB.CopyBasicFieldsFromDisplayedColumn(&input.DisplayedColumn)
+	displayedcolumnDB.DisplayedColumnPointersEncoding = input.DisplayedColumnPointersEncoding
+	displayedcolumnDB.CopyBasicFieldsFromDisplayedColumn_WOP(&input.DisplayedColumn_WOP)
 
 	query := db.Create(&displayedcolumnDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetDisplayedColumn(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoDisplayedColumn.GetDB()
 
 	// Get displayedcolumnDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetDisplayedColumn(c *gin.Context) {
 
 	var displayedcolumnAPI orm.DisplayedColumnAPI
 	displayedcolumnAPI.ID = displayedcolumnDB.ID
-	displayedcolumnAPI.DisplayedColumnPointersEnconding = displayedcolumnDB.DisplayedColumnPointersEnconding
-	displayedcolumnDB.CopyBasicFieldsToDisplayedColumn(&displayedcolumnAPI.DisplayedColumn)
+	displayedcolumnAPI.DisplayedColumnPointersEncoding = displayedcolumnDB.DisplayedColumnPointersEncoding
+	displayedcolumnDB.CopyBasicFieldsToDisplayedColumn_WOP(&displayedcolumnAPI.DisplayedColumn_WOP)
 
 	c.JSON(http.StatusOK, displayedcolumnAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateDisplayedColumn(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoDisplayedColumn.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateDisplayedColumn(c *gin.Context) {
 	}
 
 	// update
-	displayedcolumnDB.CopyBasicFieldsFromDisplayedColumn(&input.DisplayedColumn)
-	displayedcolumnDB.DisplayedColumnPointersEnconding = input.DisplayedColumnPointersEnconding
+	displayedcolumnDB.CopyBasicFieldsFromDisplayedColumn_WOP(&input.DisplayedColumn_WOP)
+	displayedcolumnDB.DisplayedColumnPointersEncoding = input.DisplayedColumnPointersEncoding
 
 	query = db.Model(&displayedcolumnDB).Updates(displayedcolumnDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteDisplayedColumn(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoDisplayedColumn.GetDB()
 
 	// Get model if exist

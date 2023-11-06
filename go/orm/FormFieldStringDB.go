@@ -35,15 +35,15 @@ var dummy_FormFieldString_sort sort.Float64Slice
 type FormFieldStringAPI struct {
 	gorm.Model
 
-	models.FormFieldString
+	models.FormFieldString_WOP
 
 	// encoding of pointers
-	FormFieldStringPointersEnconding
+	FormFieldStringPointersEncoding FormFieldStringPointersEncoding
 }
 
-// FormFieldStringPointersEnconding encodes pointers to Struct and
+// FormFieldStringPointersEncoding encodes pointers to Struct and
 // reverse pointers of slice of poitners to Struct
-type FormFieldStringPointersEnconding struct {
+type FormFieldStringPointersEncoding struct {
 	// insertion for pointer fields encoding declaration
 }
 
@@ -63,8 +63,12 @@ type FormFieldStringDB struct {
 
 	// Declation for basic field formfieldstringDB.Value
 	Value_Data sql.NullString
+
+	// Declation for basic field formfieldstringDB.IsTextArea
+	// provide the sql storage for the boolan
+	IsTextArea_Data sql.NullBool
 	// encoding of pointers
-	FormFieldStringPointersEnconding
+	FormFieldStringPointersEncoding
 }
 
 // FormFieldStringDBs arrays formfieldstringDBs
@@ -87,6 +91,8 @@ type FormFieldStringWOP struct {
 	Name string `xlsx:"1"`
 
 	Value string `xlsx:"2"`
+
+	IsTextArea bool `xlsx:"3"`
 	// insertion for WOP pointer fields
 }
 
@@ -95,6 +101,7 @@ var FormFieldString_Fields = []string{
 	"ID",
 	"Name",
 	"Value",
+	"IsTextArea",
 }
 
 type BackRepoFormFieldStringStruct struct {
@@ -156,7 +163,7 @@ func (backRepoFormFieldString *BackRepoFormFieldStringStruct) CommitDeleteInstan
 	formfieldstringDB := backRepoFormFieldString.Map_FormFieldStringDBID_FormFieldStringDB[id]
 	query := backRepoFormFieldString.db.Unscoped().Delete(&formfieldstringDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -182,7 +189,7 @@ func (backRepoFormFieldString *BackRepoFormFieldStringStruct) CommitPhaseOneInst
 
 	query := backRepoFormFieldString.db.Create(&formfieldstringDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -216,7 +223,7 @@ func (backRepoFormFieldString *BackRepoFormFieldStringStruct) CommitPhaseTwoInst
 		// insertion point for translating pointers encodings into actual pointers
 		query := backRepoFormFieldString.db.Save(&formfieldstringDB)
 		if query.Error != nil {
-			return query.Error
+			log.Fatalln(query.Error)
 		}
 
 	} else {
@@ -343,7 +350,7 @@ func (backRepo *BackRepoStruct) CheckoutFormFieldString(formfieldstring *models.
 			formfieldstringDB.ID = id
 
 			if err := backRepo.BackRepoFormFieldString.db.First(&formfieldstringDB, id).Error; err != nil {
-				log.Panicln("CheckoutFormFieldString : Problem with getting object with id:", id)
+				log.Fatalln("CheckoutFormFieldString : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoFormFieldString.CheckoutPhaseOneInstance(&formfieldstringDB)
 			backRepo.BackRepoFormFieldString.CheckoutPhaseTwoInstance(backRepo, &formfieldstringDB)
@@ -360,6 +367,23 @@ func (formfieldstringDB *FormFieldStringDB) CopyBasicFieldsFromFormFieldString(f
 
 	formfieldstringDB.Value_Data.String = formfieldstring.Value
 	formfieldstringDB.Value_Data.Valid = true
+
+	formfieldstringDB.IsTextArea_Data.Bool = formfieldstring.IsTextArea
+	formfieldstringDB.IsTextArea_Data.Valid = true
+}
+
+// CopyBasicFieldsFromFormFieldString_WOP
+func (formfieldstringDB *FormFieldStringDB) CopyBasicFieldsFromFormFieldString_WOP(formfieldstring *models.FormFieldString_WOP) {
+	// insertion point for fields commit
+
+	formfieldstringDB.Name_Data.String = formfieldstring.Name
+	formfieldstringDB.Name_Data.Valid = true
+
+	formfieldstringDB.Value_Data.String = formfieldstring.Value
+	formfieldstringDB.Value_Data.Valid = true
+
+	formfieldstringDB.IsTextArea_Data.Bool = formfieldstring.IsTextArea
+	formfieldstringDB.IsTextArea_Data.Valid = true
 }
 
 // CopyBasicFieldsFromFormFieldStringWOP
@@ -371,6 +395,9 @@ func (formfieldstringDB *FormFieldStringDB) CopyBasicFieldsFromFormFieldStringWO
 
 	formfieldstringDB.Value_Data.String = formfieldstring.Value
 	formfieldstringDB.Value_Data.Valid = true
+
+	formfieldstringDB.IsTextArea_Data.Bool = formfieldstring.IsTextArea
+	formfieldstringDB.IsTextArea_Data.Valid = true
 }
 
 // CopyBasicFieldsToFormFieldString
@@ -378,6 +405,15 @@ func (formfieldstringDB *FormFieldStringDB) CopyBasicFieldsToFormFieldString(for
 	// insertion point for checkout of basic fields (back repo to stage)
 	formfieldstring.Name = formfieldstringDB.Name_Data.String
 	formfieldstring.Value = formfieldstringDB.Value_Data.String
+	formfieldstring.IsTextArea = formfieldstringDB.IsTextArea_Data.Bool
+}
+
+// CopyBasicFieldsToFormFieldString_WOP
+func (formfieldstringDB *FormFieldStringDB) CopyBasicFieldsToFormFieldString_WOP(formfieldstring *models.FormFieldString_WOP) {
+	// insertion point for checkout of basic fields (back repo to stage)
+	formfieldstring.Name = formfieldstringDB.Name_Data.String
+	formfieldstring.Value = formfieldstringDB.Value_Data.String
+	formfieldstring.IsTextArea = formfieldstringDB.IsTextArea_Data.Bool
 }
 
 // CopyBasicFieldsToFormFieldStringWOP
@@ -386,6 +422,7 @@ func (formfieldstringDB *FormFieldStringDB) CopyBasicFieldsToFormFieldStringWOP(
 	// insertion point for checkout of basic fields (back repo to stage)
 	formfieldstring.Name = formfieldstringDB.Name_Data.String
 	formfieldstring.Value = formfieldstringDB.Value_Data.String
+	formfieldstring.IsTextArea = formfieldstringDB.IsTextArea_Data.Bool
 }
 
 // Backup generates a json file from a slice of all FormFieldStringDB instances in the backrepo
@@ -407,12 +444,12 @@ func (backRepoFormFieldString *BackRepoFormFieldStringStruct) Backup(dirPath str
 	file, err := json.MarshalIndent(forBackup, "", " ")
 
 	if err != nil {
-		log.Panic("Cannot json FormFieldString ", filename, " ", err.Error())
+		log.Fatal("Cannot json FormFieldString ", filename, " ", err.Error())
 	}
 
 	err = ioutil.WriteFile(filename, file, 0644)
 	if err != nil {
-		log.Panic("Cannot write the json FormFieldString file", err.Error())
+		log.Fatal("Cannot write the json FormFieldString file", err.Error())
 	}
 }
 
@@ -432,7 +469,7 @@ func (backRepoFormFieldString *BackRepoFormFieldStringStruct) BackupXL(file *xls
 
 	sh, err := file.AddSheet("FormFieldString")
 	if err != nil {
-		log.Panic("Cannot add XL file", err.Error())
+		log.Fatal("Cannot add XL file", err.Error())
 	}
 	_ = sh
 
@@ -457,13 +494,13 @@ func (backRepoFormFieldString *BackRepoFormFieldStringStruct) RestoreXLPhaseOne(
 	sh, ok := file.Sheet["FormFieldString"]
 	_ = sh
 	if !ok {
-		log.Panic(errors.New("sheet not found"))
+		log.Fatal(errors.New("sheet not found"))
 	}
 
 	// log.Println("Max row is", sh.MaxRow)
 	err := sh.ForEachRow(backRepoFormFieldString.rowVisitorFormFieldString)
 	if err != nil {
-		log.Panic("Err=", err)
+		log.Fatal("Err=", err)
 	}
 }
 
@@ -485,7 +522,7 @@ func (backRepoFormFieldString *BackRepoFormFieldStringStruct) rowVisitorFormFiel
 		formfieldstringDB.ID = 0
 		query := backRepoFormFieldString.db.Create(formfieldstringDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoFormFieldString.Map_FormFieldStringDBID_FormFieldStringDB[formfieldstringDB.ID] = formfieldstringDB
 		BackRepoFormFieldStringid_atBckpTime_newID[formfieldstringDB_ID_atBackupTime] = formfieldstringDB.ID
@@ -505,7 +542,7 @@ func (backRepoFormFieldString *BackRepoFormFieldStringStruct) RestorePhaseOne(di
 	jsonFile, err := os.Open(filename)
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		log.Panic("Cannot restore/open the json FormFieldString file", filename, " ", err.Error())
+		log.Fatal("Cannot restore/open the json FormFieldString file", filename, " ", err.Error())
 	}
 
 	// read our opened jsonFile as a byte array.
@@ -522,14 +559,14 @@ func (backRepoFormFieldString *BackRepoFormFieldStringStruct) RestorePhaseOne(di
 		formfieldstringDB.ID = 0
 		query := backRepoFormFieldString.db.Create(formfieldstringDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoFormFieldString.Map_FormFieldStringDBID_FormFieldStringDB[formfieldstringDB.ID] = formfieldstringDB
 		BackRepoFormFieldStringid_atBckpTime_newID[formfieldstringDB_ID_atBackupTime] = formfieldstringDB.ID
 	}
 
 	if err != nil {
-		log.Panic("Cannot restore/unmarshall json FormFieldString file", err.Error())
+		log.Fatal("Cannot restore/unmarshall json FormFieldString file", err.Error())
 	}
 }
 
@@ -546,7 +583,7 @@ func (backRepoFormFieldString *BackRepoFormFieldStringStruct) RestorePhaseTwo() 
 		// update databse with new index encoding
 		query := backRepoFormFieldString.db.Model(formfieldstringDB).Updates(*formfieldstringDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 	}
 

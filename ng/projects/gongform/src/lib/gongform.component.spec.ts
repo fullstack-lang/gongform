@@ -6,12 +6,10 @@ describe('GongformComponent', () => {
   let component: GongformComponent;
   let fixture: ComponentFixture<GongformComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ GongformComponent ]
-    })
-    .compileComponents();
-
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [GongformComponent]
+    });
     fixture = TestBed.createComponent(GongformComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

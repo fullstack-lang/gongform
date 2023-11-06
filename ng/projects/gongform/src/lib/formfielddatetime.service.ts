@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { FormFieldDateTimeDB } from './formfielddatetime-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 
@@ -42,20 +43,27 @@ export class FormFieldDateTimeService {
   }
 
   /** GET formfielddatetimes from the server */
-  getFormFieldDateTimes(GONG__StackPath: string): Observable<FormFieldDateTimeDB[]> {
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldDateTimeDB[]> {
+    return this.getFormFieldDateTimes(GONG__StackPath, frontRepo)
+  }
+  getFormFieldDateTimes(GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldDateTimeDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<FormFieldDateTimeDB[]>(this.formfielddatetimesUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched formfielddatetimes')),
         catchError(this.handleError<FormFieldDateTimeDB[]>('getFormFieldDateTimes', []))
       );
   }
 
   /** GET formfielddatetime by id. Will 404 if id not found */
-  getFormFieldDateTime(id: number, GONG__StackPath: string): Observable<FormFieldDateTimeDB> {
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldDateTimeDB> {
+    return this.getFormFieldDateTime(id, GONG__StackPath, frontRepo)
+  }
+  getFormFieldDateTime(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldDateTimeDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -67,7 +75,10 @@ export class FormFieldDateTimeService {
   }
 
   /** POST: add a new formfielddatetime to the server */
-  postFormFieldDateTime(formfielddatetimedb: FormFieldDateTimeDB, GONG__StackPath: string): Observable<FormFieldDateTimeDB> {
+  post(formfielddatetimedb: FormFieldDateTimeDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldDateTimeDB> {
+    return this.postFormFieldDateTime(formfielddatetimedb, GONG__StackPath, frontRepo)
+  }
+  postFormFieldDateTime(formfielddatetimedb: FormFieldDateTimeDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldDateTimeDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
@@ -87,6 +98,9 @@ export class FormFieldDateTimeService {
   }
 
   /** DELETE: delete the formfielddatetimedb from the server */
+  delete(formfielddatetimedb: FormFieldDateTimeDB | number, GONG__StackPath: string): Observable<FormFieldDateTimeDB> {
+    return this.deleteFormFieldDateTime(formfielddatetimedb, GONG__StackPath)
+  }
   deleteFormFieldDateTime(formfielddatetimedb: FormFieldDateTimeDB | number, GONG__StackPath: string): Observable<FormFieldDateTimeDB> {
     const id = typeof formfielddatetimedb === 'number' ? formfielddatetimedb : formfielddatetimedb.ID;
     const url = `${this.formfielddatetimesUrl}/${id}`;
@@ -104,11 +118,15 @@ export class FormFieldDateTimeService {
   }
 
   /** PUT: update the formfielddatetimedb on the server */
-  updateFormFieldDateTime(formfielddatetimedb: FormFieldDateTimeDB, GONG__StackPath: string): Observable<FormFieldDateTimeDB> {
+  update(formfielddatetimedb: FormFieldDateTimeDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldDateTimeDB> {
+    return this.updateFormFieldDateTime(formfielddatetimedb, GONG__StackPath, frontRepo)
+  }
+  updateFormFieldDateTime(formfielddatetimedb: FormFieldDateTimeDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldDateTimeDB> {
     const id = typeof formfielddatetimedb === 'number' ? formfielddatetimedb : formfielddatetimedb.ID;
     const url = `${this.formfielddatetimesUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers (to avoid circular JSON)
+    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -146,6 +164,6 @@ export class FormFieldDateTimeService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

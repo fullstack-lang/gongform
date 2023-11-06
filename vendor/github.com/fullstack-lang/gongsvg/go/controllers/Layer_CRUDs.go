@@ -65,6 +65,9 @@ func (controller *Controller) GetLayers(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoLayer.GetDB()
 
 	query := db.Find(&layerDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetLayers(c *gin.Context) {
 
 		// insertion point for updating fields
 		layerAPI.ID = layerDB.ID
-		layerDB.CopyBasicFieldsToLayer(&layerAPI.Layer)
-		layerAPI.LayerPointersEnconding = layerDB.LayerPointersEnconding
+		layerDB.CopyBasicFieldsToLayer_WOP(&layerAPI.Layer_WOP)
+		layerAPI.LayerPointersEncoding = layerDB.LayerPointersEncoding
 		layerAPIs = append(layerAPIs, layerAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostLayer(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoLayer.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostLayer(c *gin.Context) {
 
 	// Create layer
 	layerDB := orm.LayerDB{}
-	layerDB.LayerPointersEnconding = input.LayerPointersEnconding
-	layerDB.CopyBasicFieldsFromLayer(&input.Layer)
+	layerDB.LayerPointersEncoding = input.LayerPointersEncoding
+	layerDB.CopyBasicFieldsFromLayer_WOP(&input.Layer_WOP)
 
 	query := db.Create(&layerDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetLayer(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoLayer.GetDB()
 
 	// Get layerDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetLayer(c *gin.Context) {
 
 	var layerAPI orm.LayerAPI
 	layerAPI.ID = layerDB.ID
-	layerAPI.LayerPointersEnconding = layerDB.LayerPointersEnconding
-	layerDB.CopyBasicFieldsToLayer(&layerAPI.Layer)
+	layerAPI.LayerPointersEncoding = layerDB.LayerPointersEncoding
+	layerDB.CopyBasicFieldsToLayer_WOP(&layerAPI.Layer_WOP)
 
 	c.JSON(http.StatusOK, layerAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateLayer(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoLayer.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateLayer(c *gin.Context) {
 	}
 
 	// update
-	layerDB.CopyBasicFieldsFromLayer(&input.Layer)
-	layerDB.LayerPointersEnconding = input.LayerPointersEnconding
+	layerDB.CopyBasicFieldsFromLayer_WOP(&input.Layer_WOP)
+	layerDB.LayerPointersEncoding = input.LayerPointersEncoding
 
 	query = db.Model(&layerDB).Updates(layerDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteLayer(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoLayer.GetDB()
 
 	// Get model if exist

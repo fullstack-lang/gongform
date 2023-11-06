@@ -65,6 +65,9 @@ func (controller *Controller) GetUmlStates(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoUmlState.GetDB()
 
 	query := db.Find(&umlstateDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetUmlStates(c *gin.Context) {
 
 		// insertion point for updating fields
 		umlstateAPI.ID = umlstateDB.ID
-		umlstateDB.CopyBasicFieldsToUmlState(&umlstateAPI.UmlState)
-		umlstateAPI.UmlStatePointersEnconding = umlstateDB.UmlStatePointersEnconding
+		umlstateDB.CopyBasicFieldsToUmlState_WOP(&umlstateAPI.UmlState_WOP)
+		umlstateAPI.UmlStatePointersEncoding = umlstateDB.UmlStatePointersEncoding
 		umlstateAPIs = append(umlstateAPIs, umlstateAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostUmlState(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoUmlState.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostUmlState(c *gin.Context) {
 
 	// Create umlstate
 	umlstateDB := orm.UmlStateDB{}
-	umlstateDB.UmlStatePointersEnconding = input.UmlStatePointersEnconding
-	umlstateDB.CopyBasicFieldsFromUmlState(&input.UmlState)
+	umlstateDB.UmlStatePointersEncoding = input.UmlStatePointersEncoding
+	umlstateDB.CopyBasicFieldsFromUmlState_WOP(&input.UmlState_WOP)
 
 	query := db.Create(&umlstateDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetUmlState(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoUmlState.GetDB()
 
 	// Get umlstateDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetUmlState(c *gin.Context) {
 
 	var umlstateAPI orm.UmlStateAPI
 	umlstateAPI.ID = umlstateDB.ID
-	umlstateAPI.UmlStatePointersEnconding = umlstateDB.UmlStatePointersEnconding
-	umlstateDB.CopyBasicFieldsToUmlState(&umlstateAPI.UmlState)
+	umlstateAPI.UmlStatePointersEncoding = umlstateDB.UmlStatePointersEncoding
+	umlstateDB.CopyBasicFieldsToUmlState_WOP(&umlstateAPI.UmlState_WOP)
 
 	c.JSON(http.StatusOK, umlstateAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateUmlState(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoUmlState.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateUmlState(c *gin.Context) {
 	}
 
 	// update
-	umlstateDB.CopyBasicFieldsFromUmlState(&input.UmlState)
-	umlstateDB.UmlStatePointersEnconding = input.UmlStatePointersEnconding
+	umlstateDB.CopyBasicFieldsFromUmlState_WOP(&input.UmlState_WOP)
+	umlstateDB.UmlStatePointersEncoding = input.UmlStatePointersEncoding
 
 	query = db.Model(&umlstateDB).Updates(umlstateDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteUmlState(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoUmlState.GetDB()
 
 	// Get model if exist

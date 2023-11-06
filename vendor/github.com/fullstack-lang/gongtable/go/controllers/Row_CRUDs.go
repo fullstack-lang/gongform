@@ -65,6 +65,9 @@ func (controller *Controller) GetRows(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoRow.GetDB()
 
 	query := db.Find(&rowDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetRows(c *gin.Context) {
 
 		// insertion point for updating fields
 		rowAPI.ID = rowDB.ID
-		rowDB.CopyBasicFieldsToRow(&rowAPI.Row)
-		rowAPI.RowPointersEnconding = rowDB.RowPointersEnconding
+		rowDB.CopyBasicFieldsToRow_WOP(&rowAPI.Row_WOP)
+		rowAPI.RowPointersEncoding = rowDB.RowPointersEncoding
 		rowAPIs = append(rowAPIs, rowAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostRow(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoRow.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostRow(c *gin.Context) {
 
 	// Create row
 	rowDB := orm.RowDB{}
-	rowDB.RowPointersEnconding = input.RowPointersEnconding
-	rowDB.CopyBasicFieldsFromRow(&input.Row)
+	rowDB.RowPointersEncoding = input.RowPointersEncoding
+	rowDB.CopyBasicFieldsFromRow_WOP(&input.Row_WOP)
 
 	query := db.Create(&rowDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetRow(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoRow.GetDB()
 
 	// Get rowDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetRow(c *gin.Context) {
 
 	var rowAPI orm.RowAPI
 	rowAPI.ID = rowDB.ID
-	rowAPI.RowPointersEnconding = rowDB.RowPointersEnconding
-	rowDB.CopyBasicFieldsToRow(&rowAPI.Row)
+	rowAPI.RowPointersEncoding = rowDB.RowPointersEncoding
+	rowDB.CopyBasicFieldsToRow_WOP(&rowAPI.Row_WOP)
 
 	c.JSON(http.StatusOK, rowAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateRow(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoRow.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateRow(c *gin.Context) {
 	}
 
 	// update
-	rowDB.CopyBasicFieldsFromRow(&input.Row)
-	rowDB.RowPointersEnconding = input.RowPointersEnconding
+	rowDB.CopyBasicFieldsFromRow_WOP(&input.Row_WOP)
+	rowDB.RowPointersEncoding = input.RowPointersEncoding
 
 	query = db.Model(&rowDB).Updates(rowDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteRow(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoRow.GetDB()
 
 	// Get model if exist

@@ -65,6 +65,9 @@ func (controller *Controller) GetUmlscs(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoUmlsc.GetDB()
 
 	query := db.Find(&umlscDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetUmlscs(c *gin.Context) {
 
 		// insertion point for updating fields
 		umlscAPI.ID = umlscDB.ID
-		umlscDB.CopyBasicFieldsToUmlsc(&umlscAPI.Umlsc)
-		umlscAPI.UmlscPointersEnconding = umlscDB.UmlscPointersEnconding
+		umlscDB.CopyBasicFieldsToUmlsc_WOP(&umlscAPI.Umlsc_WOP)
+		umlscAPI.UmlscPointersEncoding = umlscDB.UmlscPointersEncoding
 		umlscAPIs = append(umlscAPIs, umlscAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostUmlsc(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoUmlsc.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostUmlsc(c *gin.Context) {
 
 	// Create umlsc
 	umlscDB := orm.UmlscDB{}
-	umlscDB.UmlscPointersEnconding = input.UmlscPointersEnconding
-	umlscDB.CopyBasicFieldsFromUmlsc(&input.Umlsc)
+	umlscDB.UmlscPointersEncoding = input.UmlscPointersEncoding
+	umlscDB.CopyBasicFieldsFromUmlsc_WOP(&input.Umlsc_WOP)
 
 	query := db.Create(&umlscDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetUmlsc(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoUmlsc.GetDB()
 
 	// Get umlscDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetUmlsc(c *gin.Context) {
 
 	var umlscAPI orm.UmlscAPI
 	umlscAPI.ID = umlscDB.ID
-	umlscAPI.UmlscPointersEnconding = umlscDB.UmlscPointersEnconding
-	umlscDB.CopyBasicFieldsToUmlsc(&umlscAPI.Umlsc)
+	umlscAPI.UmlscPointersEncoding = umlscDB.UmlscPointersEncoding
+	umlscDB.CopyBasicFieldsToUmlsc_WOP(&umlscAPI.Umlsc_WOP)
 
 	c.JSON(http.StatusOK, umlscAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateUmlsc(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoUmlsc.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateUmlsc(c *gin.Context) {
 	}
 
 	// update
-	umlscDB.CopyBasicFieldsFromUmlsc(&input.Umlsc)
-	umlscDB.UmlscPointersEnconding = input.UmlscPointersEnconding
+	umlscDB.CopyBasicFieldsFromUmlsc_WOP(&input.Umlsc_WOP)
+	umlscDB.UmlscPointersEncoding = input.UmlscPointersEncoding
 
 	query = db.Model(&umlscDB).Updates(umlscDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteUmlsc(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoUmlsc.GetDB()
 
 	// Get model if exist

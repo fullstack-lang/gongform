@@ -65,6 +65,9 @@ func (controller *Controller) GetGongTimeFields(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gong/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoGongTimeField.GetDB()
 
 	query := db.Find(&gongtimefieldDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetGongTimeFields(c *gin.Context) {
 
 		// insertion point for updating fields
 		gongtimefieldAPI.ID = gongtimefieldDB.ID
-		gongtimefieldDB.CopyBasicFieldsToGongTimeField(&gongtimefieldAPI.GongTimeField)
-		gongtimefieldAPI.GongTimeFieldPointersEnconding = gongtimefieldDB.GongTimeFieldPointersEnconding
+		gongtimefieldDB.CopyBasicFieldsToGongTimeField_WOP(&gongtimefieldAPI.GongTimeField_WOP)
+		gongtimefieldAPI.GongTimeFieldPointersEncoding = gongtimefieldDB.GongTimeFieldPointersEncoding
 		gongtimefieldAPIs = append(gongtimefieldAPIs, gongtimefieldAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostGongTimeField(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gong/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoGongTimeField.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostGongTimeField(c *gin.Context) {
 
 	// Create gongtimefield
 	gongtimefieldDB := orm.GongTimeFieldDB{}
-	gongtimefieldDB.GongTimeFieldPointersEnconding = input.GongTimeFieldPointersEnconding
-	gongtimefieldDB.CopyBasicFieldsFromGongTimeField(&input.GongTimeField)
+	gongtimefieldDB.GongTimeFieldPointersEncoding = input.GongTimeFieldPointersEncoding
+	gongtimefieldDB.CopyBasicFieldsFromGongTimeField_WOP(&input.GongTimeField_WOP)
 
 	query := db.Create(&gongtimefieldDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetGongTimeField(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gong/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoGongTimeField.GetDB()
 
 	// Get gongtimefieldDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetGongTimeField(c *gin.Context) {
 
 	var gongtimefieldAPI orm.GongTimeFieldAPI
 	gongtimefieldAPI.ID = gongtimefieldDB.ID
-	gongtimefieldAPI.GongTimeFieldPointersEnconding = gongtimefieldDB.GongTimeFieldPointersEnconding
-	gongtimefieldDB.CopyBasicFieldsToGongTimeField(&gongtimefieldAPI.GongTimeField)
+	gongtimefieldAPI.GongTimeFieldPointersEncoding = gongtimefieldDB.GongTimeFieldPointersEncoding
+	gongtimefieldDB.CopyBasicFieldsToGongTimeField_WOP(&gongtimefieldAPI.GongTimeField_WOP)
 
 	c.JSON(http.StatusOK, gongtimefieldAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateGongTimeField(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gong/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoGongTimeField.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateGongTimeField(c *gin.Context) {
 	}
 
 	// update
-	gongtimefieldDB.CopyBasicFieldsFromGongTimeField(&input.GongTimeField)
-	gongtimefieldDB.GongTimeFieldPointersEnconding = input.GongTimeFieldPointersEnconding
+	gongtimefieldDB.CopyBasicFieldsFromGongTimeField_WOP(&input.GongTimeField_WOP)
+	gongtimefieldDB.GongTimeFieldPointersEncoding = input.GongTimeFieldPointersEncoding
 
 	query = db.Model(&gongtimefieldDB).Updates(gongtimefieldDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteGongTimeField(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gong/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoGongTimeField.GetDB()
 
 	// Get model if exist

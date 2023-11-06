@@ -65,6 +65,9 @@ func (controller *Controller) GetVertices(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoVertice.GetDB()
 
 	query := db.Find(&verticeDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetVertices(c *gin.Context) {
 
 		// insertion point for updating fields
 		verticeAPI.ID = verticeDB.ID
-		verticeDB.CopyBasicFieldsToVertice(&verticeAPI.Vertice)
-		verticeAPI.VerticePointersEnconding = verticeDB.VerticePointersEnconding
+		verticeDB.CopyBasicFieldsToVertice_WOP(&verticeAPI.Vertice_WOP)
+		verticeAPI.VerticePointersEncoding = verticeDB.VerticePointersEncoding
 		verticeAPIs = append(verticeAPIs, verticeAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostVertice(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoVertice.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostVertice(c *gin.Context) {
 
 	// Create vertice
 	verticeDB := orm.VerticeDB{}
-	verticeDB.VerticePointersEnconding = input.VerticePointersEnconding
-	verticeDB.CopyBasicFieldsFromVertice(&input.Vertice)
+	verticeDB.VerticePointersEncoding = input.VerticePointersEncoding
+	verticeDB.CopyBasicFieldsFromVertice_WOP(&input.Vertice_WOP)
 
 	query := db.Create(&verticeDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetVertice(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoVertice.GetDB()
 
 	// Get verticeDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetVertice(c *gin.Context) {
 
 	var verticeAPI orm.VerticeAPI
 	verticeAPI.ID = verticeDB.ID
-	verticeAPI.VerticePointersEnconding = verticeDB.VerticePointersEnconding
-	verticeDB.CopyBasicFieldsToVertice(&verticeAPI.Vertice)
+	verticeAPI.VerticePointersEncoding = verticeDB.VerticePointersEncoding
+	verticeDB.CopyBasicFieldsToVertice_WOP(&verticeAPI.Vertice_WOP)
 
 	c.JSON(http.StatusOK, verticeAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateVertice(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoVertice.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateVertice(c *gin.Context) {
 	}
 
 	// update
-	verticeDB.CopyBasicFieldsFromVertice(&input.Vertice)
-	verticeDB.VerticePointersEnconding = input.VerticePointersEnconding
+	verticeDB.CopyBasicFieldsFromVertice_WOP(&input.Vertice_WOP)
+	verticeDB.VerticePointersEncoding = input.VerticePointersEncoding
 
 	query = db.Model(&verticeDB).Updates(verticeDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteVertice(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoVertice.GetDB()
 
 	// Get model if exist

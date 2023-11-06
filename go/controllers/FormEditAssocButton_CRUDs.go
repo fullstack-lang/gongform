@@ -65,6 +65,9 @@ func (controller *Controller) GetFormEditAssocButtons(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongform/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormEditAssocButton.GetDB()
 
 	query := db.Find(&formeditassocbuttonDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetFormEditAssocButtons(c *gin.Context) {
 
 		// insertion point for updating fields
 		formeditassocbuttonAPI.ID = formeditassocbuttonDB.ID
-		formeditassocbuttonDB.CopyBasicFieldsToFormEditAssocButton(&formeditassocbuttonAPI.FormEditAssocButton)
-		formeditassocbuttonAPI.FormEditAssocButtonPointersEnconding = formeditassocbuttonDB.FormEditAssocButtonPointersEnconding
+		formeditassocbuttonDB.CopyBasicFieldsToFormEditAssocButton_WOP(&formeditassocbuttonAPI.FormEditAssocButton_WOP)
+		formeditassocbuttonAPI.FormEditAssocButtonPointersEncoding = formeditassocbuttonDB.FormEditAssocButtonPointersEncoding
 		formeditassocbuttonAPIs = append(formeditassocbuttonAPIs, formeditassocbuttonAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostFormEditAssocButton(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongform/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormEditAssocButton.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostFormEditAssocButton(c *gin.Context) {
 
 	// Create formeditassocbutton
 	formeditassocbuttonDB := orm.FormEditAssocButtonDB{}
-	formeditassocbuttonDB.FormEditAssocButtonPointersEnconding = input.FormEditAssocButtonPointersEnconding
-	formeditassocbuttonDB.CopyBasicFieldsFromFormEditAssocButton(&input.FormEditAssocButton)
+	formeditassocbuttonDB.FormEditAssocButtonPointersEncoding = input.FormEditAssocButtonPointersEncoding
+	formeditassocbuttonDB.CopyBasicFieldsFromFormEditAssocButton_WOP(&input.FormEditAssocButton_WOP)
 
 	query := db.Create(&formeditassocbuttonDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetFormEditAssocButton(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongform/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormEditAssocButton.GetDB()
 
 	// Get formeditassocbuttonDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetFormEditAssocButton(c *gin.Context) {
 
 	var formeditassocbuttonAPI orm.FormEditAssocButtonAPI
 	formeditassocbuttonAPI.ID = formeditassocbuttonDB.ID
-	formeditassocbuttonAPI.FormEditAssocButtonPointersEnconding = formeditassocbuttonDB.FormEditAssocButtonPointersEnconding
-	formeditassocbuttonDB.CopyBasicFieldsToFormEditAssocButton(&formeditassocbuttonAPI.FormEditAssocButton)
+	formeditassocbuttonAPI.FormEditAssocButtonPointersEncoding = formeditassocbuttonDB.FormEditAssocButtonPointersEncoding
+	formeditassocbuttonDB.CopyBasicFieldsToFormEditAssocButton_WOP(&formeditassocbuttonAPI.FormEditAssocButton_WOP)
 
 	c.JSON(http.StatusOK, formeditassocbuttonAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateFormEditAssocButton(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongform/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormEditAssocButton.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateFormEditAssocButton(c *gin.Context) {
 	}
 
 	// update
-	formeditassocbuttonDB.CopyBasicFieldsFromFormEditAssocButton(&input.FormEditAssocButton)
-	formeditassocbuttonDB.FormEditAssocButtonPointersEnconding = input.FormEditAssocButtonPointersEnconding
+	formeditassocbuttonDB.CopyBasicFieldsFromFormEditAssocButton_WOP(&input.FormEditAssocButton_WOP)
+	formeditassocbuttonDB.FormEditAssocButtonPointersEncoding = input.FormEditAssocButtonPointersEncoding
 
 	query = db.Model(&formeditassocbuttonDB).Updates(formeditassocbuttonDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteFormEditAssocButton(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongform/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormEditAssocButton.GetDB()
 
 	// Get model if exist

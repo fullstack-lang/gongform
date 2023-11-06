@@ -14,6 +14,23 @@ export class ModelPkgDB {
 	// insertion point for basic fields declarations
 	Name: string = ""
 	PkgPath: string = ""
+	PathToGoSubDirectory: string = ""
+	OrmPkgGenPath: string = ""
+	ControllersPkgGenPath: string = ""
+	FullstackPkgGenPath: string = ""
+	StackPkgGenPath: string = ""
+	StaticPkgGenPath: string = ""
+	ProbePkgGenPath: string = ""
+	NgWorkspacePath: string = ""
+	NgDataLibrarySourceCodeDirectory: string = ""
+	NgSpecificLibrarySourceCodeDirectory: string = ""
+	MaterialLibDatamodelTargetPath: string = ""
 
-	// insertion point for other declarations
+	// insertion point for pointers and slices of pointers declarations
+
+	ModelPkgPointersEncoding: ModelPkgPointersEncoding = new ModelPkgPointersEncoding
+}
+
+export class ModelPkgPointersEncoding {
+	// insertion point for pointers and slices of pointers encoding fields
 }

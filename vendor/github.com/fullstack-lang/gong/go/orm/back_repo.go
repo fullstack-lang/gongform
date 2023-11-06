@@ -8,7 +8,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"sync"
 
 	"github.com/fullstack-lang/gong/go/models"
 
@@ -258,20 +257,6 @@ func (backRepo *BackRepoStruct) Commit(stage *models.StageStruct) {
 	backRepo.BackRepoPointerToGongStructField.CommitPhaseOne(stage)
 	backRepo.BackRepoSliceOfPointerToGongStructField.CommitPhaseOne(stage)
 
-	// insertion point for per struct back repo for reseting the reverse pointers
-	backRepo.BackRepoGongBasicField.ResetReversePointers(backRepo)
-	backRepo.BackRepoGongEnum.ResetReversePointers(backRepo)
-	backRepo.BackRepoGongEnumValue.ResetReversePointers(backRepo)
-	backRepo.BackRepoGongLink.ResetReversePointers(backRepo)
-	backRepo.BackRepoGongNote.ResetReversePointers(backRepo)
-	backRepo.BackRepoGongStruct.ResetReversePointers(backRepo)
-	backRepo.BackRepoGongTimeField.ResetReversePointers(backRepo)
-	backRepo.BackRepoMeta.ResetReversePointers(backRepo)
-	backRepo.BackRepoMetaReference.ResetReversePointers(backRepo)
-	backRepo.BackRepoModelPkg.ResetReversePointers(backRepo)
-	backRepo.BackRepoPointerToGongStructField.ResetReversePointers(backRepo)
-	backRepo.BackRepoSliceOfPointerToGongStructField.ResetReversePointers(backRepo)
-
 	// insertion point for per struct back repo phase two commit
 	backRepo.BackRepoGongBasicField.CommitPhaseTwo(backRepo)
 	backRepo.BackRepoGongEnum.CommitPhaseTwo(backRepo)
@@ -318,25 +303,6 @@ func (backRepo *BackRepoStruct) Checkout(stage *models.StageStruct) {
 	backRepo.BackRepoModelPkg.CheckoutPhaseTwo(backRepo)
 	backRepo.BackRepoPointerToGongStructField.CheckoutPhaseTwo(backRepo)
 	backRepo.BackRepoSliceOfPointerToGongStructField.CheckoutPhaseTwo(backRepo)
-}
-
-var _backRepo *BackRepoStruct
-
-var once sync.Once
-
-func GetDefaultBackRepo() *BackRepoStruct {
-	once.Do(func() {
-		_backRepo = NewBackRepo(models.GetDefaultStage(), "")
-	})
-	return _backRepo
-}
-
-func GetLastCommitFromBackNb() uint {
-	return GetDefaultBackRepo().GetLastCommitFromBackNb()
-}
-
-func GetLastPushFromFrontNb() uint {
-	return GetDefaultBackRepo().GetLastPushFromFrontNb()
 }
 
 // Backup the BackRepoStruct

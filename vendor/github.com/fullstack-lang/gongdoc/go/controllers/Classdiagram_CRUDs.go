@@ -65,6 +65,9 @@ func (controller *Controller) GetClassdiagrams(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoClassdiagram.GetDB()
 
 	query := db.Find(&classdiagramDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetClassdiagrams(c *gin.Context) {
 
 		// insertion point for updating fields
 		classdiagramAPI.ID = classdiagramDB.ID
-		classdiagramDB.CopyBasicFieldsToClassdiagram(&classdiagramAPI.Classdiagram)
-		classdiagramAPI.ClassdiagramPointersEnconding = classdiagramDB.ClassdiagramPointersEnconding
+		classdiagramDB.CopyBasicFieldsToClassdiagram_WOP(&classdiagramAPI.Classdiagram_WOP)
+		classdiagramAPI.ClassdiagramPointersEncoding = classdiagramDB.ClassdiagramPointersEncoding
 		classdiagramAPIs = append(classdiagramAPIs, classdiagramAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostClassdiagram(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoClassdiagram.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostClassdiagram(c *gin.Context) {
 
 	// Create classdiagram
 	classdiagramDB := orm.ClassdiagramDB{}
-	classdiagramDB.ClassdiagramPointersEnconding = input.ClassdiagramPointersEnconding
-	classdiagramDB.CopyBasicFieldsFromClassdiagram(&input.Classdiagram)
+	classdiagramDB.ClassdiagramPointersEncoding = input.ClassdiagramPointersEncoding
+	classdiagramDB.CopyBasicFieldsFromClassdiagram_WOP(&input.Classdiagram_WOP)
 
 	query := db.Create(&classdiagramDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetClassdiagram(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoClassdiagram.GetDB()
 
 	// Get classdiagramDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetClassdiagram(c *gin.Context) {
 
 	var classdiagramAPI orm.ClassdiagramAPI
 	classdiagramAPI.ID = classdiagramDB.ID
-	classdiagramAPI.ClassdiagramPointersEnconding = classdiagramDB.ClassdiagramPointersEnconding
-	classdiagramDB.CopyBasicFieldsToClassdiagram(&classdiagramAPI.Classdiagram)
+	classdiagramAPI.ClassdiagramPointersEncoding = classdiagramDB.ClassdiagramPointersEncoding
+	classdiagramDB.CopyBasicFieldsToClassdiagram_WOP(&classdiagramAPI.Classdiagram_WOP)
 
 	c.JSON(http.StatusOK, classdiagramAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateClassdiagram(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoClassdiagram.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateClassdiagram(c *gin.Context) {
 	}
 
 	// update
-	classdiagramDB.CopyBasicFieldsFromClassdiagram(&input.Classdiagram)
-	classdiagramDB.ClassdiagramPointersEnconding = input.ClassdiagramPointersEnconding
+	classdiagramDB.CopyBasicFieldsFromClassdiagram_WOP(&input.Classdiagram_WOP)
+	classdiagramDB.ClassdiagramPointersEncoding = input.ClassdiagramPointersEncoding
 
 	query = db.Model(&classdiagramDB).Updates(classdiagramDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteClassdiagram(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoClassdiagram.GetDB()
 
 	// Get model if exist

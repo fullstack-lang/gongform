@@ -65,6 +65,9 @@ func (controller *Controller) GetLines(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoLine.GetDB()
 
 	query := db.Find(&lineDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetLines(c *gin.Context) {
 
 		// insertion point for updating fields
 		lineAPI.ID = lineDB.ID
-		lineDB.CopyBasicFieldsToLine(&lineAPI.Line)
-		lineAPI.LinePointersEnconding = lineDB.LinePointersEnconding
+		lineDB.CopyBasicFieldsToLine_WOP(&lineAPI.Line_WOP)
+		lineAPI.LinePointersEncoding = lineDB.LinePointersEncoding
 		lineAPIs = append(lineAPIs, lineAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostLine(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoLine.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostLine(c *gin.Context) {
 
 	// Create line
 	lineDB := orm.LineDB{}
-	lineDB.LinePointersEnconding = input.LinePointersEnconding
-	lineDB.CopyBasicFieldsFromLine(&input.Line)
+	lineDB.LinePointersEncoding = input.LinePointersEncoding
+	lineDB.CopyBasicFieldsFromLine_WOP(&input.Line_WOP)
 
 	query := db.Create(&lineDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetLine(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoLine.GetDB()
 
 	// Get lineDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetLine(c *gin.Context) {
 
 	var lineAPI orm.LineAPI
 	lineAPI.ID = lineDB.ID
-	lineAPI.LinePointersEnconding = lineDB.LinePointersEnconding
-	lineDB.CopyBasicFieldsToLine(&lineAPI.Line)
+	lineAPI.LinePointersEncoding = lineDB.LinePointersEncoding
+	lineDB.CopyBasicFieldsToLine_WOP(&lineAPI.Line_WOP)
 
 	c.JSON(http.StatusOK, lineAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateLine(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoLine.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateLine(c *gin.Context) {
 	}
 
 	// update
-	lineDB.CopyBasicFieldsFromLine(&input.Line)
-	lineDB.LinePointersEnconding = input.LinePointersEnconding
+	lineDB.CopyBasicFieldsFromLine_WOP(&input.Line_WOP)
+	lineDB.LinePointersEncoding = input.LinePointersEncoding
 
 	query = db.Model(&lineDB).Updates(lineDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteLine(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoLine.GetDB()
 
 	// Get model if exist

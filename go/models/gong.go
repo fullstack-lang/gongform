@@ -4,15 +4,25 @@ package models
 import (
 	"errors"
 	"fmt"
-	"sync"
+	"math"
 	"time"
 )
+
+func __Gong__Abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
 
 // errUnkownEnum is returns when a value cannot match enum values
 var errUnkownEnum = errors.New("unkown enum")
 
 // needed to avoid when fmt package is not needed by generated code
 var __dummy__fmt_variable fmt.Scanner
+
+// idem for math package when not need by generated code
+var __dummy_math_variable = math.E
 
 // swagger:ignore
 type __void any
@@ -38,6 +48,8 @@ type StageStruct struct {
 	CheckBoxs           map[*CheckBox]any
 	CheckBoxs_mapString map[string]*CheckBox
 
+	// insertion point for slice of pointers maps
+
 	OnAfterCheckBoxCreateCallback OnAfterCreateInterface[CheckBox]
 	OnAfterCheckBoxUpdateCallback OnAfterUpdateInterface[CheckBox]
 	OnAfterCheckBoxDeleteCallback OnAfterDeleteInterface[CheckBox]
@@ -45,6 +57,10 @@ type StageStruct struct {
 
 	FormDivs           map[*FormDiv]any
 	FormDivs_mapString map[string]*FormDiv
+
+	// insertion point for slice of pointers maps
+	FormDiv_FormFields_reverseMap map[*FormField]*FormDiv
+	FormDiv_CheckBoxs_reverseMap map[*CheckBox]*FormDiv
 
 	OnAfterFormDivCreateCallback OnAfterCreateInterface[FormDiv]
 	OnAfterFormDivUpdateCallback OnAfterUpdateInterface[FormDiv]
@@ -54,6 +70,8 @@ type StageStruct struct {
 	FormEditAssocButtons           map[*FormEditAssocButton]any
 	FormEditAssocButtons_mapString map[string]*FormEditAssocButton
 
+	// insertion point for slice of pointers maps
+
 	OnAfterFormEditAssocButtonCreateCallback OnAfterCreateInterface[FormEditAssocButton]
 	OnAfterFormEditAssocButtonUpdateCallback OnAfterUpdateInterface[FormEditAssocButton]
 	OnAfterFormEditAssocButtonDeleteCallback OnAfterDeleteInterface[FormEditAssocButton]
@@ -61,6 +79,8 @@ type StageStruct struct {
 
 	FormFields           map[*FormField]any
 	FormFields_mapString map[string]*FormField
+
+	// insertion point for slice of pointers maps
 
 	OnAfterFormFieldCreateCallback OnAfterCreateInterface[FormField]
 	OnAfterFormFieldUpdateCallback OnAfterUpdateInterface[FormField]
@@ -70,6 +90,8 @@ type StageStruct struct {
 	FormFieldDates           map[*FormFieldDate]any
 	FormFieldDates_mapString map[string]*FormFieldDate
 
+	// insertion point for slice of pointers maps
+
 	OnAfterFormFieldDateCreateCallback OnAfterCreateInterface[FormFieldDate]
 	OnAfterFormFieldDateUpdateCallback OnAfterUpdateInterface[FormFieldDate]
 	OnAfterFormFieldDateDeleteCallback OnAfterDeleteInterface[FormFieldDate]
@@ -77,6 +99,8 @@ type StageStruct struct {
 
 	FormFieldDateTimes           map[*FormFieldDateTime]any
 	FormFieldDateTimes_mapString map[string]*FormFieldDateTime
+
+	// insertion point for slice of pointers maps
 
 	OnAfterFormFieldDateTimeCreateCallback OnAfterCreateInterface[FormFieldDateTime]
 	OnAfterFormFieldDateTimeUpdateCallback OnAfterUpdateInterface[FormFieldDateTime]
@@ -86,6 +110,8 @@ type StageStruct struct {
 	FormFieldFloat64s           map[*FormFieldFloat64]any
 	FormFieldFloat64s_mapString map[string]*FormFieldFloat64
 
+	// insertion point for slice of pointers maps
+
 	OnAfterFormFieldFloat64CreateCallback OnAfterCreateInterface[FormFieldFloat64]
 	OnAfterFormFieldFloat64UpdateCallback OnAfterUpdateInterface[FormFieldFloat64]
 	OnAfterFormFieldFloat64DeleteCallback OnAfterDeleteInterface[FormFieldFloat64]
@@ -93,6 +119,8 @@ type StageStruct struct {
 
 	FormFieldInts           map[*FormFieldInt]any
 	FormFieldInts_mapString map[string]*FormFieldInt
+
+	// insertion point for slice of pointers maps
 
 	OnAfterFormFieldIntCreateCallback OnAfterCreateInterface[FormFieldInt]
 	OnAfterFormFieldIntUpdateCallback OnAfterUpdateInterface[FormFieldInt]
@@ -102,6 +130,9 @@ type StageStruct struct {
 	FormFieldSelects           map[*FormFieldSelect]any
 	FormFieldSelects_mapString map[string]*FormFieldSelect
 
+	// insertion point for slice of pointers maps
+	FormFieldSelect_Options_reverseMap map[*Option]*FormFieldSelect
+
 	OnAfterFormFieldSelectCreateCallback OnAfterCreateInterface[FormFieldSelect]
 	OnAfterFormFieldSelectUpdateCallback OnAfterUpdateInterface[FormFieldSelect]
 	OnAfterFormFieldSelectDeleteCallback OnAfterDeleteInterface[FormFieldSelect]
@@ -109,6 +140,8 @@ type StageStruct struct {
 
 	FormFieldStrings           map[*FormFieldString]any
 	FormFieldStrings_mapString map[string]*FormFieldString
+
+	// insertion point for slice of pointers maps
 
 	OnAfterFormFieldStringCreateCallback OnAfterCreateInterface[FormFieldString]
 	OnAfterFormFieldStringUpdateCallback OnAfterUpdateInterface[FormFieldString]
@@ -118,6 +151,8 @@ type StageStruct struct {
 	FormFieldTimes           map[*FormFieldTime]any
 	FormFieldTimes_mapString map[string]*FormFieldTime
 
+	// insertion point for slice of pointers maps
+
 	OnAfterFormFieldTimeCreateCallback OnAfterCreateInterface[FormFieldTime]
 	OnAfterFormFieldTimeUpdateCallback OnAfterUpdateInterface[FormFieldTime]
 	OnAfterFormFieldTimeDeleteCallback OnAfterDeleteInterface[FormFieldTime]
@@ -125,6 +160,9 @@ type StageStruct struct {
 
 	FormGroups           map[*FormGroup]any
 	FormGroups_mapString map[string]*FormGroup
+
+	// insertion point for slice of pointers maps
+	FormGroup_FormDivs_reverseMap map[*FormDiv]*FormGroup
 
 	OnAfterFormGroupCreateCallback OnAfterCreateInterface[FormGroup]
 	OnAfterFormGroupUpdateCallback OnAfterUpdateInterface[FormGroup]
@@ -134,6 +172,8 @@ type StageStruct struct {
 	FormSortAssocButtons           map[*FormSortAssocButton]any
 	FormSortAssocButtons_mapString map[string]*FormSortAssocButton
 
+	// insertion point for slice of pointers maps
+
 	OnAfterFormSortAssocButtonCreateCallback OnAfterCreateInterface[FormSortAssocButton]
 	OnAfterFormSortAssocButtonUpdateCallback OnAfterUpdateInterface[FormSortAssocButton]
 	OnAfterFormSortAssocButtonDeleteCallback OnAfterDeleteInterface[FormSortAssocButton]
@@ -141,6 +181,8 @@ type StageStruct struct {
 
 	Options           map[*Option]any
 	Options_mapString map[string]*Option
+
+	// insertion point for slice of pointers maps
 
 	OnAfterOptionCreateCallback OnAfterCreateInterface[Option]
 	OnAfterOptionUpdateCallback OnAfterUpdateInterface[Option]
@@ -169,6 +211,10 @@ type StageStruct struct {
 	// map to enable docLink renaming when an identifier is renamed
 	Map_DocLink_Renaming map[string]GONG__Identifier
 	// the to be removed stops here
+}
+
+func (stage *StageStruct) GetType() string {
+	return "github.com/fullstack-lang/gongform/go/models"
 }
 
 type GONG__Identifier struct {
@@ -243,17 +289,6 @@ type BackRepoInterface interface {
 	GetLastPushFromFrontNb() uint
 }
 
-var _stage *StageStruct
-
-var once sync.Once
-
-func GetDefaultStage() *StageStruct {
-	once.Do(func() {
-		_stage = NewStage("")
-	})
-	return _stage
-}
-
 func NewStage(path string) (stage *StageStruct) {
 
 	stage = &StageStruct{ // insertion point for array initiatialisation
@@ -325,6 +360,8 @@ func (stage *StageStruct) CommitWithSuspendedCallbacks() {
 }
 
 func (stage *StageStruct) Commit() {
+	stage.ComputeReverseMaps()
+
 	if stage.BackRepo != nil {
 		stage.BackRepo.Commit(stage)
 	}
@@ -352,6 +389,7 @@ func (stage *StageStruct) Checkout() {
 		stage.BackRepo.Checkout(stage)
 	}
 
+	stage.ComputeReverseMaps()
 	// insertion point for computing the map of number of instances per gongstruct
 	stage.Map_GongStructName_InstancesNb["CheckBox"] = len(stage.CheckBoxs)
 	stage.Map_GongStructName_InstancesNb["FormDiv"] = len(stage.FormDivs)
@@ -2061,6 +2099,46 @@ func GetGongstructName[Type Gongstruct]() (res string) {
 	return res
 }
 
+// GetPointerToGongstructName returns the name of the Gongstruct
+// this can be usefull if one want program robust to refactoring
+func GetPointerToGongstructName[Type PointerToGongstruct]() (res string) {
+
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get gongstruct name
+	case *CheckBox:
+		res = "CheckBox"
+	case *FormDiv:
+		res = "FormDiv"
+	case *FormEditAssocButton:
+		res = "FormEditAssocButton"
+	case *FormField:
+		res = "FormField"
+	case *FormFieldDate:
+		res = "FormFieldDate"
+	case *FormFieldDateTime:
+		res = "FormFieldDateTime"
+	case *FormFieldFloat64:
+		res = "FormFieldFloat64"
+	case *FormFieldInt:
+		res = "FormFieldInt"
+	case *FormFieldSelect:
+		res = "FormFieldSelect"
+	case *FormFieldString:
+		res = "FormFieldString"
+	case *FormFieldTime:
+		res = "FormFieldTime"
+	case *FormGroup:
+		res = "FormGroup"
+	case *FormSortAssocButton:
+		res = "FormSortAssocButton"
+	case *Option:
+		res = "Option"
+	}
+	return res
+}
+
 // GetFields return the array of the fields
 func GetFields[Type Gongstruct]() (res []string) {
 
@@ -2087,7 +2165,7 @@ func GetFields[Type Gongstruct]() (res []string) {
 	case FormFieldSelect:
 		res = []string{"Name", "Value", "Options", "CanBeEmpty"}
 	case FormFieldString:
-		res = []string{"Name", "Value"}
+		res = []string{"Name", "Value", "IsTextArea"}
 	case FormFieldTime:
 		res = []string{"Name", "Value", "Step"}
 	case FormGroup:
@@ -2096,6 +2174,78 @@ func GetFields[Type Gongstruct]() (res []string) {
 		res = []string{"Name", "Label"}
 	case Option:
 		res = []string{"Name"}
+	}
+	return
+}
+
+type ReverseField struct {
+	GongstructName string
+	Fieldname      string
+}
+
+func GetReverseFields[Type Gongstruct]() (res []ReverseField) {
+
+	res = make([]ReverseField, 0)
+
+	var ret Type
+
+	switch any(ret).(type) {
+
+	// insertion point for generic get gongstruct name
+	case CheckBox:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "FormDiv"
+		rf.Fieldname = "CheckBoxs"
+		res = append(res, rf)
+	case FormDiv:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "FormGroup"
+		rf.Fieldname = "FormDivs"
+		res = append(res, rf)
+	case FormEditAssocButton:
+		var rf ReverseField
+		_ = rf
+	case FormField:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "FormDiv"
+		rf.Fieldname = "FormFields"
+		res = append(res, rf)
+	case FormFieldDate:
+		var rf ReverseField
+		_ = rf
+	case FormFieldDateTime:
+		var rf ReverseField
+		_ = rf
+	case FormFieldFloat64:
+		var rf ReverseField
+		_ = rf
+	case FormFieldInt:
+		var rf ReverseField
+		_ = rf
+	case FormFieldSelect:
+		var rf ReverseField
+		_ = rf
+	case FormFieldString:
+		var rf ReverseField
+		_ = rf
+	case FormFieldTime:
+		var rf ReverseField
+		_ = rf
+	case FormGroup:
+		var rf ReverseField
+		_ = rf
+	case FormSortAssocButton:
+		var rf ReverseField
+		_ = rf
+	case Option:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "FormFieldSelect"
+		rf.Fieldname = "Options"
+		res = append(res, rf)
 	}
 	return
 }
@@ -2126,7 +2276,7 @@ func GetFieldsFromPointer[Type PointerToGongstruct]() (res []string) {
 	case *FormFieldSelect:
 		res = []string{"Name", "Value", "Options", "CanBeEmpty"}
 	case *FormFieldString:
-		res = []string{"Name", "Value"}
+		res = []string{"Name", "Value", "IsTextArea"}
 	case *FormFieldTime:
 		res = []string{"Name", "Value", "Step"}
 	case *FormGroup:
@@ -2306,6 +2456,8 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 			res = inferedInstance.Name
 		case "Value":
 			res = inferedInstance.Value
+		case "IsTextArea":
+			res = fmt.Sprintf("%t", inferedInstance.IsTextArea)
 		}
 	case *FormFieldTime:
 		switch fieldName {
@@ -2347,7 +2499,7 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 			res = inferedInstance.Name
 		}
 	default:
-		_ = inferedInstance	
+		_ = inferedInstance
 	}
 	return
 }
@@ -2519,6 +2671,8 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 			res = inferedInstance.Name
 		case "Value":
 			res = inferedInstance.Value
+		case "IsTextArea":
+			res = fmt.Sprintf("%t", inferedInstance.IsTextArea)
 		}
 	case FormFieldTime:
 		switch fieldName {
@@ -2560,7 +2714,7 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 			res = inferedInstance.Name
 		}
 	default:
-		_ = inferedInstance	
+		_ = inferedInstance
 	}
 	return
 }

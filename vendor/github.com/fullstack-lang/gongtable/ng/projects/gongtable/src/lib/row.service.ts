@@ -12,9 +12,10 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { RowDB } from './row-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
-import { TableDB } from './table-db'
+import { CellDB } from './cell-db'
 
 @Injectable({
   providedIn: 'root'
@@ -43,20 +44,27 @@ export class RowService {
   }
 
   /** GET rows from the server */
-  getRows(GONG__StackPath: string): Observable<RowDB[]> {
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<RowDB[]> {
+    return this.getRows(GONG__StackPath, frontRepo)
+  }
+  getRows(GONG__StackPath: string, frontRepo: FrontRepo): Observable<RowDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<RowDB[]>(this.rowsUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched rows')),
         catchError(this.handleError<RowDB[]>('getRows', []))
       );
   }
 
   /** GET row by id. Will 404 if id not found */
-  getRow(id: number, GONG__StackPath: string): Observable<RowDB> {
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<RowDB> {
+    return this.getRow(id, GONG__StackPath, frontRepo)
+  }
+  getRow(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<RowDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -68,13 +76,17 @@ export class RowService {
   }
 
   /** POST: add a new row to the server */
-  postRow(rowdb: RowDB, GONG__StackPath: string): Observable<RowDB> {
+  post(rowdb: RowDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<RowDB> {
+    return this.postRow(rowdb, GONG__StackPath, frontRepo)
+  }
+  postRow(rowdb: RowDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<RowDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let Cells = rowdb.Cells
+    rowdb.RowPointersEncoding.Cells = []
+    for (let _cell of rowdb.Cells) {
+      rowdb.RowPointersEncoding.Cells.push(_cell.ID)
+    }
     rowdb.Cells = []
-    let _Table_Rows_reverse = rowdb.Table_Rows_reverse
-    rowdb.Table_Rows_reverse = new TableDB
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -85,8 +97,13 @@ export class RowService {
     return this.http.post<RowDB>(this.rowsUrl, rowdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-	      rowdb.Cells = Cells
-        rowdb.Table_Rows_reverse = _Table_Rows_reverse
+        rowdb.Cells = new Array<CellDB>()
+        for (let _id of rowdb.RowPointersEncoding.Cells) {
+          let _cell = frontRepo.Cells.get(_id)
+          if (_cell != undefined) {
+            rowdb.Cells.push(_cell!)
+          }
+        }
         // this.log(`posted rowdb id=${rowdb.ID}`)
       }),
       catchError(this.handleError<RowDB>('postRow'))
@@ -94,6 +111,9 @@ export class RowService {
   }
 
   /** DELETE: delete the rowdb from the server */
+  delete(rowdb: RowDB | number, GONG__StackPath: string): Observable<RowDB> {
+    return this.deleteRow(rowdb, GONG__StackPath)
+  }
   deleteRow(rowdb: RowDB | number, GONG__StackPath: string): Observable<RowDB> {
     const id = typeof rowdb === 'number' ? rowdb : rowdb.ID;
     const url = `${this.rowsUrl}/${id}`;
@@ -111,15 +131,20 @@ export class RowService {
   }
 
   /** PUT: update the rowdb on the server */
-  updateRow(rowdb: RowDB, GONG__StackPath: string): Observable<RowDB> {
+  update(rowdb: RowDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<RowDB> {
+    return this.updateRow(rowdb, GONG__StackPath, frontRepo)
+  }
+  updateRow(rowdb: RowDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<RowDB> {
     const id = typeof rowdb === 'number' ? rowdb : rowdb.ID;
     const url = `${this.rowsUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let Cells = rowdb.Cells
+    // insertion point for reset of pointers (to avoid circular JSON)
+    // and encoding of pointers
+    rowdb.RowPointersEncoding.Cells = []
+    for (let _cell of rowdb.Cells) {
+      rowdb.RowPointersEncoding.Cells.push(_cell.ID)
+    }
     rowdb.Cells = []
-    let _Table_Rows_reverse = rowdb.Table_Rows_reverse
-    rowdb.Table_Rows_reverse = new TableDB
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -130,8 +155,13 @@ export class RowService {
     return this.http.put<RowDB>(url, rowdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-	      rowdb.Cells = Cells
-        rowdb.Table_Rows_reverse = _Table_Rows_reverse
+        rowdb.Cells = new Array<CellDB>()
+        for (let _id of rowdb.RowPointersEncoding.Cells) {
+          let _cell = frontRepo.Cells.get(_id)
+          if (_cell != undefined) {
+            rowdb.Cells.push(_cell!)
+          }
+        }
         // this.log(`updated rowdb id=${rowdb.ID}`)
       }),
       catchError(this.handleError<RowDB>('updateRow'))
@@ -159,6 +189,6 @@ export class RowService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

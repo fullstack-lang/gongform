@@ -65,6 +65,9 @@ func (controller *Controller) GetLinks(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoLink.GetDB()
 
 	query := db.Find(&linkDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetLinks(c *gin.Context) {
 
 		// insertion point for updating fields
 		linkAPI.ID = linkDB.ID
-		linkDB.CopyBasicFieldsToLink(&linkAPI.Link)
-		linkAPI.LinkPointersEnconding = linkDB.LinkPointersEnconding
+		linkDB.CopyBasicFieldsToLink_WOP(&linkAPI.Link_WOP)
+		linkAPI.LinkPointersEncoding = linkDB.LinkPointersEncoding
 		linkAPIs = append(linkAPIs, linkAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostLink(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoLink.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostLink(c *gin.Context) {
 
 	// Create link
 	linkDB := orm.LinkDB{}
-	linkDB.LinkPointersEnconding = input.LinkPointersEnconding
-	linkDB.CopyBasicFieldsFromLink(&input.Link)
+	linkDB.LinkPointersEncoding = input.LinkPointersEncoding
+	linkDB.CopyBasicFieldsFromLink_WOP(&input.Link_WOP)
 
 	query := db.Create(&linkDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetLink(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoLink.GetDB()
 
 	// Get linkDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetLink(c *gin.Context) {
 
 	var linkAPI orm.LinkAPI
 	linkAPI.ID = linkDB.ID
-	linkAPI.LinkPointersEnconding = linkDB.LinkPointersEnconding
-	linkDB.CopyBasicFieldsToLink(&linkAPI.Link)
+	linkAPI.LinkPointersEncoding = linkDB.LinkPointersEncoding
+	linkDB.CopyBasicFieldsToLink_WOP(&linkAPI.Link_WOP)
 
 	c.JSON(http.StatusOK, linkAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateLink(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoLink.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateLink(c *gin.Context) {
 	}
 
 	// update
-	linkDB.CopyBasicFieldsFromLink(&input.Link)
-	linkDB.LinkPointersEnconding = input.LinkPointersEnconding
+	linkDB.CopyBasicFieldsFromLink_WOP(&input.Link_WOP)
+	linkDB.LinkPointersEncoding = input.LinkPointersEncoding
 
 	query = db.Model(&linkDB).Updates(linkDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteLink(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoLink.GetDB()
 
 	// Get model if exist

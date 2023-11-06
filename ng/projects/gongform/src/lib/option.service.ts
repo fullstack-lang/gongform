@@ -12,9 +12,9 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { OptionDB } from './option-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
-import { FormFieldSelectDB } from './formfieldselect-db'
 
 @Injectable({
   providedIn: 'root'
@@ -43,20 +43,27 @@ export class OptionService {
   }
 
   /** GET options from the server */
-  getOptions(GONG__StackPath: string): Observable<OptionDB[]> {
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<OptionDB[]> {
+    return this.getOptions(GONG__StackPath, frontRepo)
+  }
+  getOptions(GONG__StackPath: string, frontRepo: FrontRepo): Observable<OptionDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<OptionDB[]>(this.optionsUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched options')),
         catchError(this.handleError<OptionDB[]>('getOptions', []))
       );
   }
 
   /** GET option by id. Will 404 if id not found */
-  getOption(id: number, GONG__StackPath: string): Observable<OptionDB> {
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<OptionDB> {
+    return this.getOption(id, GONG__StackPath, frontRepo)
+  }
+  getOption(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<OptionDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -68,11 +75,12 @@ export class OptionService {
   }
 
   /** POST: add a new option to the server */
-  postOption(optiondb: OptionDB, GONG__StackPath: string): Observable<OptionDB> {
+  post(optiondb: OptionDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<OptionDB> {
+    return this.postOption(optiondb, GONG__StackPath, frontRepo)
+  }
+  postOption(optiondb: OptionDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<OptionDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let _FormFieldSelect_Options_reverse = optiondb.FormFieldSelect_Options_reverse
-    optiondb.FormFieldSelect_Options_reverse = new FormFieldSelectDB
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -83,7 +91,6 @@ export class OptionService {
     return this.http.post<OptionDB>(this.optionsUrl, optiondb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        optiondb.FormFieldSelect_Options_reverse = _FormFieldSelect_Options_reverse
         // this.log(`posted optiondb id=${optiondb.ID}`)
       }),
       catchError(this.handleError<OptionDB>('postOption'))
@@ -91,6 +98,9 @@ export class OptionService {
   }
 
   /** DELETE: delete the optiondb from the server */
+  delete(optiondb: OptionDB | number, GONG__StackPath: string): Observable<OptionDB> {
+    return this.deleteOption(optiondb, GONG__StackPath)
+  }
   deleteOption(optiondb: OptionDB | number, GONG__StackPath: string): Observable<OptionDB> {
     const id = typeof optiondb === 'number' ? optiondb : optiondb.ID;
     const url = `${this.optionsUrl}/${id}`;
@@ -108,13 +118,15 @@ export class OptionService {
   }
 
   /** PUT: update the optiondb on the server */
-  updateOption(optiondb: OptionDB, GONG__StackPath: string): Observable<OptionDB> {
+  update(optiondb: OptionDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<OptionDB> {
+    return this.updateOption(optiondb, GONG__StackPath, frontRepo)
+  }
+  updateOption(optiondb: OptionDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<OptionDB> {
     const id = typeof optiondb === 'number' ? optiondb : optiondb.ID;
     const url = `${this.optionsUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let _FormFieldSelect_Options_reverse = optiondb.FormFieldSelect_Options_reverse
-    optiondb.FormFieldSelect_Options_reverse = new FormFieldSelectDB
+    // insertion point for reset of pointers (to avoid circular JSON)
+    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -125,7 +137,6 @@ export class OptionService {
     return this.http.put<OptionDB>(url, optiondb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        optiondb.FormFieldSelect_Options_reverse = _FormFieldSelect_Options_reverse
         // this.log(`updated optiondb id=${optiondb.ID}`)
       }),
       catchError(this.handleError<OptionDB>('updateOption'))
@@ -153,6 +164,6 @@ export class OptionService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

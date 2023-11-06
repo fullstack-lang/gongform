@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { ModelPkgDB } from './modelpkg-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 
@@ -42,20 +43,27 @@ export class ModelPkgService {
   }
 
   /** GET modelpkgs from the server */
-  getModelPkgs(GONG__StackPath: string): Observable<ModelPkgDB[]> {
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<ModelPkgDB[]> {
+    return this.getModelPkgs(GONG__StackPath, frontRepo)
+  }
+  getModelPkgs(GONG__StackPath: string, frontRepo: FrontRepo): Observable<ModelPkgDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<ModelPkgDB[]>(this.modelpkgsUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched modelpkgs')),
         catchError(this.handleError<ModelPkgDB[]>('getModelPkgs', []))
       );
   }
 
   /** GET modelpkg by id. Will 404 if id not found */
-  getModelPkg(id: number, GONG__StackPath: string): Observable<ModelPkgDB> {
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<ModelPkgDB> {
+    return this.getModelPkg(id, GONG__StackPath, frontRepo)
+  }
+  getModelPkg(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<ModelPkgDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -67,7 +75,10 @@ export class ModelPkgService {
   }
 
   /** POST: add a new modelpkg to the server */
-  postModelPkg(modelpkgdb: ModelPkgDB, GONG__StackPath: string): Observable<ModelPkgDB> {
+  post(modelpkgdb: ModelPkgDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<ModelPkgDB> {
+    return this.postModelPkg(modelpkgdb, GONG__StackPath, frontRepo)
+  }
+  postModelPkg(modelpkgdb: ModelPkgDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<ModelPkgDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
@@ -87,6 +98,9 @@ export class ModelPkgService {
   }
 
   /** DELETE: delete the modelpkgdb from the server */
+  delete(modelpkgdb: ModelPkgDB | number, GONG__StackPath: string): Observable<ModelPkgDB> {
+    return this.deleteModelPkg(modelpkgdb, GONG__StackPath)
+  }
   deleteModelPkg(modelpkgdb: ModelPkgDB | number, GONG__StackPath: string): Observable<ModelPkgDB> {
     const id = typeof modelpkgdb === 'number' ? modelpkgdb : modelpkgdb.ID;
     const url = `${this.modelpkgsUrl}/${id}`;
@@ -104,11 +118,15 @@ export class ModelPkgService {
   }
 
   /** PUT: update the modelpkgdb on the server */
-  updateModelPkg(modelpkgdb: ModelPkgDB, GONG__StackPath: string): Observable<ModelPkgDB> {
+  update(modelpkgdb: ModelPkgDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<ModelPkgDB> {
+    return this.updateModelPkg(modelpkgdb, GONG__StackPath, frontRepo)
+  }
+  updateModelPkg(modelpkgdb: ModelPkgDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<ModelPkgDB> {
     const id = typeof modelpkgdb === 'number' ? modelpkgdb : modelpkgdb.ID;
     const url = `${this.modelpkgsUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers (to avoid circular JSON)
+    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -146,6 +164,6 @@ export class ModelPkgService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

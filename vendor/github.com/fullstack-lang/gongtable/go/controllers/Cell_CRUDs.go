@@ -65,6 +65,9 @@ func (controller *Controller) GetCells(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoCell.GetDB()
 
 	query := db.Find(&cellDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetCells(c *gin.Context) {
 
 		// insertion point for updating fields
 		cellAPI.ID = cellDB.ID
-		cellDB.CopyBasicFieldsToCell(&cellAPI.Cell)
-		cellAPI.CellPointersEnconding = cellDB.CellPointersEnconding
+		cellDB.CopyBasicFieldsToCell_WOP(&cellAPI.Cell_WOP)
+		cellAPI.CellPointersEncoding = cellDB.CellPointersEncoding
 		cellAPIs = append(cellAPIs, cellAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostCell(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoCell.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostCell(c *gin.Context) {
 
 	// Create cell
 	cellDB := orm.CellDB{}
-	cellDB.CellPointersEnconding = input.CellPointersEnconding
-	cellDB.CopyBasicFieldsFromCell(&input.Cell)
+	cellDB.CellPointersEncoding = input.CellPointersEncoding
+	cellDB.CopyBasicFieldsFromCell_WOP(&input.Cell_WOP)
 
 	query := db.Create(&cellDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetCell(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoCell.GetDB()
 
 	// Get cellDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetCell(c *gin.Context) {
 
 	var cellAPI orm.CellAPI
 	cellAPI.ID = cellDB.ID
-	cellAPI.CellPointersEnconding = cellDB.CellPointersEnconding
-	cellDB.CopyBasicFieldsToCell(&cellAPI.Cell)
+	cellAPI.CellPointersEncoding = cellDB.CellPointersEncoding
+	cellDB.CopyBasicFieldsToCell_WOP(&cellAPI.Cell_WOP)
 
 	c.JSON(http.StatusOK, cellAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateCell(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoCell.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateCell(c *gin.Context) {
 	}
 
 	// update
-	cellDB.CopyBasicFieldsFromCell(&input.Cell)
-	cellDB.CellPointersEnconding = input.CellPointersEnconding
+	cellDB.CopyBasicFieldsFromCell_WOP(&input.Cell_WOP)
+	cellDB.CellPointersEncoding = input.CellPointersEncoding
 
 	query = db.Model(&cellDB).Updates(cellDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteCell(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoCell.GetDB()
 
 	// Get model if exist

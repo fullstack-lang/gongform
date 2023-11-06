@@ -65,6 +65,9 @@ func (controller *Controller) GetGongLinks(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gong/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoGongLink.GetDB()
 
 	query := db.Find(&gonglinkDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetGongLinks(c *gin.Context) {
 
 		// insertion point for updating fields
 		gonglinkAPI.ID = gonglinkDB.ID
-		gonglinkDB.CopyBasicFieldsToGongLink(&gonglinkAPI.GongLink)
-		gonglinkAPI.GongLinkPointersEnconding = gonglinkDB.GongLinkPointersEnconding
+		gonglinkDB.CopyBasicFieldsToGongLink_WOP(&gonglinkAPI.GongLink_WOP)
+		gonglinkAPI.GongLinkPointersEncoding = gonglinkDB.GongLinkPointersEncoding
 		gonglinkAPIs = append(gonglinkAPIs, gonglinkAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostGongLink(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gong/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoGongLink.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostGongLink(c *gin.Context) {
 
 	// Create gonglink
 	gonglinkDB := orm.GongLinkDB{}
-	gonglinkDB.GongLinkPointersEnconding = input.GongLinkPointersEnconding
-	gonglinkDB.CopyBasicFieldsFromGongLink(&input.GongLink)
+	gonglinkDB.GongLinkPointersEncoding = input.GongLinkPointersEncoding
+	gonglinkDB.CopyBasicFieldsFromGongLink_WOP(&input.GongLink_WOP)
 
 	query := db.Create(&gonglinkDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetGongLink(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gong/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoGongLink.GetDB()
 
 	// Get gonglinkDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetGongLink(c *gin.Context) {
 
 	var gonglinkAPI orm.GongLinkAPI
 	gonglinkAPI.ID = gonglinkDB.ID
-	gonglinkAPI.GongLinkPointersEnconding = gonglinkDB.GongLinkPointersEnconding
-	gonglinkDB.CopyBasicFieldsToGongLink(&gonglinkAPI.GongLink)
+	gonglinkAPI.GongLinkPointersEncoding = gonglinkDB.GongLinkPointersEncoding
+	gonglinkDB.CopyBasicFieldsToGongLink_WOP(&gonglinkAPI.GongLink_WOP)
 
 	c.JSON(http.StatusOK, gonglinkAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateGongLink(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gong/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoGongLink.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateGongLink(c *gin.Context) {
 	}
 
 	// update
-	gonglinkDB.CopyBasicFieldsFromGongLink(&input.GongLink)
-	gonglinkDB.GongLinkPointersEnconding = input.GongLinkPointersEnconding
+	gonglinkDB.CopyBasicFieldsFromGongLink_WOP(&input.GongLink_WOP)
+	gonglinkDB.GongLinkPointersEncoding = input.GongLinkPointersEncoding
 
 	query = db.Model(&gonglinkDB).Updates(gonglinkDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteGongLink(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gong/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoGongLink.GetDB()
 
 	// Get model if exist

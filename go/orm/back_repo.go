@@ -8,7 +8,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"sync"
 
 	"github.com/fullstack-lang/gongform/go/models"
 
@@ -282,22 +281,6 @@ func (backRepo *BackRepoStruct) Commit(stage *models.StageStruct) {
 	backRepo.BackRepoFormSortAssocButton.CommitPhaseOne(stage)
 	backRepo.BackRepoOption.CommitPhaseOne(stage)
 
-	// insertion point for per struct back repo for reseting the reverse pointers
-	backRepo.BackRepoCheckBox.ResetReversePointers(backRepo)
-	backRepo.BackRepoFormDiv.ResetReversePointers(backRepo)
-	backRepo.BackRepoFormEditAssocButton.ResetReversePointers(backRepo)
-	backRepo.BackRepoFormField.ResetReversePointers(backRepo)
-	backRepo.BackRepoFormFieldDate.ResetReversePointers(backRepo)
-	backRepo.BackRepoFormFieldDateTime.ResetReversePointers(backRepo)
-	backRepo.BackRepoFormFieldFloat64.ResetReversePointers(backRepo)
-	backRepo.BackRepoFormFieldInt.ResetReversePointers(backRepo)
-	backRepo.BackRepoFormFieldSelect.ResetReversePointers(backRepo)
-	backRepo.BackRepoFormFieldString.ResetReversePointers(backRepo)
-	backRepo.BackRepoFormFieldTime.ResetReversePointers(backRepo)
-	backRepo.BackRepoFormGroup.ResetReversePointers(backRepo)
-	backRepo.BackRepoFormSortAssocButton.ResetReversePointers(backRepo)
-	backRepo.BackRepoOption.ResetReversePointers(backRepo)
-
 	// insertion point for per struct back repo phase two commit
 	backRepo.BackRepoCheckBox.CommitPhaseTwo(backRepo)
 	backRepo.BackRepoFormDiv.CommitPhaseTwo(backRepo)
@@ -350,25 +333,6 @@ func (backRepo *BackRepoStruct) Checkout(stage *models.StageStruct) {
 	backRepo.BackRepoFormGroup.CheckoutPhaseTwo(backRepo)
 	backRepo.BackRepoFormSortAssocButton.CheckoutPhaseTwo(backRepo)
 	backRepo.BackRepoOption.CheckoutPhaseTwo(backRepo)
-}
-
-var _backRepo *BackRepoStruct
-
-var once sync.Once
-
-func GetDefaultBackRepo() *BackRepoStruct {
-	once.Do(func() {
-		_backRepo = NewBackRepo(models.GetDefaultStage(), "")
-	})
-	return _backRepo
-}
-
-func GetLastCommitFromBackNb() uint {
-	return GetDefaultBackRepo().GetLastCommitFromBackNb()
-}
-
-func GetLastPushFromFrontNb() uint {
-	return GetDefaultBackRepo().GetLastPushFromFrontNb()
 }
 
 // Backup the BackRepoStruct

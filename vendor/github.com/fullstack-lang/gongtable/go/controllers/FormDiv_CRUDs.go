@@ -65,6 +65,9 @@ func (controller *Controller) GetFormDivs(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormDiv.GetDB()
 
 	query := db.Find(&formdivDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetFormDivs(c *gin.Context) {
 
 		// insertion point for updating fields
 		formdivAPI.ID = formdivDB.ID
-		formdivDB.CopyBasicFieldsToFormDiv(&formdivAPI.FormDiv)
-		formdivAPI.FormDivPointersEnconding = formdivDB.FormDivPointersEnconding
+		formdivDB.CopyBasicFieldsToFormDiv_WOP(&formdivAPI.FormDiv_WOP)
+		formdivAPI.FormDivPointersEncoding = formdivDB.FormDivPointersEncoding
 		formdivAPIs = append(formdivAPIs, formdivAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostFormDiv(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormDiv.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostFormDiv(c *gin.Context) {
 
 	// Create formdiv
 	formdivDB := orm.FormDivDB{}
-	formdivDB.FormDivPointersEnconding = input.FormDivPointersEnconding
-	formdivDB.CopyBasicFieldsFromFormDiv(&input.FormDiv)
+	formdivDB.FormDivPointersEncoding = input.FormDivPointersEncoding
+	formdivDB.CopyBasicFieldsFromFormDiv_WOP(&input.FormDiv_WOP)
 
 	query := db.Create(&formdivDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetFormDiv(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormDiv.GetDB()
 
 	// Get formdivDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetFormDiv(c *gin.Context) {
 
 	var formdivAPI orm.FormDivAPI
 	formdivAPI.ID = formdivDB.ID
-	formdivAPI.FormDivPointersEnconding = formdivDB.FormDivPointersEnconding
-	formdivDB.CopyBasicFieldsToFormDiv(&formdivAPI.FormDiv)
+	formdivAPI.FormDivPointersEncoding = formdivDB.FormDivPointersEncoding
+	formdivDB.CopyBasicFieldsToFormDiv_WOP(&formdivAPI.FormDiv_WOP)
 
 	c.JSON(http.StatusOK, formdivAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateFormDiv(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormDiv.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateFormDiv(c *gin.Context) {
 	}
 
 	// update
-	formdivDB.CopyBasicFieldsFromFormDiv(&input.FormDiv)
-	formdivDB.FormDivPointersEnconding = input.FormDivPointersEnconding
+	formdivDB.CopyBasicFieldsFromFormDiv_WOP(&input.FormDiv_WOP)
+	formdivDB.FormDivPointersEncoding = input.FormDivPointersEncoding
 
 	query = db.Model(&formdivDB).Updates(formdivDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteFormDiv(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormDiv.GetDB()
 
 	// Get model if exist

@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { FormFieldDateDB } from './formfielddate-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 
@@ -42,20 +43,27 @@ export class FormFieldDateService {
   }
 
   /** GET formfielddates from the server */
-  getFormFieldDates(GONG__StackPath: string): Observable<FormFieldDateDB[]> {
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldDateDB[]> {
+    return this.getFormFieldDates(GONG__StackPath, frontRepo)
+  }
+  getFormFieldDates(GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldDateDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<FormFieldDateDB[]>(this.formfielddatesUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched formfielddates')),
         catchError(this.handleError<FormFieldDateDB[]>('getFormFieldDates', []))
       );
   }
 
   /** GET formfielddate by id. Will 404 if id not found */
-  getFormFieldDate(id: number, GONG__StackPath: string): Observable<FormFieldDateDB> {
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldDateDB> {
+    return this.getFormFieldDate(id, GONG__StackPath, frontRepo)
+  }
+  getFormFieldDate(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldDateDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -67,7 +75,10 @@ export class FormFieldDateService {
   }
 
   /** POST: add a new formfielddate to the server */
-  postFormFieldDate(formfielddatedb: FormFieldDateDB, GONG__StackPath: string): Observable<FormFieldDateDB> {
+  post(formfielddatedb: FormFieldDateDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldDateDB> {
+    return this.postFormFieldDate(formfielddatedb, GONG__StackPath, frontRepo)
+  }
+  postFormFieldDate(formfielddatedb: FormFieldDateDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldDateDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
@@ -87,6 +98,9 @@ export class FormFieldDateService {
   }
 
   /** DELETE: delete the formfielddatedb from the server */
+  delete(formfielddatedb: FormFieldDateDB | number, GONG__StackPath: string): Observable<FormFieldDateDB> {
+    return this.deleteFormFieldDate(formfielddatedb, GONG__StackPath)
+  }
   deleteFormFieldDate(formfielddatedb: FormFieldDateDB | number, GONG__StackPath: string): Observable<FormFieldDateDB> {
     const id = typeof formfielddatedb === 'number' ? formfielddatedb : formfielddatedb.ID;
     const url = `${this.formfielddatesUrl}/${id}`;
@@ -104,11 +118,15 @@ export class FormFieldDateService {
   }
 
   /** PUT: update the formfielddatedb on the server */
-  updateFormFieldDate(formfielddatedb: FormFieldDateDB, GONG__StackPath: string): Observable<FormFieldDateDB> {
+  update(formfielddatedb: FormFieldDateDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldDateDB> {
+    return this.updateFormFieldDate(formfielddatedb, GONG__StackPath, frontRepo)
+  }
+  updateFormFieldDate(formfielddatedb: FormFieldDateDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldDateDB> {
     const id = typeof formfielddatedb === 'number' ? formfielddatedb : formfielddatedb.ID;
     const url = `${this.formfielddatesUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers (to avoid circular JSON)
+    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -146,6 +164,6 @@ export class FormFieldDateService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

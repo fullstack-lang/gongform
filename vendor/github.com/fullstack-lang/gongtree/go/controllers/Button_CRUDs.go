@@ -65,6 +65,9 @@ func (controller *Controller) GetButtons(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtree/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoButton.GetDB()
 
 	query := db.Find(&buttonDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetButtons(c *gin.Context) {
 
 		// insertion point for updating fields
 		buttonAPI.ID = buttonDB.ID
-		buttonDB.CopyBasicFieldsToButton(&buttonAPI.Button)
-		buttonAPI.ButtonPointersEnconding = buttonDB.ButtonPointersEnconding
+		buttonDB.CopyBasicFieldsToButton_WOP(&buttonAPI.Button_WOP)
+		buttonAPI.ButtonPointersEncoding = buttonDB.ButtonPointersEncoding
 		buttonAPIs = append(buttonAPIs, buttonAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostButton(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtree/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoButton.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostButton(c *gin.Context) {
 
 	// Create button
 	buttonDB := orm.ButtonDB{}
-	buttonDB.ButtonPointersEnconding = input.ButtonPointersEnconding
-	buttonDB.CopyBasicFieldsFromButton(&input.Button)
+	buttonDB.ButtonPointersEncoding = input.ButtonPointersEncoding
+	buttonDB.CopyBasicFieldsFromButton_WOP(&input.Button_WOP)
 
 	query := db.Create(&buttonDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetButton(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtree/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoButton.GetDB()
 
 	// Get buttonDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetButton(c *gin.Context) {
 
 	var buttonAPI orm.ButtonAPI
 	buttonAPI.ID = buttonDB.ID
-	buttonAPI.ButtonPointersEnconding = buttonDB.ButtonPointersEnconding
-	buttonDB.CopyBasicFieldsToButton(&buttonAPI.Button)
+	buttonAPI.ButtonPointersEncoding = buttonDB.ButtonPointersEncoding
+	buttonDB.CopyBasicFieldsToButton_WOP(&buttonAPI.Button_WOP)
 
 	c.JSON(http.StatusOK, buttonAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateButton(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtree/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoButton.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateButton(c *gin.Context) {
 	}
 
 	// update
-	buttonDB.CopyBasicFieldsFromButton(&input.Button)
-	buttonDB.ButtonPointersEnconding = input.ButtonPointersEnconding
+	buttonDB.CopyBasicFieldsFromButton_WOP(&input.Button_WOP)
+	buttonDB.ButtonPointersEncoding = input.ButtonPointersEncoding
 
 	query = db.Model(&buttonDB).Updates(buttonDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteButton(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtree/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoButton.GetDB()
 
 	// Get model if exist

@@ -65,6 +65,9 @@ func (controller *Controller) GetFormFieldTimes(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongform/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormFieldTime.GetDB()
 
 	query := db.Find(&formfieldtimeDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetFormFieldTimes(c *gin.Context) {
 
 		// insertion point for updating fields
 		formfieldtimeAPI.ID = formfieldtimeDB.ID
-		formfieldtimeDB.CopyBasicFieldsToFormFieldTime(&formfieldtimeAPI.FormFieldTime)
-		formfieldtimeAPI.FormFieldTimePointersEnconding = formfieldtimeDB.FormFieldTimePointersEnconding
+		formfieldtimeDB.CopyBasicFieldsToFormFieldTime_WOP(&formfieldtimeAPI.FormFieldTime_WOP)
+		formfieldtimeAPI.FormFieldTimePointersEncoding = formfieldtimeDB.FormFieldTimePointersEncoding
 		formfieldtimeAPIs = append(formfieldtimeAPIs, formfieldtimeAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostFormFieldTime(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongform/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormFieldTime.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostFormFieldTime(c *gin.Context) {
 
 	// Create formfieldtime
 	formfieldtimeDB := orm.FormFieldTimeDB{}
-	formfieldtimeDB.FormFieldTimePointersEnconding = input.FormFieldTimePointersEnconding
-	formfieldtimeDB.CopyBasicFieldsFromFormFieldTime(&input.FormFieldTime)
+	formfieldtimeDB.FormFieldTimePointersEncoding = input.FormFieldTimePointersEncoding
+	formfieldtimeDB.CopyBasicFieldsFromFormFieldTime_WOP(&input.FormFieldTime_WOP)
 
 	query := db.Create(&formfieldtimeDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetFormFieldTime(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongform/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormFieldTime.GetDB()
 
 	// Get formfieldtimeDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetFormFieldTime(c *gin.Context) {
 
 	var formfieldtimeAPI orm.FormFieldTimeAPI
 	formfieldtimeAPI.ID = formfieldtimeDB.ID
-	formfieldtimeAPI.FormFieldTimePointersEnconding = formfieldtimeDB.FormFieldTimePointersEnconding
-	formfieldtimeDB.CopyBasicFieldsToFormFieldTime(&formfieldtimeAPI.FormFieldTime)
+	formfieldtimeAPI.FormFieldTimePointersEncoding = formfieldtimeDB.FormFieldTimePointersEncoding
+	formfieldtimeDB.CopyBasicFieldsToFormFieldTime_WOP(&formfieldtimeAPI.FormFieldTime_WOP)
 
 	c.JSON(http.StatusOK, formfieldtimeAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateFormFieldTime(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongform/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormFieldTime.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateFormFieldTime(c *gin.Context) {
 	}
 
 	// update
-	formfieldtimeDB.CopyBasicFieldsFromFormFieldTime(&input.FormFieldTime)
-	formfieldtimeDB.FormFieldTimePointersEnconding = input.FormFieldTimePointersEnconding
+	formfieldtimeDB.CopyBasicFieldsFromFormFieldTime_WOP(&input.FormFieldTime_WOP)
+	formfieldtimeDB.FormFieldTimePointersEncoding = input.FormFieldTimePointersEncoding
 
 	query = db.Model(&formfieldtimeDB).Updates(formfieldtimeDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteFormFieldTime(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongform/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormFieldTime.GetDB()
 
 	// Get model if exist

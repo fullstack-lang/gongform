@@ -7,8 +7,8 @@ import (
 	"github.com/fullstack-lang/gongform/go/models"
 )
 
-func FillUpFormFromGongstruct[T models.Gongstruct](instance *T, playground *Playground) {
-	formStage := playground.formStage
+func FillUpFormFromGongstruct[T models.Gongstruct](instance *T, probe *Probe) {
+	formStage := probe.formStage
 	formStage.Reset()
 	formStage.Commit()
 
@@ -18,142 +18,142 @@ func FillUpFormFromGongstruct[T models.Gongstruct](instance *T, playground *Play
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update CheckBox Form",
-			OnSave: NewCheckBoxFormCallback(
+			OnSave: __gong__New__CheckBoxFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.FormDiv:
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update FormDiv Form",
-			OnSave: NewFormDivFormCallback(
+			OnSave: __gong__New__FormDivFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.FormEditAssocButton:
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update FormEditAssocButton Form",
-			OnSave: NewFormEditAssocButtonFormCallback(
+			OnSave: __gong__New__FormEditAssocButtonFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.FormField:
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update FormField Form",
-			OnSave: NewFormFieldFormCallback(
+			OnSave: __gong__New__FormFieldFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.FormFieldDate:
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update FormFieldDate Form",
-			OnSave: NewFormFieldDateFormCallback(
+			OnSave: __gong__New__FormFieldDateFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.FormFieldDateTime:
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update FormFieldDateTime Form",
-			OnSave: NewFormFieldDateTimeFormCallback(
+			OnSave: __gong__New__FormFieldDateTimeFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.FormFieldFloat64:
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update FormFieldFloat64 Form",
-			OnSave: NewFormFieldFloat64FormCallback(
+			OnSave: __gong__New__FormFieldFloat64FormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.FormFieldInt:
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update FormFieldInt Form",
-			OnSave: NewFormFieldIntFormCallback(
+			OnSave: __gong__New__FormFieldIntFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.FormFieldSelect:
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update FormFieldSelect Form",
-			OnSave: NewFormFieldSelectFormCallback(
+			OnSave: __gong__New__FormFieldSelectFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.FormFieldString:
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update FormFieldString Form",
-			OnSave: NewFormFieldStringFormCallback(
+			OnSave: __gong__New__FormFieldStringFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.FormFieldTime:
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update FormFieldTime Form",
-			OnSave: NewFormFieldTimeFormCallback(
+			OnSave: __gong__New__FormFieldTimeFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.FormGroup:
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update FormGroup Form",
-			OnSave: NewFormGroupFormCallback(
+			OnSave: __gong__New__FormGroupFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.FormSortAssocButton:
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update FormSortAssocButton Form",
-			OnSave: NewFormSortAssocButtonFormCallback(
+			OnSave: __gong__New__FormSortAssocButtonFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	case *models.Option:
 		formGroup := (&gongtable.FormGroup{
 			Name:  gongtable.FormGroupDefaultName.ToString(),
 			Label: "Update Option Form",
-			OnSave: NewOptionFormCallback(
+			OnSave: __gong__New__OptionFormCallback(
 				instancesTyped,
-				playground,
+				probe,
 			),
 		}).Stage(formStage)
-		FillUpForm(instancesTyped, formGroup, playground)
+		FillUpForm(instancesTyped, formGroup, probe)
 	default:
 		_ = instancesTyped
 	}

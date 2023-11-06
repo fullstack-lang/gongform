@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { FormSortAssocButtonDB } from './formsortassocbutton-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 
@@ -42,20 +43,27 @@ export class FormSortAssocButtonService {
   }
 
   /** GET formsortassocbuttons from the server */
-  getFormSortAssocButtons(GONG__StackPath: string): Observable<FormSortAssocButtonDB[]> {
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormSortAssocButtonDB[]> {
+    return this.getFormSortAssocButtons(GONG__StackPath, frontRepo)
+  }
+  getFormSortAssocButtons(GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormSortAssocButtonDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<FormSortAssocButtonDB[]>(this.formsortassocbuttonsUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched formsortassocbuttons')),
         catchError(this.handleError<FormSortAssocButtonDB[]>('getFormSortAssocButtons', []))
       );
   }
 
   /** GET formsortassocbutton by id. Will 404 if id not found */
-  getFormSortAssocButton(id: number, GONG__StackPath: string): Observable<FormSortAssocButtonDB> {
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormSortAssocButtonDB> {
+    return this.getFormSortAssocButton(id, GONG__StackPath, frontRepo)
+  }
+  getFormSortAssocButton(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormSortAssocButtonDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -67,7 +75,10 @@ export class FormSortAssocButtonService {
   }
 
   /** POST: add a new formsortassocbutton to the server */
-  postFormSortAssocButton(formsortassocbuttondb: FormSortAssocButtonDB, GONG__StackPath: string): Observable<FormSortAssocButtonDB> {
+  post(formsortassocbuttondb: FormSortAssocButtonDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormSortAssocButtonDB> {
+    return this.postFormSortAssocButton(formsortassocbuttondb, GONG__StackPath, frontRepo)
+  }
+  postFormSortAssocButton(formsortassocbuttondb: FormSortAssocButtonDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormSortAssocButtonDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
@@ -87,6 +98,9 @@ export class FormSortAssocButtonService {
   }
 
   /** DELETE: delete the formsortassocbuttondb from the server */
+  delete(formsortassocbuttondb: FormSortAssocButtonDB | number, GONG__StackPath: string): Observable<FormSortAssocButtonDB> {
+    return this.deleteFormSortAssocButton(formsortassocbuttondb, GONG__StackPath)
+  }
   deleteFormSortAssocButton(formsortassocbuttondb: FormSortAssocButtonDB | number, GONG__StackPath: string): Observable<FormSortAssocButtonDB> {
     const id = typeof formsortassocbuttondb === 'number' ? formsortassocbuttondb : formsortassocbuttondb.ID;
     const url = `${this.formsortassocbuttonsUrl}/${id}`;
@@ -104,11 +118,15 @@ export class FormSortAssocButtonService {
   }
 
   /** PUT: update the formsortassocbuttondb on the server */
-  updateFormSortAssocButton(formsortassocbuttondb: FormSortAssocButtonDB, GONG__StackPath: string): Observable<FormSortAssocButtonDB> {
+  update(formsortassocbuttondb: FormSortAssocButtonDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormSortAssocButtonDB> {
+    return this.updateFormSortAssocButton(formsortassocbuttondb, GONG__StackPath, frontRepo)
+  }
+  updateFormSortAssocButton(formsortassocbuttondb: FormSortAssocButtonDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormSortAssocButtonDB> {
     const id = typeof formsortassocbuttondb === 'number' ? formsortassocbuttondb : formsortassocbuttondb.ID;
     const url = `${this.formsortassocbuttonsUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers (to avoid circular JSON)
+    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -146,6 +164,6 @@ export class FormSortAssocButtonService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

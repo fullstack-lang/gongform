@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { CellDB } from './cell-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 import { CellStringDB } from './cellstring-db'
@@ -19,7 +20,6 @@ import { CellFloat64DB } from './cellfloat64-db'
 import { CellIntDB } from './cellint-db'
 import { CellBooleanDB } from './cellboolean-db'
 import { CellIconDB } from './cellicon-db'
-import { RowDB } from './row-db'
 
 @Injectable({
   providedIn: 'root'
@@ -48,20 +48,27 @@ export class CellService {
   }
 
   /** GET cells from the server */
-  getCells(GONG__StackPath: string): Observable<CellDB[]> {
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<CellDB[]> {
+    return this.getCells(GONG__StackPath, frontRepo)
+  }
+  getCells(GONG__StackPath: string, frontRepo: FrontRepo): Observable<CellDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<CellDB[]>(this.cellsUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched cells')),
         catchError(this.handleError<CellDB[]>('getCells', []))
       );
   }
 
   /** GET cell by id. Will 404 if id not found */
-  getCell(id: number, GONG__StackPath: string): Observable<CellDB> {
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<CellDB> {
+    return this.getCell(id, GONG__StackPath, frontRepo)
+  }
+  getCell(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<CellDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -73,21 +80,37 @@ export class CellService {
   }
 
   /** POST: add a new cell to the server */
-  postCell(celldb: CellDB, GONG__StackPath: string): Observable<CellDB> {
+  post(celldb: CellDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<CellDB> {
+    return this.postCell(celldb, GONG__StackPath, frontRepo)
+  }
+  postCell(celldb: CellDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<CellDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let CellString = celldb.CellString
-    celldb.CellString = new CellStringDB
-    let CellFloat64 = celldb.CellFloat64
-    celldb.CellFloat64 = new CellFloat64DB
-    let CellInt = celldb.CellInt
-    celldb.CellInt = new CellIntDB
-    let CellBool = celldb.CellBool
-    celldb.CellBool = new CellBooleanDB
-    let CellIcon = celldb.CellIcon
-    celldb.CellIcon = new CellIconDB
-    let _Row_Cells_reverse = celldb.Row_Cells_reverse
-    celldb.Row_Cells_reverse = new RowDB
+    if (celldb.CellString != undefined) {
+      celldb.CellPointersEncoding.CellStringID.Int64 = celldb.CellString.ID
+      celldb.CellPointersEncoding.CellStringID.Valid = true
+    }
+    celldb.CellString = undefined
+    if (celldb.CellFloat64 != undefined) {
+      celldb.CellPointersEncoding.CellFloat64ID.Int64 = celldb.CellFloat64.ID
+      celldb.CellPointersEncoding.CellFloat64ID.Valid = true
+    }
+    celldb.CellFloat64 = undefined
+    if (celldb.CellInt != undefined) {
+      celldb.CellPointersEncoding.CellIntID.Int64 = celldb.CellInt.ID
+      celldb.CellPointersEncoding.CellIntID.Valid = true
+    }
+    celldb.CellInt = undefined
+    if (celldb.CellBool != undefined) {
+      celldb.CellPointersEncoding.CellBoolID.Int64 = celldb.CellBool.ID
+      celldb.CellPointersEncoding.CellBoolID.Valid = true
+    }
+    celldb.CellBool = undefined
+    if (celldb.CellIcon != undefined) {
+      celldb.CellPointersEncoding.CellIconID.Int64 = celldb.CellIcon.ID
+      celldb.CellPointersEncoding.CellIconID.Valid = true
+    }
+    celldb.CellIcon = undefined
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -98,7 +121,11 @@ export class CellService {
     return this.http.post<CellDB>(this.cellsUrl, celldb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        celldb.Row_Cells_reverse = _Row_Cells_reverse
+        celldb.CellString = frontRepo.CellStrings.get(celldb.CellPointersEncoding.CellStringID.Int64)
+        celldb.CellFloat64 = frontRepo.CellFloat64s.get(celldb.CellPointersEncoding.CellFloat64ID.Int64)
+        celldb.CellInt = frontRepo.CellInts.get(celldb.CellPointersEncoding.CellIntID.Int64)
+        celldb.CellBool = frontRepo.CellBooleans.get(celldb.CellPointersEncoding.CellBoolID.Int64)
+        celldb.CellIcon = frontRepo.CellIcons.get(celldb.CellPointersEncoding.CellIconID.Int64)
         // this.log(`posted celldb id=${celldb.ID}`)
       }),
       catchError(this.handleError<CellDB>('postCell'))
@@ -106,6 +133,9 @@ export class CellService {
   }
 
   /** DELETE: delete the celldb from the server */
+  delete(celldb: CellDB | number, GONG__StackPath: string): Observable<CellDB> {
+    return this.deleteCell(celldb, GONG__StackPath)
+  }
   deleteCell(celldb: CellDB | number, GONG__StackPath: string): Observable<CellDB> {
     const id = typeof celldb === 'number' ? celldb : celldb.ID;
     const url = `${this.cellsUrl}/${id}`;
@@ -123,23 +153,40 @@ export class CellService {
   }
 
   /** PUT: update the celldb on the server */
-  updateCell(celldb: CellDB, GONG__StackPath: string): Observable<CellDB> {
+  update(celldb: CellDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<CellDB> {
+    return this.updateCell(celldb, GONG__StackPath, frontRepo)
+  }
+  updateCell(celldb: CellDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<CellDB> {
     const id = typeof celldb === 'number' ? celldb : celldb.ID;
     const url = `${this.cellsUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let CellString = celldb.CellString
-    celldb.CellString = new CellStringDB
-    let CellFloat64 = celldb.CellFloat64
-    celldb.CellFloat64 = new CellFloat64DB
-    let CellInt = celldb.CellInt
-    celldb.CellInt = new CellIntDB
-    let CellBool = celldb.CellBool
-    celldb.CellBool = new CellBooleanDB
-    let CellIcon = celldb.CellIcon
-    celldb.CellIcon = new CellIconDB
-    let _Row_Cells_reverse = celldb.Row_Cells_reverse
-    celldb.Row_Cells_reverse = new RowDB
+    // insertion point for reset of pointers (to avoid circular JSON)
+    // and encoding of pointers
+    if (celldb.CellString != undefined) {
+      celldb.CellPointersEncoding.CellStringID.Int64 = celldb.CellString.ID
+      celldb.CellPointersEncoding.CellStringID.Valid = true
+    }
+    celldb.CellString = undefined
+    if (celldb.CellFloat64 != undefined) {
+      celldb.CellPointersEncoding.CellFloat64ID.Int64 = celldb.CellFloat64.ID
+      celldb.CellPointersEncoding.CellFloat64ID.Valid = true
+    }
+    celldb.CellFloat64 = undefined
+    if (celldb.CellInt != undefined) {
+      celldb.CellPointersEncoding.CellIntID.Int64 = celldb.CellInt.ID
+      celldb.CellPointersEncoding.CellIntID.Valid = true
+    }
+    celldb.CellInt = undefined
+    if (celldb.CellBool != undefined) {
+      celldb.CellPointersEncoding.CellBoolID.Int64 = celldb.CellBool.ID
+      celldb.CellPointersEncoding.CellBoolID.Valid = true
+    }
+    celldb.CellBool = undefined
+    if (celldb.CellIcon != undefined) {
+      celldb.CellPointersEncoding.CellIconID.Int64 = celldb.CellIcon.ID
+      celldb.CellPointersEncoding.CellIconID.Valid = true
+    }
+    celldb.CellIcon = undefined
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -150,7 +197,11 @@ export class CellService {
     return this.http.put<CellDB>(url, celldb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        celldb.Row_Cells_reverse = _Row_Cells_reverse
+        celldb.CellString = frontRepo.CellStrings.get(celldb.CellPointersEncoding.CellStringID.Int64)
+        celldb.CellFloat64 = frontRepo.CellFloat64s.get(celldb.CellPointersEncoding.CellFloat64ID.Int64)
+        celldb.CellInt = frontRepo.CellInts.get(celldb.CellPointersEncoding.CellIntID.Int64)
+        celldb.CellBool = frontRepo.CellBooleans.get(celldb.CellPointersEncoding.CellBoolID.Int64)
+        celldb.CellIcon = frontRepo.CellIcons.get(celldb.CellPointersEncoding.CellIconID.Int64)
         // this.log(`updated celldb id=${celldb.ID}`)
       }),
       catchError(this.handleError<CellDB>('updateCell'))
@@ -178,6 +229,6 @@ export class CellService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

@@ -65,6 +65,9 @@ func (controller *Controller) GetFields(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoField.GetDB()
 
 	query := db.Find(&fieldDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetFields(c *gin.Context) {
 
 		// insertion point for updating fields
 		fieldAPI.ID = fieldDB.ID
-		fieldDB.CopyBasicFieldsToField(&fieldAPI.Field)
-		fieldAPI.FieldPointersEnconding = fieldDB.FieldPointersEnconding
+		fieldDB.CopyBasicFieldsToField_WOP(&fieldAPI.Field_WOP)
+		fieldAPI.FieldPointersEncoding = fieldDB.FieldPointersEncoding
 		fieldAPIs = append(fieldAPIs, fieldAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostField(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoField.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostField(c *gin.Context) {
 
 	// Create field
 	fieldDB := orm.FieldDB{}
-	fieldDB.FieldPointersEnconding = input.FieldPointersEnconding
-	fieldDB.CopyBasicFieldsFromField(&input.Field)
+	fieldDB.FieldPointersEncoding = input.FieldPointersEncoding
+	fieldDB.CopyBasicFieldsFromField_WOP(&input.Field_WOP)
 
 	query := db.Create(&fieldDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetField(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoField.GetDB()
 
 	// Get fieldDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetField(c *gin.Context) {
 
 	var fieldAPI orm.FieldAPI
 	fieldAPI.ID = fieldDB.ID
-	fieldAPI.FieldPointersEnconding = fieldDB.FieldPointersEnconding
-	fieldDB.CopyBasicFieldsToField(&fieldAPI.Field)
+	fieldAPI.FieldPointersEncoding = fieldDB.FieldPointersEncoding
+	fieldDB.CopyBasicFieldsToField_WOP(&fieldAPI.Field_WOP)
 
 	c.JSON(http.StatusOK, fieldAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateField(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoField.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateField(c *gin.Context) {
 	}
 
 	// update
-	fieldDB.CopyBasicFieldsFromField(&input.Field)
-	fieldDB.FieldPointersEnconding = input.FieldPointersEnconding
+	fieldDB.CopyBasicFieldsFromField_WOP(&input.Field_WOP)
+	fieldDB.FieldPointersEncoding = input.FieldPointersEncoding
 
 	query = db.Model(&fieldDB).Updates(fieldDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteField(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoField.GetDB()
 
 	// Get model if exist

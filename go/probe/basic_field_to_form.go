@@ -2,6 +2,7 @@
 package probe
 
 import (
+	"math"
 	"time"
 
 	form "github.com/fullstack-lang/gongtable/go/models"
@@ -10,7 +11,7 @@ import (
 )
 
 func BasicFieldtoForm[T models.PointerToGongstruct, TF models.GongtructBasicField](
-	fieldName string, field TF, instance T, formStage *form.StageStruct, formGroup *form.FormGroup,
+	fieldName string, field TF, instance T, formStage *form.StageStruct, formGroup *form.FormGroup, isTextArea bool,
 ) {
 
 	switch fieldWithInterferedType := any(field).(type) {
@@ -27,8 +28,9 @@ func BasicFieldtoForm[T models.PointerToGongstruct, TF models.GongtructBasicFiel
 		formDiv.FormFields = append(formDiv.FormFields, formField)
 
 		formFieldString := (&form.FormFieldString{
-			Name:  "string",
-			Value: fieldWithInterferedType,
+			Name:       "string",
+			Value:      fieldWithInterferedType,
+			IsTextArea: isTextArea,
 		}).Stage(formStage)
 		formField.FormFieldString = formFieldString
 	case time.Time:
@@ -115,6 +117,34 @@ func BasicFieldtoForm[T models.PointerToGongstruct, TF models.GongtructBasicFiel
 		formGroup.FormDivs = append(formGroup.FormDivs, formDiv)
 
 		{
+			checkBox := (&form.CheckBox{
+				Name:  "negative",
+				Value: fieldWithInterferedType < 0,
+			}).Stage(formStage)
+			formDiv.CheckBoxs = append(formDiv.CheckBoxs, checkBox)
+		}
+
+		{
+			formFieldDays := (&form.FormField{
+				Name:  "Days",
+				Label: "Days",
+			}).Stage(formStage)
+			formFieldDays.HasBespokeWidth = true
+			formFieldDays.BespokeWidthPx = 90
+
+			formDiv.FormFields = append(formDiv.FormFields, formFieldDays)
+
+			value := int(math.Abs(fieldWithInterferedType.Hours() / 24))
+			formFieldIntDays := (&form.FormFieldInt{
+				Name:  "Days",
+				Value: value,
+			}).Stage(formStage)
+			formFieldIntDays.HasMinValidator = true
+			formFieldIntDays.MinValue = 0
+			formFieldDays.FormFieldInt = formFieldIntDays
+		}
+
+		{
 			formFieldHours := (&form.FormField{
 				Name:  "Hours",
 				Label: "Hours",
@@ -126,7 +156,7 @@ func BasicFieldtoForm[T models.PointerToGongstruct, TF models.GongtructBasicFiel
 
 			formFieldIntHours := (&form.FormFieldInt{
 				Name:  "Hours",
-				Value: int(fieldWithInterferedType.Hours()) % 24,
+				Value: int(math.Abs(fieldWithInterferedType.Hours())) % 24,
 			}).Stage(formStage)
 			formFieldIntHours.HasMaxValidator = true
 			formFieldIntHours.MaxValue = 23
@@ -146,7 +176,7 @@ func BasicFieldtoForm[T models.PointerToGongstruct, TF models.GongtructBasicFiel
 
 			formFieldIntMinutes := (&form.FormFieldInt{
 				Name:  "Minutes",
-				Value: int(fieldWithInterferedType.Minutes()) % 60,
+				Value: int(math.Abs(fieldWithInterferedType.Minutes())) % 60,
 			}).Stage(formStage)
 			formFieldIntMinutes.HasMaxValidator = true
 			formFieldIntMinutes.MaxValue = 59
@@ -165,7 +195,7 @@ func BasicFieldtoForm[T models.PointerToGongstruct, TF models.GongtructBasicFiel
 
 			formFieldIntSeconds := (&form.FormFieldInt{
 				Name:  "Seconds",
-				Value: int(fieldWithInterferedType.Seconds()) % 60,
+				Value: int(math.Abs(fieldWithInterferedType.Seconds())) % 60,
 			}).Stage(formStage)
 			formFieldIntSeconds.HasMaxValidator = true
 			formFieldIntSeconds.MaxValue = 59

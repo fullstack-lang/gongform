@@ -12,8 +12,10 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { TreeDB } from './tree-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
+import { NodeDB } from './node-db'
 
 @Injectable({
   providedIn: 'root'
@@ -42,20 +44,27 @@ export class TreeService {
   }
 
   /** GET trees from the server */
-  getTrees(GONG__StackPath: string): Observable<TreeDB[]> {
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<TreeDB[]> {
+    return this.getTrees(GONG__StackPath, frontRepo)
+  }
+  getTrees(GONG__StackPath: string, frontRepo: FrontRepo): Observable<TreeDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<TreeDB[]>(this.treesUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched trees')),
         catchError(this.handleError<TreeDB[]>('getTrees', []))
       );
   }
 
   /** GET tree by id. Will 404 if id not found */
-  getTree(id: number, GONG__StackPath: string): Observable<TreeDB> {
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<TreeDB> {
+    return this.getTree(id, GONG__StackPath, frontRepo)
+  }
+  getTree(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<TreeDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -67,10 +76,16 @@ export class TreeService {
   }
 
   /** POST: add a new tree to the server */
-  postTree(treedb: TreeDB, GONG__StackPath: string): Observable<TreeDB> {
+  post(treedb: TreeDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<TreeDB> {
+    return this.postTree(treedb, GONG__StackPath, frontRepo)
+  }
+  postTree(treedb: TreeDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<TreeDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let RootNodes = treedb.RootNodes
+    treedb.TreePointersEncoding.RootNodes = []
+    for (let _node of treedb.RootNodes) {
+      treedb.TreePointersEncoding.RootNodes.push(_node.ID)
+    }
     treedb.RootNodes = []
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -82,7 +97,13 @@ export class TreeService {
     return this.http.post<TreeDB>(this.treesUrl, treedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-	      treedb.RootNodes = RootNodes
+        treedb.RootNodes = new Array<NodeDB>()
+        for (let _id of treedb.TreePointersEncoding.RootNodes) {
+          let _node = frontRepo.Nodes.get(_id)
+          if (_node != undefined) {
+            treedb.RootNodes.push(_node!)
+          }
+        }
         // this.log(`posted treedb id=${treedb.ID}`)
       }),
       catchError(this.handleError<TreeDB>('postTree'))
@@ -90,6 +111,9 @@ export class TreeService {
   }
 
   /** DELETE: delete the treedb from the server */
+  delete(treedb: TreeDB | number, GONG__StackPath: string): Observable<TreeDB> {
+    return this.deleteTree(treedb, GONG__StackPath)
+  }
   deleteTree(treedb: TreeDB | number, GONG__StackPath: string): Observable<TreeDB> {
     const id = typeof treedb === 'number' ? treedb : treedb.ID;
     const url = `${this.treesUrl}/${id}`;
@@ -107,12 +131,19 @@ export class TreeService {
   }
 
   /** PUT: update the treedb on the server */
-  updateTree(treedb: TreeDB, GONG__StackPath: string): Observable<TreeDB> {
+  update(treedb: TreeDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<TreeDB> {
+    return this.updateTree(treedb, GONG__StackPath, frontRepo)
+  }
+  updateTree(treedb: TreeDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<TreeDB> {
     const id = typeof treedb === 'number' ? treedb : treedb.ID;
     const url = `${this.treesUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let RootNodes = treedb.RootNodes
+    // insertion point for reset of pointers (to avoid circular JSON)
+    // and encoding of pointers
+    treedb.TreePointersEncoding.RootNodes = []
+    for (let _node of treedb.RootNodes) {
+      treedb.TreePointersEncoding.RootNodes.push(_node.ID)
+    }
     treedb.RootNodes = []
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
@@ -124,7 +155,13 @@ export class TreeService {
     return this.http.put<TreeDB>(url, treedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-	      treedb.RootNodes = RootNodes
+        treedb.RootNodes = new Array<NodeDB>()
+        for (let _id of treedb.TreePointersEncoding.RootNodes) {
+          let _node = frontRepo.Nodes.get(_id)
+          if (_node != undefined) {
+            treedb.RootNodes.push(_node!)
+          }
+        }
         // this.log(`updated treedb id=${treedb.ID}`)
       }),
       catchError(this.handleError<TreeDB>('updateTree'))
@@ -152,6 +189,6 @@ export class TreeService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

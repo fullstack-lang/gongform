@@ -65,6 +65,9 @@ func (controller *Controller) GetCellFloat64s(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoCellFloat64.GetDB()
 
 	query := db.Find(&cellfloat64DBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetCellFloat64s(c *gin.Context) {
 
 		// insertion point for updating fields
 		cellfloat64API.ID = cellfloat64DB.ID
-		cellfloat64DB.CopyBasicFieldsToCellFloat64(&cellfloat64API.CellFloat64)
-		cellfloat64API.CellFloat64PointersEnconding = cellfloat64DB.CellFloat64PointersEnconding
+		cellfloat64DB.CopyBasicFieldsToCellFloat64_WOP(&cellfloat64API.CellFloat64_WOP)
+		cellfloat64API.CellFloat64PointersEncoding = cellfloat64DB.CellFloat64PointersEncoding
 		cellfloat64APIs = append(cellfloat64APIs, cellfloat64API)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostCellFloat64(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoCellFloat64.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostCellFloat64(c *gin.Context) {
 
 	// Create cellfloat64
 	cellfloat64DB := orm.CellFloat64DB{}
-	cellfloat64DB.CellFloat64PointersEnconding = input.CellFloat64PointersEnconding
-	cellfloat64DB.CopyBasicFieldsFromCellFloat64(&input.CellFloat64)
+	cellfloat64DB.CellFloat64PointersEncoding = input.CellFloat64PointersEncoding
+	cellfloat64DB.CopyBasicFieldsFromCellFloat64_WOP(&input.CellFloat64_WOP)
 
 	query := db.Create(&cellfloat64DB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetCellFloat64(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoCellFloat64.GetDB()
 
 	// Get cellfloat64DB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetCellFloat64(c *gin.Context) {
 
 	var cellfloat64API orm.CellFloat64API
 	cellfloat64API.ID = cellfloat64DB.ID
-	cellfloat64API.CellFloat64PointersEnconding = cellfloat64DB.CellFloat64PointersEnconding
-	cellfloat64DB.CopyBasicFieldsToCellFloat64(&cellfloat64API.CellFloat64)
+	cellfloat64API.CellFloat64PointersEncoding = cellfloat64DB.CellFloat64PointersEncoding
+	cellfloat64DB.CopyBasicFieldsToCellFloat64_WOP(&cellfloat64API.CellFloat64_WOP)
 
 	c.JSON(http.StatusOK, cellfloat64API)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateCellFloat64(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoCellFloat64.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateCellFloat64(c *gin.Context) {
 	}
 
 	// update
-	cellfloat64DB.CopyBasicFieldsFromCellFloat64(&input.CellFloat64)
-	cellfloat64DB.CellFloat64PointersEnconding = input.CellFloat64PointersEnconding
+	cellfloat64DB.CopyBasicFieldsFromCellFloat64_WOP(&input.CellFloat64_WOP)
+	cellfloat64DB.CellFloat64PointersEncoding = input.CellFloat64PointersEncoding
 
 	query = db.Model(&cellfloat64DB).Updates(cellfloat64DB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteCellFloat64(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoCellFloat64.GetDB()
 
 	// Get model if exist

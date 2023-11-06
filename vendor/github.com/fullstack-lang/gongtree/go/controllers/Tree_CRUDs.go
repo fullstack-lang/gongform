@@ -65,6 +65,9 @@ func (controller *Controller) GetTrees(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtree/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoTree.GetDB()
 
 	query := db.Find(&treeDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetTrees(c *gin.Context) {
 
 		// insertion point for updating fields
 		treeAPI.ID = treeDB.ID
-		treeDB.CopyBasicFieldsToTree(&treeAPI.Tree)
-		treeAPI.TreePointersEnconding = treeDB.TreePointersEnconding
+		treeDB.CopyBasicFieldsToTree_WOP(&treeAPI.Tree_WOP)
+		treeAPI.TreePointersEncoding = treeDB.TreePointersEncoding
 		treeAPIs = append(treeAPIs, treeAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostTree(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtree/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoTree.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostTree(c *gin.Context) {
 
 	// Create tree
 	treeDB := orm.TreeDB{}
-	treeDB.TreePointersEnconding = input.TreePointersEnconding
-	treeDB.CopyBasicFieldsFromTree(&input.Tree)
+	treeDB.TreePointersEncoding = input.TreePointersEncoding
+	treeDB.CopyBasicFieldsFromTree_WOP(&input.Tree_WOP)
 
 	query := db.Create(&treeDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetTree(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtree/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoTree.GetDB()
 
 	// Get treeDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetTree(c *gin.Context) {
 
 	var treeAPI orm.TreeAPI
 	treeAPI.ID = treeDB.ID
-	treeAPI.TreePointersEnconding = treeDB.TreePointersEnconding
-	treeDB.CopyBasicFieldsToTree(&treeAPI.Tree)
+	treeAPI.TreePointersEncoding = treeDB.TreePointersEncoding
+	treeDB.CopyBasicFieldsToTree_WOP(&treeAPI.Tree_WOP)
 
 	c.JSON(http.StatusOK, treeAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateTree(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtree/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoTree.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateTree(c *gin.Context) {
 	}
 
 	// update
-	treeDB.CopyBasicFieldsFromTree(&input.Tree)
-	treeDB.TreePointersEnconding = input.TreePointersEnconding
+	treeDB.CopyBasicFieldsFromTree_WOP(&input.Tree_WOP)
+	treeDB.TreePointersEncoding = input.TreePointersEncoding
 
 	query = db.Model(&treeDB).Updates(treeDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteTree(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtree/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoTree.GetDB()
 
 	// Get model if exist

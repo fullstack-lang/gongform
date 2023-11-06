@@ -65,6 +65,9 @@ func (controller *Controller) GetCellBooleans(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoCellBoolean.GetDB()
 
 	query := db.Find(&cellbooleanDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetCellBooleans(c *gin.Context) {
 
 		// insertion point for updating fields
 		cellbooleanAPI.ID = cellbooleanDB.ID
-		cellbooleanDB.CopyBasicFieldsToCellBoolean(&cellbooleanAPI.CellBoolean)
-		cellbooleanAPI.CellBooleanPointersEnconding = cellbooleanDB.CellBooleanPointersEnconding
+		cellbooleanDB.CopyBasicFieldsToCellBoolean_WOP(&cellbooleanAPI.CellBoolean_WOP)
+		cellbooleanAPI.CellBooleanPointersEncoding = cellbooleanDB.CellBooleanPointersEncoding
 		cellbooleanAPIs = append(cellbooleanAPIs, cellbooleanAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostCellBoolean(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoCellBoolean.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostCellBoolean(c *gin.Context) {
 
 	// Create cellboolean
 	cellbooleanDB := orm.CellBooleanDB{}
-	cellbooleanDB.CellBooleanPointersEnconding = input.CellBooleanPointersEnconding
-	cellbooleanDB.CopyBasicFieldsFromCellBoolean(&input.CellBoolean)
+	cellbooleanDB.CellBooleanPointersEncoding = input.CellBooleanPointersEncoding
+	cellbooleanDB.CopyBasicFieldsFromCellBoolean_WOP(&input.CellBoolean_WOP)
 
 	query := db.Create(&cellbooleanDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetCellBoolean(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoCellBoolean.GetDB()
 
 	// Get cellbooleanDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetCellBoolean(c *gin.Context) {
 
 	var cellbooleanAPI orm.CellBooleanAPI
 	cellbooleanAPI.ID = cellbooleanDB.ID
-	cellbooleanAPI.CellBooleanPointersEnconding = cellbooleanDB.CellBooleanPointersEnconding
-	cellbooleanDB.CopyBasicFieldsToCellBoolean(&cellbooleanAPI.CellBoolean)
+	cellbooleanAPI.CellBooleanPointersEncoding = cellbooleanDB.CellBooleanPointersEncoding
+	cellbooleanDB.CopyBasicFieldsToCellBoolean_WOP(&cellbooleanAPI.CellBoolean_WOP)
 
 	c.JSON(http.StatusOK, cellbooleanAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateCellBoolean(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoCellBoolean.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateCellBoolean(c *gin.Context) {
 	}
 
 	// update
-	cellbooleanDB.CopyBasicFieldsFromCellBoolean(&input.CellBoolean)
-	cellbooleanDB.CellBooleanPointersEnconding = input.CellBooleanPointersEnconding
+	cellbooleanDB.CopyBasicFieldsFromCellBoolean_WOP(&input.CellBoolean_WOP)
+	cellbooleanDB.CellBooleanPointersEncoding = input.CellBooleanPointersEncoding
 
 	query = db.Model(&cellbooleanDB).Updates(cellbooleanDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteCellBoolean(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoCellBoolean.GetDB()
 
 	// Get model if exist

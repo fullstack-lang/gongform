@@ -12,9 +12,10 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { LineDB } from './line-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
-import { LayerDB } from './layer-db'
+import { AnimateDB } from './animate-db'
 
 @Injectable({
   providedIn: 'root'
@@ -43,20 +44,27 @@ export class LineService {
   }
 
   /** GET lines from the server */
-  getLines(GONG__StackPath: string): Observable<LineDB[]> {
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<LineDB[]> {
+    return this.getLines(GONG__StackPath, frontRepo)
+  }
+  getLines(GONG__StackPath: string, frontRepo: FrontRepo): Observable<LineDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<LineDB[]>(this.linesUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched lines')),
         catchError(this.handleError<LineDB[]>('getLines', []))
       );
   }
 
   /** GET line by id. Will 404 if id not found */
-  getLine(id: number, GONG__StackPath: string): Observable<LineDB> {
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LineDB> {
+    return this.getLine(id, GONG__StackPath, frontRepo)
+  }
+  getLine(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LineDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -68,13 +76,17 @@ export class LineService {
   }
 
   /** POST: add a new line to the server */
-  postLine(linedb: LineDB, GONG__StackPath: string): Observable<LineDB> {
+  post(linedb: LineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LineDB> {
+    return this.postLine(linedb, GONG__StackPath, frontRepo)
+  }
+  postLine(linedb: LineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LineDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let Animates = linedb.Animates
+    linedb.LinePointersEncoding.Animates = []
+    for (let _animate of linedb.Animates) {
+      linedb.LinePointersEncoding.Animates.push(_animate.ID)
+    }
     linedb.Animates = []
-    let _Layer_Lines_reverse = linedb.Layer_Lines_reverse
-    linedb.Layer_Lines_reverse = new LayerDB
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -85,8 +97,13 @@ export class LineService {
     return this.http.post<LineDB>(this.linesUrl, linedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-	      linedb.Animates = Animates
-        linedb.Layer_Lines_reverse = _Layer_Lines_reverse
+        linedb.Animates = new Array<AnimateDB>()
+        for (let _id of linedb.LinePointersEncoding.Animates) {
+          let _animate = frontRepo.Animates.get(_id)
+          if (_animate != undefined) {
+            linedb.Animates.push(_animate!)
+          }
+        }
         // this.log(`posted linedb id=${linedb.ID}`)
       }),
       catchError(this.handleError<LineDB>('postLine'))
@@ -94,6 +111,9 @@ export class LineService {
   }
 
   /** DELETE: delete the linedb from the server */
+  delete(linedb: LineDB | number, GONG__StackPath: string): Observable<LineDB> {
+    return this.deleteLine(linedb, GONG__StackPath)
+  }
   deleteLine(linedb: LineDB | number, GONG__StackPath: string): Observable<LineDB> {
     const id = typeof linedb === 'number' ? linedb : linedb.ID;
     const url = `${this.linesUrl}/${id}`;
@@ -111,15 +131,20 @@ export class LineService {
   }
 
   /** PUT: update the linedb on the server */
-  updateLine(linedb: LineDB, GONG__StackPath: string): Observable<LineDB> {
+  update(linedb: LineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LineDB> {
+    return this.updateLine(linedb, GONG__StackPath, frontRepo)
+  }
+  updateLine(linedb: LineDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<LineDB> {
     const id = typeof linedb === 'number' ? linedb : linedb.ID;
     const url = `${this.linesUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let Animates = linedb.Animates
+    // insertion point for reset of pointers (to avoid circular JSON)
+    // and encoding of pointers
+    linedb.LinePointersEncoding.Animates = []
+    for (let _animate of linedb.Animates) {
+      linedb.LinePointersEncoding.Animates.push(_animate.ID)
+    }
     linedb.Animates = []
-    let _Layer_Lines_reverse = linedb.Layer_Lines_reverse
-    linedb.Layer_Lines_reverse = new LayerDB
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -130,8 +155,13 @@ export class LineService {
     return this.http.put<LineDB>(url, linedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-	      linedb.Animates = Animates
-        linedb.Layer_Lines_reverse = _Layer_Lines_reverse
+        linedb.Animates = new Array<AnimateDB>()
+        for (let _id of linedb.LinePointersEncoding.Animates) {
+          let _animate = frontRepo.Animates.get(_id)
+          if (_animate != undefined) {
+            linedb.Animates.push(_animate!)
+          }
+        }
         // this.log(`updated linedb id=${linedb.ID}`)
       }),
       catchError(this.handleError<LineDB>('updateLine'))
@@ -159,6 +189,6 @@ export class LineService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

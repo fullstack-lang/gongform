@@ -12,9 +12,9 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { RectAnchoredRectDB } from './rectanchoredrect-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
-import { RectDB } from './rect-db'
 
 @Injectable({
   providedIn: 'root'
@@ -43,20 +43,27 @@ export class RectAnchoredRectService {
   }
 
   /** GET rectanchoredrects from the server */
-  getRectAnchoredRects(GONG__StackPath: string): Observable<RectAnchoredRectDB[]> {
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<RectAnchoredRectDB[]> {
+    return this.getRectAnchoredRects(GONG__StackPath, frontRepo)
+  }
+  getRectAnchoredRects(GONG__StackPath: string, frontRepo: FrontRepo): Observable<RectAnchoredRectDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<RectAnchoredRectDB[]>(this.rectanchoredrectsUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched rectanchoredrects')),
         catchError(this.handleError<RectAnchoredRectDB[]>('getRectAnchoredRects', []))
       );
   }
 
   /** GET rectanchoredrect by id. Will 404 if id not found */
-  getRectAnchoredRect(id: number, GONG__StackPath: string): Observable<RectAnchoredRectDB> {
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<RectAnchoredRectDB> {
+    return this.getRectAnchoredRect(id, GONG__StackPath, frontRepo)
+  }
+  getRectAnchoredRect(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<RectAnchoredRectDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -68,11 +75,12 @@ export class RectAnchoredRectService {
   }
 
   /** POST: add a new rectanchoredrect to the server */
-  postRectAnchoredRect(rectanchoredrectdb: RectAnchoredRectDB, GONG__StackPath: string): Observable<RectAnchoredRectDB> {
+  post(rectanchoredrectdb: RectAnchoredRectDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<RectAnchoredRectDB> {
+    return this.postRectAnchoredRect(rectanchoredrectdb, GONG__StackPath, frontRepo)
+  }
+  postRectAnchoredRect(rectanchoredrectdb: RectAnchoredRectDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<RectAnchoredRectDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let _Rect_RectAnchoredRects_reverse = rectanchoredrectdb.Rect_RectAnchoredRects_reverse
-    rectanchoredrectdb.Rect_RectAnchoredRects_reverse = new RectDB
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -83,7 +91,6 @@ export class RectAnchoredRectService {
     return this.http.post<RectAnchoredRectDB>(this.rectanchoredrectsUrl, rectanchoredrectdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        rectanchoredrectdb.Rect_RectAnchoredRects_reverse = _Rect_RectAnchoredRects_reverse
         // this.log(`posted rectanchoredrectdb id=${rectanchoredrectdb.ID}`)
       }),
       catchError(this.handleError<RectAnchoredRectDB>('postRectAnchoredRect'))
@@ -91,6 +98,9 @@ export class RectAnchoredRectService {
   }
 
   /** DELETE: delete the rectanchoredrectdb from the server */
+  delete(rectanchoredrectdb: RectAnchoredRectDB | number, GONG__StackPath: string): Observable<RectAnchoredRectDB> {
+    return this.deleteRectAnchoredRect(rectanchoredrectdb, GONG__StackPath)
+  }
   deleteRectAnchoredRect(rectanchoredrectdb: RectAnchoredRectDB | number, GONG__StackPath: string): Observable<RectAnchoredRectDB> {
     const id = typeof rectanchoredrectdb === 'number' ? rectanchoredrectdb : rectanchoredrectdb.ID;
     const url = `${this.rectanchoredrectsUrl}/${id}`;
@@ -108,13 +118,15 @@ export class RectAnchoredRectService {
   }
 
   /** PUT: update the rectanchoredrectdb on the server */
-  updateRectAnchoredRect(rectanchoredrectdb: RectAnchoredRectDB, GONG__StackPath: string): Observable<RectAnchoredRectDB> {
+  update(rectanchoredrectdb: RectAnchoredRectDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<RectAnchoredRectDB> {
+    return this.updateRectAnchoredRect(rectanchoredrectdb, GONG__StackPath, frontRepo)
+  }
+  updateRectAnchoredRect(rectanchoredrectdb: RectAnchoredRectDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<RectAnchoredRectDB> {
     const id = typeof rectanchoredrectdb === 'number' ? rectanchoredrectdb : rectanchoredrectdb.ID;
     const url = `${this.rectanchoredrectsUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let _Rect_RectAnchoredRects_reverse = rectanchoredrectdb.Rect_RectAnchoredRects_reverse
-    rectanchoredrectdb.Rect_RectAnchoredRects_reverse = new RectDB
+    // insertion point for reset of pointers (to avoid circular JSON)
+    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -125,7 +137,6 @@ export class RectAnchoredRectService {
     return this.http.put<RectAnchoredRectDB>(url, rectanchoredrectdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-        rectanchoredrectdb.Rect_RectAnchoredRects_reverse = _Rect_RectAnchoredRects_reverse
         // this.log(`updated rectanchoredrectdb id=${rectanchoredrectdb.ID}`)
       }),
       catchError(this.handleError<RectAnchoredRectDB>('updateRectAnchoredRect'))
@@ -153,6 +164,6 @@ export class RectAnchoredRectService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

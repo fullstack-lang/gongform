@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { FormFieldTimeDB } from './formfieldtime-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 
@@ -42,20 +43,27 @@ export class FormFieldTimeService {
   }
 
   /** GET formfieldtimes from the server */
-  getFormFieldTimes(GONG__StackPath: string): Observable<FormFieldTimeDB[]> {
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldTimeDB[]> {
+    return this.getFormFieldTimes(GONG__StackPath, frontRepo)
+  }
+  getFormFieldTimes(GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldTimeDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<FormFieldTimeDB[]>(this.formfieldtimesUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched formfieldtimes')),
         catchError(this.handleError<FormFieldTimeDB[]>('getFormFieldTimes', []))
       );
   }
 
   /** GET formfieldtime by id. Will 404 if id not found */
-  getFormFieldTime(id: number, GONG__StackPath: string): Observable<FormFieldTimeDB> {
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldTimeDB> {
+    return this.getFormFieldTime(id, GONG__StackPath, frontRepo)
+  }
+  getFormFieldTime(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldTimeDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -67,7 +75,10 @@ export class FormFieldTimeService {
   }
 
   /** POST: add a new formfieldtime to the server */
-  postFormFieldTime(formfieldtimedb: FormFieldTimeDB, GONG__StackPath: string): Observable<FormFieldTimeDB> {
+  post(formfieldtimedb: FormFieldTimeDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldTimeDB> {
+    return this.postFormFieldTime(formfieldtimedb, GONG__StackPath, frontRepo)
+  }
+  postFormFieldTime(formfieldtimedb: FormFieldTimeDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldTimeDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
@@ -87,6 +98,9 @@ export class FormFieldTimeService {
   }
 
   /** DELETE: delete the formfieldtimedb from the server */
+  delete(formfieldtimedb: FormFieldTimeDB | number, GONG__StackPath: string): Observable<FormFieldTimeDB> {
+    return this.deleteFormFieldTime(formfieldtimedb, GONG__StackPath)
+  }
   deleteFormFieldTime(formfieldtimedb: FormFieldTimeDB | number, GONG__StackPath: string): Observable<FormFieldTimeDB> {
     const id = typeof formfieldtimedb === 'number' ? formfieldtimedb : formfieldtimedb.ID;
     const url = `${this.formfieldtimesUrl}/${id}`;
@@ -104,11 +118,15 @@ export class FormFieldTimeService {
   }
 
   /** PUT: update the formfieldtimedb on the server */
-  updateFormFieldTime(formfieldtimedb: FormFieldTimeDB, GONG__StackPath: string): Observable<FormFieldTimeDB> {
+  update(formfieldtimedb: FormFieldTimeDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldTimeDB> {
+    return this.updateFormFieldTime(formfieldtimedb, GONG__StackPath, frontRepo)
+  }
+  updateFormFieldTime(formfieldtimedb: FormFieldTimeDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldTimeDB> {
     const id = typeof formfieldtimedb === 'number' ? formfieldtimedb : formfieldtimedb.ID;
     const url = `${this.formfieldtimesUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers (to avoid circular JSON)
+    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -146,6 +164,6 @@ export class FormFieldTimeService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

@@ -307,7 +307,7 @@ func (c *Cell) SetDateTime(t time.Time) {
 func (c *Cell) SetDateWithOptions(t time.Time, options DateTimeOptions) {
 	c.updatable()
 	_, offset := t.In(options.Location).Zone()
-	t = time.Unix(t.Unix()+int64(offset), 0)
+	t = time.Unix(t.Unix()+int64(offset), int64(t.Nanosecond()))
 	c.SetDateTimeWithFormat(TimeToExcelTime(t.In(timeLocationUTC), c.date1904), options.ExcelTimeFormat)
 	c.modified = true
 }
@@ -396,7 +396,6 @@ func (c *Cell) SetValue(n interface{}) {
 	switch t := n.(type) {
 	case time.Time:
 		c.SetDateTime(t)
-		return
 	case int, int8, int16, int32, int64:
 		c.SetNumeric(fmt.Sprintf("%d", n))
 	case float64:
@@ -412,6 +411,8 @@ func (c *Cell) SetValue(n interface{}) {
 		c.SetString(t)
 	case []byte:
 		c.SetString(string(t))
+	case bool:
+		c.SetBool(t)
 	case nil:
 		c.SetString("")
 	default:

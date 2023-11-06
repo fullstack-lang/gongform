@@ -65,6 +65,9 @@ func (controller *Controller) GetOptions(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoOption.GetDB()
 
 	query := db.Find(&optionDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetOptions(c *gin.Context) {
 
 		// insertion point for updating fields
 		optionAPI.ID = optionDB.ID
-		optionDB.CopyBasicFieldsToOption(&optionAPI.Option)
-		optionAPI.OptionPointersEnconding = optionDB.OptionPointersEnconding
+		optionDB.CopyBasicFieldsToOption_WOP(&optionAPI.Option_WOP)
+		optionAPI.OptionPointersEncoding = optionDB.OptionPointersEncoding
 		optionAPIs = append(optionAPIs, optionAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostOption(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoOption.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostOption(c *gin.Context) {
 
 	// Create option
 	optionDB := orm.OptionDB{}
-	optionDB.OptionPointersEnconding = input.OptionPointersEnconding
-	optionDB.CopyBasicFieldsFromOption(&input.Option)
+	optionDB.OptionPointersEncoding = input.OptionPointersEncoding
+	optionDB.CopyBasicFieldsFromOption_WOP(&input.Option_WOP)
 
 	query := db.Create(&optionDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetOption(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoOption.GetDB()
 
 	// Get optionDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetOption(c *gin.Context) {
 
 	var optionAPI orm.OptionAPI
 	optionAPI.ID = optionDB.ID
-	optionAPI.OptionPointersEnconding = optionDB.OptionPointersEnconding
-	optionDB.CopyBasicFieldsToOption(&optionAPI.Option)
+	optionAPI.OptionPointersEncoding = optionDB.OptionPointersEncoding
+	optionDB.CopyBasicFieldsToOption_WOP(&optionAPI.Option_WOP)
 
 	c.JSON(http.StatusOK, optionAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateOption(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoOption.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateOption(c *gin.Context) {
 	}
 
 	// update
-	optionDB.CopyBasicFieldsFromOption(&input.Option)
-	optionDB.OptionPointersEnconding = input.OptionPointersEnconding
+	optionDB.CopyBasicFieldsFromOption_WOP(&input.Option_WOP)
+	optionDB.OptionPointersEncoding = input.OptionPointersEncoding
 
 	query = db.Model(&optionDB).Updates(optionDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteOption(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtable/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoOption.GetDB()
 
 	// Get model if exist

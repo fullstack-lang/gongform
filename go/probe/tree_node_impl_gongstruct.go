@@ -12,17 +12,17 @@ import (
 
 type TreeNodeImplGongstruct struct {
 	gongStruct *gong_models.GongStruct
-	playground *Playground
+	probe *Probe
 }
 
 func NewTreeNodeImplGongstruct(
 	gongStruct *gong_models.GongStruct,
-	playground *Playground,
+	probe *Probe,
 ) (nodeImplGongstruct *TreeNodeImplGongstruct) {
 
 	nodeImplGongstruct = new(TreeNodeImplGongstruct)
 	nodeImplGongstruct.gongStruct = gongStruct
-	nodeImplGongstruct.playground = playground
+	nodeImplGongstruct.probe = probe
 	return
 }
 
@@ -53,46 +53,46 @@ func (nodeImplGongstruct *TreeNodeImplGongstruct) OnAfterUpdate(
 
 	// insertion point
 	if nodeImplGongstruct.gongStruct.GetName() == "CheckBox" {
-		fillUpTable[models.CheckBox](nodeImplGongstruct.playground)
+		fillUpTable[models.CheckBox](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "FormDiv" {
-		fillUpTable[models.FormDiv](nodeImplGongstruct.playground)
+		fillUpTable[models.FormDiv](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "FormEditAssocButton" {
-		fillUpTable[models.FormEditAssocButton](nodeImplGongstruct.playground)
+		fillUpTable[models.FormEditAssocButton](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "FormField" {
-		fillUpTable[models.FormField](nodeImplGongstruct.playground)
+		fillUpTable[models.FormField](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "FormFieldDate" {
-		fillUpTable[models.FormFieldDate](nodeImplGongstruct.playground)
+		fillUpTable[models.FormFieldDate](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "FormFieldDateTime" {
-		fillUpTable[models.FormFieldDateTime](nodeImplGongstruct.playground)
+		fillUpTable[models.FormFieldDateTime](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "FormFieldFloat64" {
-		fillUpTable[models.FormFieldFloat64](nodeImplGongstruct.playground)
+		fillUpTable[models.FormFieldFloat64](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "FormFieldInt" {
-		fillUpTable[models.FormFieldInt](nodeImplGongstruct.playground)
+		fillUpTable[models.FormFieldInt](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "FormFieldSelect" {
-		fillUpTable[models.FormFieldSelect](nodeImplGongstruct.playground)
+		fillUpTable[models.FormFieldSelect](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "FormFieldString" {
-		fillUpTable[models.FormFieldString](nodeImplGongstruct.playground)
+		fillUpTable[models.FormFieldString](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "FormFieldTime" {
-		fillUpTable[models.FormFieldTime](nodeImplGongstruct.playground)
+		fillUpTable[models.FormFieldTime](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "FormGroup" {
-		fillUpTable[models.FormGroup](nodeImplGongstruct.playground)
+		fillUpTable[models.FormGroup](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "FormSortAssocButton" {
-		fillUpTable[models.FormSortAssocButton](nodeImplGongstruct.playground)
+		fillUpTable[models.FormSortAssocButton](nodeImplGongstruct.probe)
 	}
 	if nodeImplGongstruct.gongStruct.GetName() == "Option" {
-		fillUpTable[models.Option](nodeImplGongstruct.playground)
+		fillUpTable[models.Option](nodeImplGongstruct.probe)
 	}
 
 	// set color for node and reset all other nodes color
@@ -102,5 +102,5 @@ func (nodeImplGongstruct *TreeNodeImplGongstruct) OnAfterUpdate(
 	stagedNode.BackgroundColor = "lightgrey"
 	gongtreeStage.Commit()
 
-	nodeImplGongstruct.playground.tableStage.Commit()
+	nodeImplGongstruct.probe.tableStage.Commit()
 }

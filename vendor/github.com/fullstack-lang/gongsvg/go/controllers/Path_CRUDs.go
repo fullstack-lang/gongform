@@ -65,6 +65,9 @@ func (controller *Controller) GetPaths(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoPath.GetDB()
 
 	query := db.Find(&pathDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetPaths(c *gin.Context) {
 
 		// insertion point for updating fields
 		pathAPI.ID = pathDB.ID
-		pathDB.CopyBasicFieldsToPath(&pathAPI.Path)
-		pathAPI.PathPointersEnconding = pathDB.PathPointersEnconding
+		pathDB.CopyBasicFieldsToPath_WOP(&pathAPI.Path_WOP)
+		pathAPI.PathPointersEncoding = pathDB.PathPointersEncoding
 		pathAPIs = append(pathAPIs, pathAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostPath(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoPath.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostPath(c *gin.Context) {
 
 	// Create path
 	pathDB := orm.PathDB{}
-	pathDB.PathPointersEnconding = input.PathPointersEnconding
-	pathDB.CopyBasicFieldsFromPath(&input.Path)
+	pathDB.PathPointersEncoding = input.PathPointersEncoding
+	pathDB.CopyBasicFieldsFromPath_WOP(&input.Path_WOP)
 
 	query := db.Create(&pathDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetPath(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoPath.GetDB()
 
 	// Get pathDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetPath(c *gin.Context) {
 
 	var pathAPI orm.PathAPI
 	pathAPI.ID = pathDB.ID
-	pathAPI.PathPointersEnconding = pathDB.PathPointersEnconding
-	pathDB.CopyBasicFieldsToPath(&pathAPI.Path)
+	pathAPI.PathPointersEncoding = pathDB.PathPointersEncoding
+	pathDB.CopyBasicFieldsToPath_WOP(&pathAPI.Path_WOP)
 
 	c.JSON(http.StatusOK, pathAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdatePath(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoPath.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdatePath(c *gin.Context) {
 	}
 
 	// update
-	pathDB.CopyBasicFieldsFromPath(&input.Path)
-	pathDB.PathPointersEnconding = input.PathPointersEnconding
+	pathDB.CopyBasicFieldsFromPath_WOP(&input.Path_WOP)
+	pathDB.PathPointersEncoding = input.PathPointersEncoding
 
 	query = db.Model(&pathDB).Updates(pathDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeletePath(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoPath.GetDB()
 
 	// Get model if exist

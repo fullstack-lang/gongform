@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { CellStringDB } from './cellstring-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 
@@ -42,20 +43,27 @@ export class CellStringService {
   }
 
   /** GET cellstrings from the server */
-  getCellStrings(GONG__StackPath: string): Observable<CellStringDB[]> {
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<CellStringDB[]> {
+    return this.getCellStrings(GONG__StackPath, frontRepo)
+  }
+  getCellStrings(GONG__StackPath: string, frontRepo: FrontRepo): Observable<CellStringDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<CellStringDB[]>(this.cellstringsUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched cellstrings')),
         catchError(this.handleError<CellStringDB[]>('getCellStrings', []))
       );
   }
 
   /** GET cellstring by id. Will 404 if id not found */
-  getCellString(id: number, GONG__StackPath: string): Observable<CellStringDB> {
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<CellStringDB> {
+    return this.getCellString(id, GONG__StackPath, frontRepo)
+  }
+  getCellString(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<CellStringDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -67,7 +75,10 @@ export class CellStringService {
   }
 
   /** POST: add a new cellstring to the server */
-  postCellString(cellstringdb: CellStringDB, GONG__StackPath: string): Observable<CellStringDB> {
+  post(cellstringdb: CellStringDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<CellStringDB> {
+    return this.postCellString(cellstringdb, GONG__StackPath, frontRepo)
+  }
+  postCellString(cellstringdb: CellStringDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<CellStringDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
@@ -87,6 +98,9 @@ export class CellStringService {
   }
 
   /** DELETE: delete the cellstringdb from the server */
+  delete(cellstringdb: CellStringDB | number, GONG__StackPath: string): Observable<CellStringDB> {
+    return this.deleteCellString(cellstringdb, GONG__StackPath)
+  }
   deleteCellString(cellstringdb: CellStringDB | number, GONG__StackPath: string): Observable<CellStringDB> {
     const id = typeof cellstringdb === 'number' ? cellstringdb : cellstringdb.ID;
     const url = `${this.cellstringsUrl}/${id}`;
@@ -104,11 +118,15 @@ export class CellStringService {
   }
 
   /** PUT: update the cellstringdb on the server */
-  updateCellString(cellstringdb: CellStringDB, GONG__StackPath: string): Observable<CellStringDB> {
+  update(cellstringdb: CellStringDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<CellStringDB> {
+    return this.updateCellString(cellstringdb, GONG__StackPath, frontRepo)
+  }
+  updateCellString(cellstringdb: CellStringDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<CellStringDB> {
     const id = typeof cellstringdb === 'number' ? cellstringdb : cellstringdb.ID;
     const url = `${this.cellstringsUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers (to avoid circular JSON)
+    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -146,6 +164,6 @@ export class CellStringService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

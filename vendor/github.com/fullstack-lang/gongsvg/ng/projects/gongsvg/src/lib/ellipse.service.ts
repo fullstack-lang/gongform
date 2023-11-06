@@ -12,9 +12,10 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { EllipseDB } from './ellipse-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
-import { LayerDB } from './layer-db'
+import { AnimateDB } from './animate-db'
 
 @Injectable({
   providedIn: 'root'
@@ -43,20 +44,27 @@ export class EllipseService {
   }
 
   /** GET ellipses from the server */
-  getEllipses(GONG__StackPath: string): Observable<EllipseDB[]> {
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<EllipseDB[]> {
+    return this.getEllipses(GONG__StackPath, frontRepo)
+  }
+  getEllipses(GONG__StackPath: string, frontRepo: FrontRepo): Observable<EllipseDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<EllipseDB[]>(this.ellipsesUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched ellipses')),
         catchError(this.handleError<EllipseDB[]>('getEllipses', []))
       );
   }
 
   /** GET ellipse by id. Will 404 if id not found */
-  getEllipse(id: number, GONG__StackPath: string): Observable<EllipseDB> {
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EllipseDB> {
+    return this.getEllipse(id, GONG__StackPath, frontRepo)
+  }
+  getEllipse(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EllipseDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -68,13 +76,17 @@ export class EllipseService {
   }
 
   /** POST: add a new ellipse to the server */
-  postEllipse(ellipsedb: EllipseDB, GONG__StackPath: string): Observable<EllipseDB> {
+  post(ellipsedb: EllipseDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EllipseDB> {
+    return this.postEllipse(ellipsedb, GONG__StackPath, frontRepo)
+  }
+  postEllipse(ellipsedb: EllipseDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EllipseDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let Animates = ellipsedb.Animates
+    ellipsedb.EllipsePointersEncoding.Animates = []
+    for (let _animate of ellipsedb.Animates) {
+      ellipsedb.EllipsePointersEncoding.Animates.push(_animate.ID)
+    }
     ellipsedb.Animates = []
-    let _Layer_Ellipses_reverse = ellipsedb.Layer_Ellipses_reverse
-    ellipsedb.Layer_Ellipses_reverse = new LayerDB
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -85,8 +97,13 @@ export class EllipseService {
     return this.http.post<EllipseDB>(this.ellipsesUrl, ellipsedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-	      ellipsedb.Animates = Animates
-        ellipsedb.Layer_Ellipses_reverse = _Layer_Ellipses_reverse
+        ellipsedb.Animates = new Array<AnimateDB>()
+        for (let _id of ellipsedb.EllipsePointersEncoding.Animates) {
+          let _animate = frontRepo.Animates.get(_id)
+          if (_animate != undefined) {
+            ellipsedb.Animates.push(_animate!)
+          }
+        }
         // this.log(`posted ellipsedb id=${ellipsedb.ID}`)
       }),
       catchError(this.handleError<EllipseDB>('postEllipse'))
@@ -94,6 +111,9 @@ export class EllipseService {
   }
 
   /** DELETE: delete the ellipsedb from the server */
+  delete(ellipsedb: EllipseDB | number, GONG__StackPath: string): Observable<EllipseDB> {
+    return this.deleteEllipse(ellipsedb, GONG__StackPath)
+  }
   deleteEllipse(ellipsedb: EllipseDB | number, GONG__StackPath: string): Observable<EllipseDB> {
     const id = typeof ellipsedb === 'number' ? ellipsedb : ellipsedb.ID;
     const url = `${this.ellipsesUrl}/${id}`;
@@ -111,15 +131,20 @@ export class EllipseService {
   }
 
   /** PUT: update the ellipsedb on the server */
-  updateEllipse(ellipsedb: EllipseDB, GONG__StackPath: string): Observable<EllipseDB> {
+  update(ellipsedb: EllipseDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EllipseDB> {
+    return this.updateEllipse(ellipsedb, GONG__StackPath, frontRepo)
+  }
+  updateEllipse(ellipsedb: EllipseDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<EllipseDB> {
     const id = typeof ellipsedb === 'number' ? ellipsedb : ellipsedb.ID;
     const url = `${this.ellipsesUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let Animates = ellipsedb.Animates
+    // insertion point for reset of pointers (to avoid circular JSON)
+    // and encoding of pointers
+    ellipsedb.EllipsePointersEncoding.Animates = []
+    for (let _animate of ellipsedb.Animates) {
+      ellipsedb.EllipsePointersEncoding.Animates.push(_animate.ID)
+    }
     ellipsedb.Animates = []
-    let _Layer_Ellipses_reverse = ellipsedb.Layer_Ellipses_reverse
-    ellipsedb.Layer_Ellipses_reverse = new LayerDB
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -130,8 +155,13 @@ export class EllipseService {
     return this.http.put<EllipseDB>(url, ellipsedb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-	      ellipsedb.Animates = Animates
-        ellipsedb.Layer_Ellipses_reverse = _Layer_Ellipses_reverse
+        ellipsedb.Animates = new Array<AnimateDB>()
+        for (let _id of ellipsedb.EllipsePointersEncoding.Animates) {
+          let _animate = frontRepo.Animates.get(_id)
+          if (_animate != undefined) {
+            ellipsedb.Animates.push(_animate!)
+          }
+        }
         // this.log(`updated ellipsedb id=${ellipsedb.ID}`)
       }),
       catchError(this.handleError<EllipseDB>('updateEllipse'))
@@ -159,6 +189,6 @@ export class EllipseService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

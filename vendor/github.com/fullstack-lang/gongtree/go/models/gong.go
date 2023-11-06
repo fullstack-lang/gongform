@@ -4,15 +4,25 @@ package models
 import (
 	"errors"
 	"fmt"
-	"sync"
+	"math"
 	"time"
 )
+
+func __Gong__Abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
 
 // errUnkownEnum is returns when a value cannot match enum values
 var errUnkownEnum = errors.New("unkown enum")
 
 // needed to avoid when fmt package is not needed by generated code
 var __dummy__fmt_variable fmt.Scanner
+
+// idem for math package when not need by generated code
+var __dummy_math_variable = math.E
 
 // swagger:ignore
 type __void any
@@ -38,6 +48,8 @@ type StageStruct struct {
 	Buttons           map[*Button]any
 	Buttons_mapString map[string]*Button
 
+	// insertion point for slice of pointers maps
+
 	OnAfterButtonCreateCallback OnAfterCreateInterface[Button]
 	OnAfterButtonUpdateCallback OnAfterUpdateInterface[Button]
 	OnAfterButtonDeleteCallback OnAfterDeleteInterface[Button]
@@ -46,6 +58,10 @@ type StageStruct struct {
 	Nodes           map[*Node]any
 	Nodes_mapString map[string]*Node
 
+	// insertion point for slice of pointers maps
+	Node_Children_reverseMap map[*Node]*Node
+	Node_Buttons_reverseMap map[*Button]*Node
+
 	OnAfterNodeCreateCallback OnAfterCreateInterface[Node]
 	OnAfterNodeUpdateCallback OnAfterUpdateInterface[Node]
 	OnAfterNodeDeleteCallback OnAfterDeleteInterface[Node]
@@ -53,6 +69,9 @@ type StageStruct struct {
 
 	Trees           map[*Tree]any
 	Trees_mapString map[string]*Tree
+
+	// insertion point for slice of pointers maps
+	Tree_RootNodes_reverseMap map[*Node]*Tree
 
 	OnAfterTreeCreateCallback OnAfterCreateInterface[Tree]
 	OnAfterTreeUpdateCallback OnAfterUpdateInterface[Tree]
@@ -81,6 +100,10 @@ type StageStruct struct {
 	// map to enable docLink renaming when an identifier is renamed
 	Map_DocLink_Renaming map[string]GONG__Identifier
 	// the to be removed stops here
+}
+
+func (stage *StageStruct) GetType() string {
+	return "github.com/fullstack-lang/gongtree/go/models"
 }
 
 type GONG__Identifier struct {
@@ -133,17 +156,6 @@ type BackRepoInterface interface {
 	GetLastPushFromFrontNb() uint
 }
 
-var _stage *StageStruct
-
-var once sync.Once
-
-func GetDefaultStage() *StageStruct {
-	once.Do(func() {
-		_stage = NewStage("")
-	})
-	return _stage
-}
-
 func NewStage(path string) (stage *StageStruct) {
 
 	stage = &StageStruct{ // insertion point for array initiatialisation
@@ -182,6 +194,8 @@ func (stage *StageStruct) CommitWithSuspendedCallbacks() {
 }
 
 func (stage *StageStruct) Commit() {
+	stage.ComputeReverseMaps()
+
 	if stage.BackRepo != nil {
 		stage.BackRepo.Commit(stage)
 	}
@@ -198,6 +212,7 @@ func (stage *StageStruct) Checkout() {
 		stage.BackRepo.Checkout(stage)
 	}
 
+	stage.ComputeReverseMaps()
 	// insertion point for computing the map of number of instances per gongstruct
 	stage.Map_GongStructName_InstancesNb["Button"] = len(stage.Buttons)
 	stage.Map_GongStructName_InstancesNb["Node"] = len(stage.Nodes)
@@ -249,6 +264,12 @@ func (button *Button) Unstage(stage *StageStruct) *Button {
 	return button
 }
 
+// UnstageVoid removes button off the model stage
+func (button *Button) UnstageVoid(stage *StageStruct) {
+	delete(stage.Buttons, button)
+	delete(stage.Buttons_mapString, button.Name)
+}
+
 // commit button to the back repo (if it is already staged)
 func (button *Button) Commit(stage *StageStruct) *Button {
 	if _, ok := stage.Buttons[button]; ok {
@@ -293,6 +314,12 @@ func (node *Node) Unstage(stage *StageStruct) *Node {
 	return node
 }
 
+// UnstageVoid removes node off the model stage
+func (node *Node) UnstageVoid(stage *StageStruct) {
+	delete(stage.Nodes, node)
+	delete(stage.Nodes_mapString, node.Name)
+}
+
 // commit node to the back repo (if it is already staged)
 func (node *Node) Commit(stage *StageStruct) *Node {
 	if _, ok := stage.Nodes[node]; ok {
@@ -335,6 +362,12 @@ func (tree *Tree) Unstage(stage *StageStruct) *Tree {
 	delete(stage.Trees, tree)
 	delete(stage.Trees_mapString, tree.Name)
 	return tree
+}
+
+// UnstageVoid removes tree off the model stage
+func (tree *Tree) UnstageVoid(stage *StageStruct) {
+	delete(stage.Trees, tree)
+	delete(stage.Trees_mapString, tree.Name)
 }
 
 // commit tree to the back repo (if it is already staged)
@@ -440,6 +473,7 @@ type PointerToGongstruct interface {
 	*Button | *Node | *Tree
 	GetName() string
 	CommitVoid(*StageStruct)
+	UnstageVoid(stage *StageStruct)
 }
 
 type GongstructSet interface {
@@ -687,6 +721,24 @@ func GetGongstructName[Type Gongstruct]() (res string) {
 	return res
 }
 
+// GetPointerToGongstructName returns the name of the Gongstruct
+// this can be usefull if one want program robust to refactoring
+func GetPointerToGongstructName[Type PointerToGongstruct]() (res string) {
+
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get gongstruct name
+	case *Button:
+		res = "Button"
+	case *Node:
+		res = "Node"
+	case *Tree:
+		res = "Tree"
+	}
+	return res
+}
+
 // GetFields return the array of the fields
 func GetFields[Type Gongstruct]() (res []string) {
 
@@ -700,6 +752,42 @@ func GetFields[Type Gongstruct]() (res []string) {
 		res = []string{"Name", "BackgroundColor", "IsExpanded", "HasCheckboxButton", "IsChecked", "IsCheckboxDisabled", "IsInEditMode", "IsNodeClickable", "Children", "Buttons"}
 	case Tree:
 		res = []string{"Name", "RootNodes"}
+	}
+	return
+}
+
+type ReverseField struct {
+	GongstructName string
+	Fieldname      string
+}
+
+func GetReverseFields[Type Gongstruct]() (res []ReverseField) {
+
+	res = make([]ReverseField, 0)
+
+	var ret Type
+
+	switch any(ret).(type) {
+
+	// insertion point for generic get gongstruct name
+	case Button:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "Node"
+		rf.Fieldname = "Buttons"
+		res = append(res, rf)
+	case Node:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "Node"
+		rf.Fieldname = "Children"
+		res = append(res, rf)
+		rf.GongstructName = "Tree"
+		rf.Fieldname = "RootNodes"
+		res = append(res, rf)
+	case Tree:
+		var rf ReverseField
+		_ = rf
 	}
 	return
 }
@@ -781,7 +869,7 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 			}
 		}
 	default:
-		_ = inferedInstance	
+		_ = inferedInstance
 	}
 	return
 }
@@ -846,7 +934,7 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 			}
 		}
 	default:
-		_ = inferedInstance	
+		_ = inferedInstance
 	}
 	return
 }

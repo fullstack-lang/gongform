@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { FormFieldStringDB } from './formfieldstring-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
 
@@ -42,20 +43,27 @@ export class FormFieldStringService {
   }
 
   /** GET formfieldstrings from the server */
-  getFormFieldStrings(GONG__StackPath: string): Observable<FormFieldStringDB[]> {
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldStringDB[]> {
+    return this.getFormFieldStrings(GONG__StackPath, frontRepo)
+  }
+  getFormFieldStrings(GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldStringDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<FormFieldStringDB[]>(this.formfieldstringsUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched formfieldstrings')),
         catchError(this.handleError<FormFieldStringDB[]>('getFormFieldStrings', []))
       );
   }
 
   /** GET formfieldstring by id. Will 404 if id not found */
-  getFormFieldString(id: number, GONG__StackPath: string): Observable<FormFieldStringDB> {
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldStringDB> {
+    return this.getFormFieldString(id, GONG__StackPath, frontRepo)
+  }
+  getFormFieldString(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldStringDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -67,7 +75,10 @@ export class FormFieldStringService {
   }
 
   /** POST: add a new formfieldstring to the server */
-  postFormFieldString(formfieldstringdb: FormFieldStringDB, GONG__StackPath: string): Observable<FormFieldStringDB> {
+  post(formfieldstringdb: FormFieldStringDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldStringDB> {
+    return this.postFormFieldString(formfieldstringdb, GONG__StackPath, frontRepo)
+  }
+  postFormFieldString(formfieldstringdb: FormFieldStringDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldStringDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
 
@@ -87,6 +98,9 @@ export class FormFieldStringService {
   }
 
   /** DELETE: delete the formfieldstringdb from the server */
+  delete(formfieldstringdb: FormFieldStringDB | number, GONG__StackPath: string): Observable<FormFieldStringDB> {
+    return this.deleteFormFieldString(formfieldstringdb, GONG__StackPath)
+  }
   deleteFormFieldString(formfieldstringdb: FormFieldStringDB | number, GONG__StackPath: string): Observable<FormFieldStringDB> {
     const id = typeof formfieldstringdb === 'number' ? formfieldstringdb : formfieldstringdb.ID;
     const url = `${this.formfieldstringsUrl}/${id}`;
@@ -104,11 +118,15 @@ export class FormFieldStringService {
   }
 
   /** PUT: update the formfieldstringdb on the server */
-  updateFormFieldString(formfieldstringdb: FormFieldStringDB, GONG__StackPath: string): Observable<FormFieldStringDB> {
+  update(formfieldstringdb: FormFieldStringDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldStringDB> {
+    return this.updateFormFieldString(formfieldstringdb, GONG__StackPath, frontRepo)
+  }
+  updateFormFieldString(formfieldstringdb: FormFieldStringDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<FormFieldStringDB> {
     const id = typeof formfieldstringdb === 'number' ? formfieldstringdb : formfieldstringdb.ID;
     const url = `${this.formfieldstringsUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
+    // insertion point for reset of pointers (to avoid circular JSON)
+    // and encoding of pointers
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -146,6 +164,6 @@ export class FormFieldStringService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

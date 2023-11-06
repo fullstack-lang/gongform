@@ -65,6 +65,9 @@ func (controller *Controller) GetPoints(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoPoint.GetDB()
 
 	query := db.Find(&pointDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetPoints(c *gin.Context) {
 
 		// insertion point for updating fields
 		pointAPI.ID = pointDB.ID
-		pointDB.CopyBasicFieldsToPoint(&pointAPI.Point)
-		pointAPI.PointPointersEnconding = pointDB.PointPointersEnconding
+		pointDB.CopyBasicFieldsToPoint_WOP(&pointAPI.Point_WOP)
+		pointAPI.PointPointersEncoding = pointDB.PointPointersEncoding
 		pointAPIs = append(pointAPIs, pointAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostPoint(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoPoint.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostPoint(c *gin.Context) {
 
 	// Create point
 	pointDB := orm.PointDB{}
-	pointDB.PointPointersEnconding = input.PointPointersEnconding
-	pointDB.CopyBasicFieldsFromPoint(&input.Point)
+	pointDB.PointPointersEncoding = input.PointPointersEncoding
+	pointDB.CopyBasicFieldsFromPoint_WOP(&input.Point_WOP)
 
 	query := db.Create(&pointDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetPoint(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoPoint.GetDB()
 
 	// Get pointDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetPoint(c *gin.Context) {
 
 	var pointAPI orm.PointAPI
 	pointAPI.ID = pointDB.ID
-	pointAPI.PointPointersEnconding = pointDB.PointPointersEnconding
-	pointDB.CopyBasicFieldsToPoint(&pointAPI.Point)
+	pointAPI.PointPointersEncoding = pointDB.PointPointersEncoding
+	pointDB.CopyBasicFieldsToPoint_WOP(&pointAPI.Point_WOP)
 
 	c.JSON(http.StatusOK, pointAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdatePoint(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoPoint.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdatePoint(c *gin.Context) {
 	}
 
 	// update
-	pointDB.CopyBasicFieldsFromPoint(&input.Point)
-	pointDB.PointPointersEnconding = input.PointPointersEnconding
+	pointDB.CopyBasicFieldsFromPoint_WOP(&input.Point_WOP)
+	pointDB.PointPointersEncoding = input.PointPointersEncoding
 
 	query = db.Model(&pointDB).Updates(pointDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeletePoint(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoPoint.GetDB()
 
 	// Get model if exist

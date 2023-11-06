@@ -14,6 +14,13 @@ export class FormFieldStringDB {
 	// insertion point for basic fields declarations
 	Name: string = ""
 	Value: string = ""
+	IsTextArea: boolean = false
 
-	// insertion point for other declarations
+	// insertion point for pointers and slices of pointers declarations
+
+	FormFieldStringPointersEncoding: FormFieldStringPointersEncoding = new FormFieldStringPointersEncoding
+}
+
+export class FormFieldStringPointersEncoding {
+	// insertion point for pointers and slices of pointers encoding fields
 }

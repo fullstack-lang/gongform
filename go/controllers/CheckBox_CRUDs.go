@@ -65,6 +65,9 @@ func (controller *Controller) GetCheckBoxs(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongform/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoCheckBox.GetDB()
 
 	query := db.Find(&checkboxDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetCheckBoxs(c *gin.Context) {
 
 		// insertion point for updating fields
 		checkboxAPI.ID = checkboxDB.ID
-		checkboxDB.CopyBasicFieldsToCheckBox(&checkboxAPI.CheckBox)
-		checkboxAPI.CheckBoxPointersEnconding = checkboxDB.CheckBoxPointersEnconding
+		checkboxDB.CopyBasicFieldsToCheckBox_WOP(&checkboxAPI.CheckBox_WOP)
+		checkboxAPI.CheckBoxPointersEncoding = checkboxDB.CheckBoxPointersEncoding
 		checkboxAPIs = append(checkboxAPIs, checkboxAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostCheckBox(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongform/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoCheckBox.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostCheckBox(c *gin.Context) {
 
 	// Create checkbox
 	checkboxDB := orm.CheckBoxDB{}
-	checkboxDB.CheckBoxPointersEnconding = input.CheckBoxPointersEnconding
-	checkboxDB.CopyBasicFieldsFromCheckBox(&input.CheckBox)
+	checkboxDB.CheckBoxPointersEncoding = input.CheckBoxPointersEncoding
+	checkboxDB.CopyBasicFieldsFromCheckBox_WOP(&input.CheckBox_WOP)
 
 	query := db.Create(&checkboxDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetCheckBox(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongform/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoCheckBox.GetDB()
 
 	// Get checkboxDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetCheckBox(c *gin.Context) {
 
 	var checkboxAPI orm.CheckBoxAPI
 	checkboxAPI.ID = checkboxDB.ID
-	checkboxAPI.CheckBoxPointersEnconding = checkboxDB.CheckBoxPointersEnconding
-	checkboxDB.CopyBasicFieldsToCheckBox(&checkboxAPI.CheckBox)
+	checkboxAPI.CheckBoxPointersEncoding = checkboxDB.CheckBoxPointersEncoding
+	checkboxDB.CopyBasicFieldsToCheckBox_WOP(&checkboxAPI.CheckBox_WOP)
 
 	c.JSON(http.StatusOK, checkboxAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateCheckBox(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongform/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoCheckBox.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateCheckBox(c *gin.Context) {
 	}
 
 	// update
-	checkboxDB.CopyBasicFieldsFromCheckBox(&input.CheckBox)
-	checkboxDB.CheckBoxPointersEnconding = input.CheckBoxPointersEnconding
+	checkboxDB.CopyBasicFieldsFromCheckBox_WOP(&input.CheckBox_WOP)
+	checkboxDB.CheckBoxPointersEncoding = input.CheckBoxPointersEncoding
 
 	query = db.Model(&checkboxDB).Updates(checkboxDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteCheckBox(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongform/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoCheckBox.GetDB()
 
 	// Get model if exist

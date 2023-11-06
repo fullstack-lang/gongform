@@ -4,15 +4,25 @@ package models
 import (
 	"errors"
 	"fmt"
-	"sync"
+	"math"
 	"time"
 )
+
+func __Gong__Abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
 
 // errUnkownEnum is returns when a value cannot match enum values
 var errUnkownEnum = errors.New("unkown enum")
 
 // needed to avoid when fmt package is not needed by generated code
 var __dummy__fmt_variable fmt.Scanner
+
+// idem for math package when not need by generated code
+var __dummy_math_variable = math.E
 
 // swagger:ignore
 type __void any
@@ -38,6 +48,8 @@ type StageStruct struct {
 	GongBasicFields           map[*GongBasicField]any
 	GongBasicFields_mapString map[string]*GongBasicField
 
+	// insertion point for slice of pointers maps
+
 	OnAfterGongBasicFieldCreateCallback OnAfterCreateInterface[GongBasicField]
 	OnAfterGongBasicFieldUpdateCallback OnAfterUpdateInterface[GongBasicField]
 	OnAfterGongBasicFieldDeleteCallback OnAfterDeleteInterface[GongBasicField]
@@ -45,6 +57,9 @@ type StageStruct struct {
 
 	GongEnums           map[*GongEnum]any
 	GongEnums_mapString map[string]*GongEnum
+
+	// insertion point for slice of pointers maps
+	GongEnum_GongEnumValues_reverseMap map[*GongEnumValue]*GongEnum
 
 	OnAfterGongEnumCreateCallback OnAfterCreateInterface[GongEnum]
 	OnAfterGongEnumUpdateCallback OnAfterUpdateInterface[GongEnum]
@@ -54,6 +69,8 @@ type StageStruct struct {
 	GongEnumValues           map[*GongEnumValue]any
 	GongEnumValues_mapString map[string]*GongEnumValue
 
+	// insertion point for slice of pointers maps
+
 	OnAfterGongEnumValueCreateCallback OnAfterCreateInterface[GongEnumValue]
 	OnAfterGongEnumValueUpdateCallback OnAfterUpdateInterface[GongEnumValue]
 	OnAfterGongEnumValueDeleteCallback OnAfterDeleteInterface[GongEnumValue]
@@ -61,6 +78,8 @@ type StageStruct struct {
 
 	GongLinks           map[*GongLink]any
 	GongLinks_mapString map[string]*GongLink
+
+	// insertion point for slice of pointers maps
 
 	OnAfterGongLinkCreateCallback OnAfterCreateInterface[GongLink]
 	OnAfterGongLinkUpdateCallback OnAfterUpdateInterface[GongLink]
@@ -70,6 +89,9 @@ type StageStruct struct {
 	GongNotes           map[*GongNote]any
 	GongNotes_mapString map[string]*GongNote
 
+	// insertion point for slice of pointers maps
+	GongNote_Links_reverseMap map[*GongLink]*GongNote
+
 	OnAfterGongNoteCreateCallback OnAfterCreateInterface[GongNote]
 	OnAfterGongNoteUpdateCallback OnAfterUpdateInterface[GongNote]
 	OnAfterGongNoteDeleteCallback OnAfterDeleteInterface[GongNote]
@@ -77,6 +99,12 @@ type StageStruct struct {
 
 	GongStructs           map[*GongStruct]any
 	GongStructs_mapString map[string]*GongStruct
+
+	// insertion point for slice of pointers maps
+	GongStruct_GongBasicFields_reverseMap map[*GongBasicField]*GongStruct
+	GongStruct_GongTimeFields_reverseMap map[*GongTimeField]*GongStruct
+	GongStruct_PointerToGongStructFields_reverseMap map[*PointerToGongStructField]*GongStruct
+	GongStruct_SliceOfPointerToGongStructFields_reverseMap map[*SliceOfPointerToGongStructField]*GongStruct
 
 	OnAfterGongStructCreateCallback OnAfterCreateInterface[GongStruct]
 	OnAfterGongStructUpdateCallback OnAfterUpdateInterface[GongStruct]
@@ -86,6 +114,8 @@ type StageStruct struct {
 	GongTimeFields           map[*GongTimeField]any
 	GongTimeFields_mapString map[string]*GongTimeField
 
+	// insertion point for slice of pointers maps
+
 	OnAfterGongTimeFieldCreateCallback OnAfterCreateInterface[GongTimeField]
 	OnAfterGongTimeFieldUpdateCallback OnAfterUpdateInterface[GongTimeField]
 	OnAfterGongTimeFieldDeleteCallback OnAfterDeleteInterface[GongTimeField]
@@ -93,6 +123,9 @@ type StageStruct struct {
 
 	Metas           map[*Meta]any
 	Metas_mapString map[string]*Meta
+
+	// insertion point for slice of pointers maps
+	Meta_MetaReferences_reverseMap map[*MetaReference]*Meta
 
 	OnAfterMetaCreateCallback OnAfterCreateInterface[Meta]
 	OnAfterMetaUpdateCallback OnAfterUpdateInterface[Meta]
@@ -102,6 +135,8 @@ type StageStruct struct {
 	MetaReferences           map[*MetaReference]any
 	MetaReferences_mapString map[string]*MetaReference
 
+	// insertion point for slice of pointers maps
+
 	OnAfterMetaReferenceCreateCallback OnAfterCreateInterface[MetaReference]
 	OnAfterMetaReferenceUpdateCallback OnAfterUpdateInterface[MetaReference]
 	OnAfterMetaReferenceDeleteCallback OnAfterDeleteInterface[MetaReference]
@@ -109,6 +144,8 @@ type StageStruct struct {
 
 	ModelPkgs           map[*ModelPkg]any
 	ModelPkgs_mapString map[string]*ModelPkg
+
+	// insertion point for slice of pointers maps
 
 	OnAfterModelPkgCreateCallback OnAfterCreateInterface[ModelPkg]
 	OnAfterModelPkgUpdateCallback OnAfterUpdateInterface[ModelPkg]
@@ -118,6 +155,8 @@ type StageStruct struct {
 	PointerToGongStructFields           map[*PointerToGongStructField]any
 	PointerToGongStructFields_mapString map[string]*PointerToGongStructField
 
+	// insertion point for slice of pointers maps
+
 	OnAfterPointerToGongStructFieldCreateCallback OnAfterCreateInterface[PointerToGongStructField]
 	OnAfterPointerToGongStructFieldUpdateCallback OnAfterUpdateInterface[PointerToGongStructField]
 	OnAfterPointerToGongStructFieldDeleteCallback OnAfterDeleteInterface[PointerToGongStructField]
@@ -125,6 +164,8 @@ type StageStruct struct {
 
 	SliceOfPointerToGongStructFields           map[*SliceOfPointerToGongStructField]any
 	SliceOfPointerToGongStructFields_mapString map[string]*SliceOfPointerToGongStructField
+
+	// insertion point for slice of pointers maps
 
 	OnAfterSliceOfPointerToGongStructFieldCreateCallback OnAfterCreateInterface[SliceOfPointerToGongStructField]
 	OnAfterSliceOfPointerToGongStructFieldUpdateCallback OnAfterUpdateInterface[SliceOfPointerToGongStructField]
@@ -153,6 +194,10 @@ type StageStruct struct {
 	// map to enable docLink renaming when an identifier is renamed
 	Map_DocLink_Renaming map[string]GONG__Identifier
 	// the to be removed stops here
+}
+
+func (stage *StageStruct) GetType() string {
+	return "github.com/fullstack-lang/gong/go/models"
 }
 
 type GONG__Identifier struct {
@@ -223,17 +268,6 @@ type BackRepoInterface interface {
 	GetLastPushFromFrontNb() uint
 }
 
-var _stage *StageStruct
-
-var once sync.Once
-
-func GetDefaultStage() *StageStruct {
-	once.Do(func() {
-		_stage = NewStage("")
-	})
-	return _stage
-}
-
 func NewStage(path string) (stage *StageStruct) {
 
 	stage = &StageStruct{ // insertion point for array initiatialisation
@@ -299,6 +333,8 @@ func (stage *StageStruct) CommitWithSuspendedCallbacks() {
 }
 
 func (stage *StageStruct) Commit() {
+	stage.ComputeReverseMaps()
+
 	if stage.BackRepo != nil {
 		stage.BackRepo.Commit(stage)
 	}
@@ -324,6 +360,7 @@ func (stage *StageStruct) Checkout() {
 		stage.BackRepo.Checkout(stage)
 	}
 
+	stage.ComputeReverseMaps()
 	// insertion point for computing the map of number of instances per gongstruct
 	stage.Map_GongStructName_InstancesNb["GongBasicField"] = len(stage.GongBasicFields)
 	stage.Map_GongStructName_InstancesNb["GongEnum"] = len(stage.GongEnums)
@@ -384,6 +421,12 @@ func (gongbasicfield *GongBasicField) Unstage(stage *StageStruct) *GongBasicFiel
 	return gongbasicfield
 }
 
+// UnstageVoid removes gongbasicfield off the model stage
+func (gongbasicfield *GongBasicField) UnstageVoid(stage *StageStruct) {
+	delete(stage.GongBasicFields, gongbasicfield)
+	delete(stage.GongBasicFields_mapString, gongbasicfield.Name)
+}
+
 // commit gongbasicfield to the back repo (if it is already staged)
 func (gongbasicfield *GongBasicField) Commit(stage *StageStruct) *GongBasicField {
 	if _, ok := stage.GongBasicFields[gongbasicfield]; ok {
@@ -426,6 +469,12 @@ func (gongenum *GongEnum) Unstage(stage *StageStruct) *GongEnum {
 	delete(stage.GongEnums, gongenum)
 	delete(stage.GongEnums_mapString, gongenum.Name)
 	return gongenum
+}
+
+// UnstageVoid removes gongenum off the model stage
+func (gongenum *GongEnum) UnstageVoid(stage *StageStruct) {
+	delete(stage.GongEnums, gongenum)
+	delete(stage.GongEnums_mapString, gongenum.Name)
 }
 
 // commit gongenum to the back repo (if it is already staged)
@@ -472,6 +521,12 @@ func (gongenumvalue *GongEnumValue) Unstage(stage *StageStruct) *GongEnumValue {
 	return gongenumvalue
 }
 
+// UnstageVoid removes gongenumvalue off the model stage
+func (gongenumvalue *GongEnumValue) UnstageVoid(stage *StageStruct) {
+	delete(stage.GongEnumValues, gongenumvalue)
+	delete(stage.GongEnumValues_mapString, gongenumvalue.Name)
+}
+
 // commit gongenumvalue to the back repo (if it is already staged)
 func (gongenumvalue *GongEnumValue) Commit(stage *StageStruct) *GongEnumValue {
 	if _, ok := stage.GongEnumValues[gongenumvalue]; ok {
@@ -514,6 +569,12 @@ func (gonglink *GongLink) Unstage(stage *StageStruct) *GongLink {
 	delete(stage.GongLinks, gonglink)
 	delete(stage.GongLinks_mapString, gonglink.Name)
 	return gonglink
+}
+
+// UnstageVoid removes gonglink off the model stage
+func (gonglink *GongLink) UnstageVoid(stage *StageStruct) {
+	delete(stage.GongLinks, gonglink)
+	delete(stage.GongLinks_mapString, gonglink.Name)
 }
 
 // commit gonglink to the back repo (if it is already staged)
@@ -560,6 +621,12 @@ func (gongnote *GongNote) Unstage(stage *StageStruct) *GongNote {
 	return gongnote
 }
 
+// UnstageVoid removes gongnote off the model stage
+func (gongnote *GongNote) UnstageVoid(stage *StageStruct) {
+	delete(stage.GongNotes, gongnote)
+	delete(stage.GongNotes_mapString, gongnote.Name)
+}
+
 // commit gongnote to the back repo (if it is already staged)
 func (gongnote *GongNote) Commit(stage *StageStruct) *GongNote {
 	if _, ok := stage.GongNotes[gongnote]; ok {
@@ -602,6 +669,12 @@ func (gongstruct *GongStruct) Unstage(stage *StageStruct) *GongStruct {
 	delete(stage.GongStructs, gongstruct)
 	delete(stage.GongStructs_mapString, gongstruct.Name)
 	return gongstruct
+}
+
+// UnstageVoid removes gongstruct off the model stage
+func (gongstruct *GongStruct) UnstageVoid(stage *StageStruct) {
+	delete(stage.GongStructs, gongstruct)
+	delete(stage.GongStructs_mapString, gongstruct.Name)
 }
 
 // commit gongstruct to the back repo (if it is already staged)
@@ -648,6 +721,12 @@ func (gongtimefield *GongTimeField) Unstage(stage *StageStruct) *GongTimeField {
 	return gongtimefield
 }
 
+// UnstageVoid removes gongtimefield off the model stage
+func (gongtimefield *GongTimeField) UnstageVoid(stage *StageStruct) {
+	delete(stage.GongTimeFields, gongtimefield)
+	delete(stage.GongTimeFields_mapString, gongtimefield.Name)
+}
+
 // commit gongtimefield to the back repo (if it is already staged)
 func (gongtimefield *GongTimeField) Commit(stage *StageStruct) *GongTimeField {
 	if _, ok := stage.GongTimeFields[gongtimefield]; ok {
@@ -690,6 +769,12 @@ func (meta *Meta) Unstage(stage *StageStruct) *Meta {
 	delete(stage.Metas, meta)
 	delete(stage.Metas_mapString, meta.Name)
 	return meta
+}
+
+// UnstageVoid removes meta off the model stage
+func (meta *Meta) UnstageVoid(stage *StageStruct) {
+	delete(stage.Metas, meta)
+	delete(stage.Metas_mapString, meta.Name)
 }
 
 // commit meta to the back repo (if it is already staged)
@@ -736,6 +821,12 @@ func (metareference *MetaReference) Unstage(stage *StageStruct) *MetaReference {
 	return metareference
 }
 
+// UnstageVoid removes metareference off the model stage
+func (metareference *MetaReference) UnstageVoid(stage *StageStruct) {
+	delete(stage.MetaReferences, metareference)
+	delete(stage.MetaReferences_mapString, metareference.Name)
+}
+
 // commit metareference to the back repo (if it is already staged)
 func (metareference *MetaReference) Commit(stage *StageStruct) *MetaReference {
 	if _, ok := stage.MetaReferences[metareference]; ok {
@@ -778,6 +869,12 @@ func (modelpkg *ModelPkg) Unstage(stage *StageStruct) *ModelPkg {
 	delete(stage.ModelPkgs, modelpkg)
 	delete(stage.ModelPkgs_mapString, modelpkg.Name)
 	return modelpkg
+}
+
+// UnstageVoid removes modelpkg off the model stage
+func (modelpkg *ModelPkg) UnstageVoid(stage *StageStruct) {
+	delete(stage.ModelPkgs, modelpkg)
+	delete(stage.ModelPkgs_mapString, modelpkg.Name)
 }
 
 // commit modelpkg to the back repo (if it is already staged)
@@ -824,6 +921,12 @@ func (pointertogongstructfield *PointerToGongStructField) Unstage(stage *StageSt
 	return pointertogongstructfield
 }
 
+// UnstageVoid removes pointertogongstructfield off the model stage
+func (pointertogongstructfield *PointerToGongStructField) UnstageVoid(stage *StageStruct) {
+	delete(stage.PointerToGongStructFields, pointertogongstructfield)
+	delete(stage.PointerToGongStructFields_mapString, pointertogongstructfield.Name)
+}
+
 // commit pointertogongstructfield to the back repo (if it is already staged)
 func (pointertogongstructfield *PointerToGongStructField) Commit(stage *StageStruct) *PointerToGongStructField {
 	if _, ok := stage.PointerToGongStructFields[pointertogongstructfield]; ok {
@@ -866,6 +969,12 @@ func (sliceofpointertogongstructfield *SliceOfPointerToGongStructField) Unstage(
 	delete(stage.SliceOfPointerToGongStructFields, sliceofpointertogongstructfield)
 	delete(stage.SliceOfPointerToGongStructFields_mapString, sliceofpointertogongstructfield.Name)
 	return sliceofpointertogongstructfield
+}
+
+// UnstageVoid removes sliceofpointertogongstructfield off the model stage
+func (sliceofpointertogongstructfield *SliceOfPointerToGongStructField) UnstageVoid(stage *StageStruct) {
+	delete(stage.SliceOfPointerToGongStructFields, sliceofpointertogongstructfield)
+	delete(stage.SliceOfPointerToGongStructFields_mapString, sliceofpointertogongstructfield.Name)
 }
 
 // commit sliceofpointertogongstructfield to the back repo (if it is already staged)
@@ -1079,6 +1188,7 @@ type PointerToGongstruct interface {
 	*GongBasicField | *GongEnum | *GongEnumValue | *GongLink | *GongNote | *GongStruct | *GongTimeField | *Meta | *MetaReference | *ModelPkg | *PointerToGongStructField | *SliceOfPointerToGongStructField
 	GetName() string
 	CommitVoid(*StageStruct)
+	UnstageVoid(stage *StageStruct)
 }
 
 type GongstructSet interface {
@@ -1675,6 +1785,42 @@ func GetGongstructName[Type Gongstruct]() (res string) {
 	return res
 }
 
+// GetPointerToGongstructName returns the name of the Gongstruct
+// this can be usefull if one want program robust to refactoring
+func GetPointerToGongstructName[Type PointerToGongstruct]() (res string) {
+
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get gongstruct name
+	case *GongBasicField:
+		res = "GongBasicField"
+	case *GongEnum:
+		res = "GongEnum"
+	case *GongEnumValue:
+		res = "GongEnumValue"
+	case *GongLink:
+		res = "GongLink"
+	case *GongNote:
+		res = "GongNote"
+	case *GongStruct:
+		res = "GongStruct"
+	case *GongTimeField:
+		res = "GongTimeField"
+	case *Meta:
+		res = "Meta"
+	case *MetaReference:
+		res = "MetaReference"
+	case *ModelPkg:
+		res = "ModelPkg"
+	case *PointerToGongStructField:
+		res = "PointerToGongStructField"
+	case *SliceOfPointerToGongStructField:
+		res = "SliceOfPointerToGongStructField"
+	}
+	return res
+}
+
 // GetFields return the array of the fields
 func GetFields[Type Gongstruct]() (res []string) {
 
@@ -1683,7 +1829,7 @@ func GetFields[Type Gongstruct]() (res []string) {
 	switch any(ret).(type) {
 	// insertion point for generic get gongstruct name
 	case GongBasicField:
-		res = []string{"Name", "BasicKindName", "GongEnum", "DeclaredType", "CompositeStructName", "Index", "IsDocLink"}
+		res = []string{"Name", "BasicKindName", "GongEnum", "DeclaredType", "CompositeStructName", "Index", "IsDocLink", "IsTextArea"}
 	case GongEnum:
 		res = []string{"Name", "Type", "GongEnumValues"}
 	case GongEnumValue:
@@ -1693,7 +1839,7 @@ func GetFields[Type Gongstruct]() (res []string) {
 	case GongNote:
 		res = []string{"Name", "Body", "BodyHTML", "Links"}
 	case GongStruct:
-		res = []string{"Name", "GongBasicFields", "GongTimeFields", "PointerToGongStructFields", "SliceOfPointerToGongStructFields", "HasOnAfterUpdateSignature"}
+		res = []string{"Name", "GongBasicFields", "GongTimeFields", "PointerToGongStructFields", "SliceOfPointerToGongStructFields", "HasOnAfterUpdateSignature", "IsIgnoredForFront"}
 	case GongTimeField:
 		res = []string{"Name", "Index", "CompositeStructName"}
 	case Meta:
@@ -1701,11 +1847,86 @@ func GetFields[Type Gongstruct]() (res []string) {
 	case MetaReference:
 		res = []string{"Name"}
 	case ModelPkg:
-		res = []string{"Name", "PkgPath"}
+		res = []string{"Name", "PkgPath", "PathToGoSubDirectory", "OrmPkgGenPath", "ControllersPkgGenPath", "FullstackPkgGenPath", "StackPkgGenPath", "StaticPkgGenPath", "ProbePkgGenPath", "NgWorkspacePath", "NgDataLibrarySourceCodeDirectory", "NgSpecificLibrarySourceCodeDirectory", "MaterialLibDatamodelTargetPath"}
 	case PointerToGongStructField:
 		res = []string{"Name", "GongStruct", "Index", "CompositeStructName"}
 	case SliceOfPointerToGongStructField:
 		res = []string{"Name", "GongStruct", "Index", "CompositeStructName"}
+	}
+	return
+}
+
+type ReverseField struct {
+	GongstructName string
+	Fieldname      string
+}
+
+func GetReverseFields[Type Gongstruct]() (res []ReverseField) {
+
+	res = make([]ReverseField, 0)
+
+	var ret Type
+
+	switch any(ret).(type) {
+
+	// insertion point for generic get gongstruct name
+	case GongBasicField:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "GongStruct"
+		rf.Fieldname = "GongBasicFields"
+		res = append(res, rf)
+	case GongEnum:
+		var rf ReverseField
+		_ = rf
+	case GongEnumValue:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "GongEnum"
+		rf.Fieldname = "GongEnumValues"
+		res = append(res, rf)
+	case GongLink:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "GongNote"
+		rf.Fieldname = "Links"
+		res = append(res, rf)
+	case GongNote:
+		var rf ReverseField
+		_ = rf
+	case GongStruct:
+		var rf ReverseField
+		_ = rf
+	case GongTimeField:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "GongStruct"
+		rf.Fieldname = "GongTimeFields"
+		res = append(res, rf)
+	case Meta:
+		var rf ReverseField
+		_ = rf
+	case MetaReference:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "Meta"
+		rf.Fieldname = "MetaReferences"
+		res = append(res, rf)
+	case ModelPkg:
+		var rf ReverseField
+		_ = rf
+	case PointerToGongStructField:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "GongStruct"
+		rf.Fieldname = "PointerToGongStructFields"
+		res = append(res, rf)
+	case SliceOfPointerToGongStructField:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "GongStruct"
+		rf.Fieldname = "SliceOfPointerToGongStructFields"
+		res = append(res, rf)
 	}
 	return
 }
@@ -1718,7 +1939,7 @@ func GetFieldsFromPointer[Type PointerToGongstruct]() (res []string) {
 	switch any(ret).(type) {
 	// insertion point for generic get gongstruct name
 	case *GongBasicField:
-		res = []string{"Name", "BasicKindName", "GongEnum", "DeclaredType", "CompositeStructName", "Index", "IsDocLink"}
+		res = []string{"Name", "BasicKindName", "GongEnum", "DeclaredType", "CompositeStructName", "Index", "IsDocLink", "IsTextArea"}
 	case *GongEnum:
 		res = []string{"Name", "Type", "GongEnumValues"}
 	case *GongEnumValue:
@@ -1728,7 +1949,7 @@ func GetFieldsFromPointer[Type PointerToGongstruct]() (res []string) {
 	case *GongNote:
 		res = []string{"Name", "Body", "BodyHTML", "Links"}
 	case *GongStruct:
-		res = []string{"Name", "GongBasicFields", "GongTimeFields", "PointerToGongStructFields", "SliceOfPointerToGongStructFields", "HasOnAfterUpdateSignature"}
+		res = []string{"Name", "GongBasicFields", "GongTimeFields", "PointerToGongStructFields", "SliceOfPointerToGongStructFields", "HasOnAfterUpdateSignature", "IsIgnoredForFront"}
 	case *GongTimeField:
 		res = []string{"Name", "Index", "CompositeStructName"}
 	case *Meta:
@@ -1736,7 +1957,7 @@ func GetFieldsFromPointer[Type PointerToGongstruct]() (res []string) {
 	case *MetaReference:
 		res = []string{"Name"}
 	case *ModelPkg:
-		res = []string{"Name", "PkgPath"}
+		res = []string{"Name", "PkgPath", "PathToGoSubDirectory", "OrmPkgGenPath", "ControllersPkgGenPath", "FullstackPkgGenPath", "StackPkgGenPath", "StaticPkgGenPath", "ProbePkgGenPath", "NgWorkspacePath", "NgDataLibrarySourceCodeDirectory", "NgSpecificLibrarySourceCodeDirectory", "MaterialLibDatamodelTargetPath"}
 	case *PointerToGongStructField:
 		res = []string{"Name", "GongStruct", "Index", "CompositeStructName"}
 	case *SliceOfPointerToGongStructField:
@@ -1768,6 +1989,8 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 			res = fmt.Sprintf("%d", inferedInstance.Index)
 		case "IsDocLink":
 			res = fmt.Sprintf("%t", inferedInstance.IsDocLink)
+		case "IsTextArea":
+			res = fmt.Sprintf("%t", inferedInstance.IsTextArea)
 		}
 	case *GongEnum:
 		switch fieldName {
@@ -1855,6 +2078,8 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 			}
 		case "HasOnAfterUpdateSignature":
 			res = fmt.Sprintf("%t", inferedInstance.HasOnAfterUpdateSignature)
+		case "IsIgnoredForFront":
+			res = fmt.Sprintf("%t", inferedInstance.IsIgnoredForFront)
 		}
 	case *GongTimeField:
 		switch fieldName {
@@ -1894,6 +2119,28 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 			res = inferedInstance.Name
 		case "PkgPath":
 			res = inferedInstance.PkgPath
+		case "PathToGoSubDirectory":
+			res = inferedInstance.PathToGoSubDirectory
+		case "OrmPkgGenPath":
+			res = inferedInstance.OrmPkgGenPath
+		case "ControllersPkgGenPath":
+			res = inferedInstance.ControllersPkgGenPath
+		case "FullstackPkgGenPath":
+			res = inferedInstance.FullstackPkgGenPath
+		case "StackPkgGenPath":
+			res = inferedInstance.StackPkgGenPath
+		case "StaticPkgGenPath":
+			res = inferedInstance.StaticPkgGenPath
+		case "ProbePkgGenPath":
+			res = inferedInstance.ProbePkgGenPath
+		case "NgWorkspacePath":
+			res = inferedInstance.NgWorkspacePath
+		case "NgDataLibrarySourceCodeDirectory":
+			res = inferedInstance.NgDataLibrarySourceCodeDirectory
+		case "NgSpecificLibrarySourceCodeDirectory":
+			res = inferedInstance.NgSpecificLibrarySourceCodeDirectory
+		case "MaterialLibDatamodelTargetPath":
+			res = inferedInstance.MaterialLibDatamodelTargetPath
 		}
 	case *PointerToGongStructField:
 		switch fieldName {
@@ -1924,7 +2171,7 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 			res = inferedInstance.CompositeStructName
 		}
 	default:
-		_ = inferedInstance	
+		_ = inferedInstance
 	}
 	return
 }
@@ -1952,6 +2199,8 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 			res = fmt.Sprintf("%d", inferedInstance.Index)
 		case "IsDocLink":
 			res = fmt.Sprintf("%t", inferedInstance.IsDocLink)
+		case "IsTextArea":
+			res = fmt.Sprintf("%t", inferedInstance.IsTextArea)
 		}
 	case GongEnum:
 		switch fieldName {
@@ -2039,6 +2288,8 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 			}
 		case "HasOnAfterUpdateSignature":
 			res = fmt.Sprintf("%t", inferedInstance.HasOnAfterUpdateSignature)
+		case "IsIgnoredForFront":
+			res = fmt.Sprintf("%t", inferedInstance.IsIgnoredForFront)
 		}
 	case GongTimeField:
 		switch fieldName {
@@ -2078,6 +2329,28 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 			res = inferedInstance.Name
 		case "PkgPath":
 			res = inferedInstance.PkgPath
+		case "PathToGoSubDirectory":
+			res = inferedInstance.PathToGoSubDirectory
+		case "OrmPkgGenPath":
+			res = inferedInstance.OrmPkgGenPath
+		case "ControllersPkgGenPath":
+			res = inferedInstance.ControllersPkgGenPath
+		case "FullstackPkgGenPath":
+			res = inferedInstance.FullstackPkgGenPath
+		case "StackPkgGenPath":
+			res = inferedInstance.StackPkgGenPath
+		case "StaticPkgGenPath":
+			res = inferedInstance.StaticPkgGenPath
+		case "ProbePkgGenPath":
+			res = inferedInstance.ProbePkgGenPath
+		case "NgWorkspacePath":
+			res = inferedInstance.NgWorkspacePath
+		case "NgDataLibrarySourceCodeDirectory":
+			res = inferedInstance.NgDataLibrarySourceCodeDirectory
+		case "NgSpecificLibrarySourceCodeDirectory":
+			res = inferedInstance.NgSpecificLibrarySourceCodeDirectory
+		case "MaterialLibDatamodelTargetPath":
+			res = inferedInstance.MaterialLibDatamodelTargetPath
 		}
 	case PointerToGongStructField:
 		switch fieldName {
@@ -2108,7 +2381,7 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 			res = inferedInstance.CompositeStructName
 		}
 	default:
-		_ = inferedInstance	
+		_ = inferedInstance
 	}
 	return
 }

@@ -65,6 +65,9 @@ func (controller *Controller) GetAnimates(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoAnimate.GetDB()
 
 	query := db.Find(&animateDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetAnimates(c *gin.Context) {
 
 		// insertion point for updating fields
 		animateAPI.ID = animateDB.ID
-		animateDB.CopyBasicFieldsToAnimate(&animateAPI.Animate)
-		animateAPI.AnimatePointersEnconding = animateDB.AnimatePointersEnconding
+		animateDB.CopyBasicFieldsToAnimate_WOP(&animateAPI.Animate_WOP)
+		animateAPI.AnimatePointersEncoding = animateDB.AnimatePointersEncoding
 		animateAPIs = append(animateAPIs, animateAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostAnimate(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoAnimate.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostAnimate(c *gin.Context) {
 
 	// Create animate
 	animateDB := orm.AnimateDB{}
-	animateDB.AnimatePointersEnconding = input.AnimatePointersEnconding
-	animateDB.CopyBasicFieldsFromAnimate(&input.Animate)
+	animateDB.AnimatePointersEncoding = input.AnimatePointersEncoding
+	animateDB.CopyBasicFieldsFromAnimate_WOP(&input.Animate_WOP)
 
 	query := db.Create(&animateDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetAnimate(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoAnimate.GetDB()
 
 	// Get animateDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetAnimate(c *gin.Context) {
 
 	var animateAPI orm.AnimateAPI
 	animateAPI.ID = animateDB.ID
-	animateAPI.AnimatePointersEnconding = animateDB.AnimatePointersEnconding
-	animateDB.CopyBasicFieldsToAnimate(&animateAPI.Animate)
+	animateAPI.AnimatePointersEncoding = animateDB.AnimatePointersEncoding
+	animateDB.CopyBasicFieldsToAnimate_WOP(&animateAPI.Animate_WOP)
 
 	c.JSON(http.StatusOK, animateAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateAnimate(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoAnimate.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateAnimate(c *gin.Context) {
 	}
 
 	// update
-	animateDB.CopyBasicFieldsFromAnimate(&input.Animate)
-	animateDB.AnimatePointersEnconding = input.AnimatePointersEnconding
+	animateDB.CopyBasicFieldsFromAnimate_WOP(&input.Animate_WOP)
+	animateDB.AnimatePointersEncoding = input.AnimatePointersEncoding
 
 	query = db.Model(&animateDB).Updates(animateDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteAnimate(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoAnimate.GetDB()
 
 	// Get model if exist

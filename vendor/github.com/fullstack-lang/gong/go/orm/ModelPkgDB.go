@@ -35,15 +35,15 @@ var dummy_ModelPkg_sort sort.Float64Slice
 type ModelPkgAPI struct {
 	gorm.Model
 
-	models.ModelPkg
+	models.ModelPkg_WOP
 
 	// encoding of pointers
-	ModelPkgPointersEnconding
+	ModelPkgPointersEncoding ModelPkgPointersEncoding
 }
 
-// ModelPkgPointersEnconding encodes pointers to Struct and
+// ModelPkgPointersEncoding encodes pointers to Struct and
 // reverse pointers of slice of poitners to Struct
-type ModelPkgPointersEnconding struct {
+type ModelPkgPointersEncoding struct {
 	// insertion for pointer fields encoding declaration
 }
 
@@ -63,8 +63,41 @@ type ModelPkgDB struct {
 
 	// Declation for basic field modelpkgDB.PkgPath
 	PkgPath_Data sql.NullString
+
+	// Declation for basic field modelpkgDB.PathToGoSubDirectory
+	PathToGoSubDirectory_Data sql.NullString
+
+	// Declation for basic field modelpkgDB.OrmPkgGenPath
+	OrmPkgGenPath_Data sql.NullString
+
+	// Declation for basic field modelpkgDB.ControllersPkgGenPath
+	ControllersPkgGenPath_Data sql.NullString
+
+	// Declation for basic field modelpkgDB.FullstackPkgGenPath
+	FullstackPkgGenPath_Data sql.NullString
+
+	// Declation for basic field modelpkgDB.StackPkgGenPath
+	StackPkgGenPath_Data sql.NullString
+
+	// Declation for basic field modelpkgDB.StaticPkgGenPath
+	StaticPkgGenPath_Data sql.NullString
+
+	// Declation for basic field modelpkgDB.ProbePkgGenPath
+	ProbePkgGenPath_Data sql.NullString
+
+	// Declation for basic field modelpkgDB.NgWorkspacePath
+	NgWorkspacePath_Data sql.NullString
+
+	// Declation for basic field modelpkgDB.NgDataLibrarySourceCodeDirectory
+	NgDataLibrarySourceCodeDirectory_Data sql.NullString
+
+	// Declation for basic field modelpkgDB.NgSpecificLibrarySourceCodeDirectory
+	NgSpecificLibrarySourceCodeDirectory_Data sql.NullString
+
+	// Declation for basic field modelpkgDB.MaterialLibDatamodelTargetPath
+	MaterialLibDatamodelTargetPath_Data sql.NullString
 	// encoding of pointers
-	ModelPkgPointersEnconding
+	ModelPkgPointersEncoding
 }
 
 // ModelPkgDBs arrays modelpkgDBs
@@ -87,6 +120,28 @@ type ModelPkgWOP struct {
 	Name string `xlsx:"1"`
 
 	PkgPath string `xlsx:"2"`
+
+	PathToGoSubDirectory string `xlsx:"3"`
+
+	OrmPkgGenPath string `xlsx:"4"`
+
+	ControllersPkgGenPath string `xlsx:"5"`
+
+	FullstackPkgGenPath string `xlsx:"6"`
+
+	StackPkgGenPath string `xlsx:"7"`
+
+	StaticPkgGenPath string `xlsx:"8"`
+
+	ProbePkgGenPath string `xlsx:"9"`
+
+	NgWorkspacePath string `xlsx:"10"`
+
+	NgDataLibrarySourceCodeDirectory string `xlsx:"11"`
+
+	NgSpecificLibrarySourceCodeDirectory string `xlsx:"12"`
+
+	MaterialLibDatamodelTargetPath string `xlsx:"13"`
 	// insertion for WOP pointer fields
 }
 
@@ -95,6 +150,17 @@ var ModelPkg_Fields = []string{
 	"ID",
 	"Name",
 	"PkgPath",
+	"PathToGoSubDirectory",
+	"OrmPkgGenPath",
+	"ControllersPkgGenPath",
+	"FullstackPkgGenPath",
+	"StackPkgGenPath",
+	"StaticPkgGenPath",
+	"ProbePkgGenPath",
+	"NgWorkspacePath",
+	"NgDataLibrarySourceCodeDirectory",
+	"NgSpecificLibrarySourceCodeDirectory",
+	"MaterialLibDatamodelTargetPath",
 }
 
 type BackRepoModelPkgStruct struct {
@@ -156,7 +222,7 @@ func (backRepoModelPkg *BackRepoModelPkgStruct) CommitDeleteInstance(id uint) (E
 	modelpkgDB := backRepoModelPkg.Map_ModelPkgDBID_ModelPkgDB[id]
 	query := backRepoModelPkg.db.Unscoped().Delete(&modelpkgDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -182,7 +248,7 @@ func (backRepoModelPkg *BackRepoModelPkgStruct) CommitPhaseOneInstance(modelpkg 
 
 	query := backRepoModelPkg.db.Create(&modelpkgDB)
 	if query.Error != nil {
-		return query.Error
+		log.Fatal(query.Error)
 	}
 
 	// update stores
@@ -216,7 +282,7 @@ func (backRepoModelPkg *BackRepoModelPkgStruct) CommitPhaseTwoInstance(backRepo 
 		// insertion point for translating pointers encodings into actual pointers
 		query := backRepoModelPkg.db.Save(&modelpkgDB)
 		if query.Error != nil {
-			return query.Error
+			log.Fatalln(query.Error)
 		}
 
 	} else {
@@ -343,7 +409,7 @@ func (backRepo *BackRepoStruct) CheckoutModelPkg(modelpkg *models.ModelPkg) {
 			modelpkgDB.ID = id
 
 			if err := backRepo.BackRepoModelPkg.db.First(&modelpkgDB, id).Error; err != nil {
-				log.Panicln("CheckoutModelPkg : Problem with getting object with id:", id)
+				log.Fatalln("CheckoutModelPkg : Problem with getting object with id:", id)
 			}
 			backRepo.BackRepoModelPkg.CheckoutPhaseOneInstance(&modelpkgDB)
 			backRepo.BackRepoModelPkg.CheckoutPhaseTwoInstance(backRepo, &modelpkgDB)
@@ -360,6 +426,83 @@ func (modelpkgDB *ModelPkgDB) CopyBasicFieldsFromModelPkg(modelpkg *models.Model
 
 	modelpkgDB.PkgPath_Data.String = modelpkg.PkgPath
 	modelpkgDB.PkgPath_Data.Valid = true
+
+	modelpkgDB.PathToGoSubDirectory_Data.String = modelpkg.PathToGoSubDirectory
+	modelpkgDB.PathToGoSubDirectory_Data.Valid = true
+
+	modelpkgDB.OrmPkgGenPath_Data.String = modelpkg.OrmPkgGenPath
+	modelpkgDB.OrmPkgGenPath_Data.Valid = true
+
+	modelpkgDB.ControllersPkgGenPath_Data.String = modelpkg.ControllersPkgGenPath
+	modelpkgDB.ControllersPkgGenPath_Data.Valid = true
+
+	modelpkgDB.FullstackPkgGenPath_Data.String = modelpkg.FullstackPkgGenPath
+	modelpkgDB.FullstackPkgGenPath_Data.Valid = true
+
+	modelpkgDB.StackPkgGenPath_Data.String = modelpkg.StackPkgGenPath
+	modelpkgDB.StackPkgGenPath_Data.Valid = true
+
+	modelpkgDB.StaticPkgGenPath_Data.String = modelpkg.StaticPkgGenPath
+	modelpkgDB.StaticPkgGenPath_Data.Valid = true
+
+	modelpkgDB.ProbePkgGenPath_Data.String = modelpkg.ProbePkgGenPath
+	modelpkgDB.ProbePkgGenPath_Data.Valid = true
+
+	modelpkgDB.NgWorkspacePath_Data.String = modelpkg.NgWorkspacePath
+	modelpkgDB.NgWorkspacePath_Data.Valid = true
+
+	modelpkgDB.NgDataLibrarySourceCodeDirectory_Data.String = modelpkg.NgDataLibrarySourceCodeDirectory
+	modelpkgDB.NgDataLibrarySourceCodeDirectory_Data.Valid = true
+
+	modelpkgDB.NgSpecificLibrarySourceCodeDirectory_Data.String = modelpkg.NgSpecificLibrarySourceCodeDirectory
+	modelpkgDB.NgSpecificLibrarySourceCodeDirectory_Data.Valid = true
+
+	modelpkgDB.MaterialLibDatamodelTargetPath_Data.String = modelpkg.MaterialLibDatamodelTargetPath
+	modelpkgDB.MaterialLibDatamodelTargetPath_Data.Valid = true
+}
+
+// CopyBasicFieldsFromModelPkg_WOP
+func (modelpkgDB *ModelPkgDB) CopyBasicFieldsFromModelPkg_WOP(modelpkg *models.ModelPkg_WOP) {
+	// insertion point for fields commit
+
+	modelpkgDB.Name_Data.String = modelpkg.Name
+	modelpkgDB.Name_Data.Valid = true
+
+	modelpkgDB.PkgPath_Data.String = modelpkg.PkgPath
+	modelpkgDB.PkgPath_Data.Valid = true
+
+	modelpkgDB.PathToGoSubDirectory_Data.String = modelpkg.PathToGoSubDirectory
+	modelpkgDB.PathToGoSubDirectory_Data.Valid = true
+
+	modelpkgDB.OrmPkgGenPath_Data.String = modelpkg.OrmPkgGenPath
+	modelpkgDB.OrmPkgGenPath_Data.Valid = true
+
+	modelpkgDB.ControllersPkgGenPath_Data.String = modelpkg.ControllersPkgGenPath
+	modelpkgDB.ControllersPkgGenPath_Data.Valid = true
+
+	modelpkgDB.FullstackPkgGenPath_Data.String = modelpkg.FullstackPkgGenPath
+	modelpkgDB.FullstackPkgGenPath_Data.Valid = true
+
+	modelpkgDB.StackPkgGenPath_Data.String = modelpkg.StackPkgGenPath
+	modelpkgDB.StackPkgGenPath_Data.Valid = true
+
+	modelpkgDB.StaticPkgGenPath_Data.String = modelpkg.StaticPkgGenPath
+	modelpkgDB.StaticPkgGenPath_Data.Valid = true
+
+	modelpkgDB.ProbePkgGenPath_Data.String = modelpkg.ProbePkgGenPath
+	modelpkgDB.ProbePkgGenPath_Data.Valid = true
+
+	modelpkgDB.NgWorkspacePath_Data.String = modelpkg.NgWorkspacePath
+	modelpkgDB.NgWorkspacePath_Data.Valid = true
+
+	modelpkgDB.NgDataLibrarySourceCodeDirectory_Data.String = modelpkg.NgDataLibrarySourceCodeDirectory
+	modelpkgDB.NgDataLibrarySourceCodeDirectory_Data.Valid = true
+
+	modelpkgDB.NgSpecificLibrarySourceCodeDirectory_Data.String = modelpkg.NgSpecificLibrarySourceCodeDirectory
+	modelpkgDB.NgSpecificLibrarySourceCodeDirectory_Data.Valid = true
+
+	modelpkgDB.MaterialLibDatamodelTargetPath_Data.String = modelpkg.MaterialLibDatamodelTargetPath
+	modelpkgDB.MaterialLibDatamodelTargetPath_Data.Valid = true
 }
 
 // CopyBasicFieldsFromModelPkgWOP
@@ -371,6 +514,39 @@ func (modelpkgDB *ModelPkgDB) CopyBasicFieldsFromModelPkgWOP(modelpkg *ModelPkgW
 
 	modelpkgDB.PkgPath_Data.String = modelpkg.PkgPath
 	modelpkgDB.PkgPath_Data.Valid = true
+
+	modelpkgDB.PathToGoSubDirectory_Data.String = modelpkg.PathToGoSubDirectory
+	modelpkgDB.PathToGoSubDirectory_Data.Valid = true
+
+	modelpkgDB.OrmPkgGenPath_Data.String = modelpkg.OrmPkgGenPath
+	modelpkgDB.OrmPkgGenPath_Data.Valid = true
+
+	modelpkgDB.ControllersPkgGenPath_Data.String = modelpkg.ControllersPkgGenPath
+	modelpkgDB.ControllersPkgGenPath_Data.Valid = true
+
+	modelpkgDB.FullstackPkgGenPath_Data.String = modelpkg.FullstackPkgGenPath
+	modelpkgDB.FullstackPkgGenPath_Data.Valid = true
+
+	modelpkgDB.StackPkgGenPath_Data.String = modelpkg.StackPkgGenPath
+	modelpkgDB.StackPkgGenPath_Data.Valid = true
+
+	modelpkgDB.StaticPkgGenPath_Data.String = modelpkg.StaticPkgGenPath
+	modelpkgDB.StaticPkgGenPath_Data.Valid = true
+
+	modelpkgDB.ProbePkgGenPath_Data.String = modelpkg.ProbePkgGenPath
+	modelpkgDB.ProbePkgGenPath_Data.Valid = true
+
+	modelpkgDB.NgWorkspacePath_Data.String = modelpkg.NgWorkspacePath
+	modelpkgDB.NgWorkspacePath_Data.Valid = true
+
+	modelpkgDB.NgDataLibrarySourceCodeDirectory_Data.String = modelpkg.NgDataLibrarySourceCodeDirectory
+	modelpkgDB.NgDataLibrarySourceCodeDirectory_Data.Valid = true
+
+	modelpkgDB.NgSpecificLibrarySourceCodeDirectory_Data.String = modelpkg.NgSpecificLibrarySourceCodeDirectory
+	modelpkgDB.NgSpecificLibrarySourceCodeDirectory_Data.Valid = true
+
+	modelpkgDB.MaterialLibDatamodelTargetPath_Data.String = modelpkg.MaterialLibDatamodelTargetPath
+	modelpkgDB.MaterialLibDatamodelTargetPath_Data.Valid = true
 }
 
 // CopyBasicFieldsToModelPkg
@@ -378,6 +554,35 @@ func (modelpkgDB *ModelPkgDB) CopyBasicFieldsToModelPkg(modelpkg *models.ModelPk
 	// insertion point for checkout of basic fields (back repo to stage)
 	modelpkg.Name = modelpkgDB.Name_Data.String
 	modelpkg.PkgPath = modelpkgDB.PkgPath_Data.String
+	modelpkg.PathToGoSubDirectory = modelpkgDB.PathToGoSubDirectory_Data.String
+	modelpkg.OrmPkgGenPath = modelpkgDB.OrmPkgGenPath_Data.String
+	modelpkg.ControllersPkgGenPath = modelpkgDB.ControllersPkgGenPath_Data.String
+	modelpkg.FullstackPkgGenPath = modelpkgDB.FullstackPkgGenPath_Data.String
+	modelpkg.StackPkgGenPath = modelpkgDB.StackPkgGenPath_Data.String
+	modelpkg.StaticPkgGenPath = modelpkgDB.StaticPkgGenPath_Data.String
+	modelpkg.ProbePkgGenPath = modelpkgDB.ProbePkgGenPath_Data.String
+	modelpkg.NgWorkspacePath = modelpkgDB.NgWorkspacePath_Data.String
+	modelpkg.NgDataLibrarySourceCodeDirectory = modelpkgDB.NgDataLibrarySourceCodeDirectory_Data.String
+	modelpkg.NgSpecificLibrarySourceCodeDirectory = modelpkgDB.NgSpecificLibrarySourceCodeDirectory_Data.String
+	modelpkg.MaterialLibDatamodelTargetPath = modelpkgDB.MaterialLibDatamodelTargetPath_Data.String
+}
+
+// CopyBasicFieldsToModelPkg_WOP
+func (modelpkgDB *ModelPkgDB) CopyBasicFieldsToModelPkg_WOP(modelpkg *models.ModelPkg_WOP) {
+	// insertion point for checkout of basic fields (back repo to stage)
+	modelpkg.Name = modelpkgDB.Name_Data.String
+	modelpkg.PkgPath = modelpkgDB.PkgPath_Data.String
+	modelpkg.PathToGoSubDirectory = modelpkgDB.PathToGoSubDirectory_Data.String
+	modelpkg.OrmPkgGenPath = modelpkgDB.OrmPkgGenPath_Data.String
+	modelpkg.ControllersPkgGenPath = modelpkgDB.ControllersPkgGenPath_Data.String
+	modelpkg.FullstackPkgGenPath = modelpkgDB.FullstackPkgGenPath_Data.String
+	modelpkg.StackPkgGenPath = modelpkgDB.StackPkgGenPath_Data.String
+	modelpkg.StaticPkgGenPath = modelpkgDB.StaticPkgGenPath_Data.String
+	modelpkg.ProbePkgGenPath = modelpkgDB.ProbePkgGenPath_Data.String
+	modelpkg.NgWorkspacePath = modelpkgDB.NgWorkspacePath_Data.String
+	modelpkg.NgDataLibrarySourceCodeDirectory = modelpkgDB.NgDataLibrarySourceCodeDirectory_Data.String
+	modelpkg.NgSpecificLibrarySourceCodeDirectory = modelpkgDB.NgSpecificLibrarySourceCodeDirectory_Data.String
+	modelpkg.MaterialLibDatamodelTargetPath = modelpkgDB.MaterialLibDatamodelTargetPath_Data.String
 }
 
 // CopyBasicFieldsToModelPkgWOP
@@ -386,6 +591,17 @@ func (modelpkgDB *ModelPkgDB) CopyBasicFieldsToModelPkgWOP(modelpkg *ModelPkgWOP
 	// insertion point for checkout of basic fields (back repo to stage)
 	modelpkg.Name = modelpkgDB.Name_Data.String
 	modelpkg.PkgPath = modelpkgDB.PkgPath_Data.String
+	modelpkg.PathToGoSubDirectory = modelpkgDB.PathToGoSubDirectory_Data.String
+	modelpkg.OrmPkgGenPath = modelpkgDB.OrmPkgGenPath_Data.String
+	modelpkg.ControllersPkgGenPath = modelpkgDB.ControllersPkgGenPath_Data.String
+	modelpkg.FullstackPkgGenPath = modelpkgDB.FullstackPkgGenPath_Data.String
+	modelpkg.StackPkgGenPath = modelpkgDB.StackPkgGenPath_Data.String
+	modelpkg.StaticPkgGenPath = modelpkgDB.StaticPkgGenPath_Data.String
+	modelpkg.ProbePkgGenPath = modelpkgDB.ProbePkgGenPath_Data.String
+	modelpkg.NgWorkspacePath = modelpkgDB.NgWorkspacePath_Data.String
+	modelpkg.NgDataLibrarySourceCodeDirectory = modelpkgDB.NgDataLibrarySourceCodeDirectory_Data.String
+	modelpkg.NgSpecificLibrarySourceCodeDirectory = modelpkgDB.NgSpecificLibrarySourceCodeDirectory_Data.String
+	modelpkg.MaterialLibDatamodelTargetPath = modelpkgDB.MaterialLibDatamodelTargetPath_Data.String
 }
 
 // Backup generates a json file from a slice of all ModelPkgDB instances in the backrepo
@@ -407,12 +623,12 @@ func (backRepoModelPkg *BackRepoModelPkgStruct) Backup(dirPath string) {
 	file, err := json.MarshalIndent(forBackup, "", " ")
 
 	if err != nil {
-		log.Panic("Cannot json ModelPkg ", filename, " ", err.Error())
+		log.Fatal("Cannot json ModelPkg ", filename, " ", err.Error())
 	}
 
 	err = ioutil.WriteFile(filename, file, 0644)
 	if err != nil {
-		log.Panic("Cannot write the json ModelPkg file", err.Error())
+		log.Fatal("Cannot write the json ModelPkg file", err.Error())
 	}
 }
 
@@ -432,7 +648,7 @@ func (backRepoModelPkg *BackRepoModelPkgStruct) BackupXL(file *xlsx.File) {
 
 	sh, err := file.AddSheet("ModelPkg")
 	if err != nil {
-		log.Panic("Cannot add XL file", err.Error())
+		log.Fatal("Cannot add XL file", err.Error())
 	}
 	_ = sh
 
@@ -457,13 +673,13 @@ func (backRepoModelPkg *BackRepoModelPkgStruct) RestoreXLPhaseOne(file *xlsx.Fil
 	sh, ok := file.Sheet["ModelPkg"]
 	_ = sh
 	if !ok {
-		log.Panic(errors.New("sheet not found"))
+		log.Fatal(errors.New("sheet not found"))
 	}
 
 	// log.Println("Max row is", sh.MaxRow)
 	err := sh.ForEachRow(backRepoModelPkg.rowVisitorModelPkg)
 	if err != nil {
-		log.Panic("Err=", err)
+		log.Fatal("Err=", err)
 	}
 }
 
@@ -485,7 +701,7 @@ func (backRepoModelPkg *BackRepoModelPkgStruct) rowVisitorModelPkg(row *xlsx.Row
 		modelpkgDB.ID = 0
 		query := backRepoModelPkg.db.Create(modelpkgDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoModelPkg.Map_ModelPkgDBID_ModelPkgDB[modelpkgDB.ID] = modelpkgDB
 		BackRepoModelPkgid_atBckpTime_newID[modelpkgDB_ID_atBackupTime] = modelpkgDB.ID
@@ -505,7 +721,7 @@ func (backRepoModelPkg *BackRepoModelPkgStruct) RestorePhaseOne(dirPath string) 
 	jsonFile, err := os.Open(filename)
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		log.Panic("Cannot restore/open the json ModelPkg file", filename, " ", err.Error())
+		log.Fatal("Cannot restore/open the json ModelPkg file", filename, " ", err.Error())
 	}
 
 	// read our opened jsonFile as a byte array.
@@ -522,14 +738,14 @@ func (backRepoModelPkg *BackRepoModelPkgStruct) RestorePhaseOne(dirPath string) 
 		modelpkgDB.ID = 0
 		query := backRepoModelPkg.db.Create(modelpkgDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 		backRepoModelPkg.Map_ModelPkgDBID_ModelPkgDB[modelpkgDB.ID] = modelpkgDB
 		BackRepoModelPkgid_atBckpTime_newID[modelpkgDB_ID_atBackupTime] = modelpkgDB.ID
 	}
 
 	if err != nil {
-		log.Panic("Cannot restore/unmarshall json ModelPkg file", err.Error())
+		log.Fatal("Cannot restore/unmarshall json ModelPkg file", err.Error())
 	}
 }
 
@@ -546,7 +762,7 @@ func (backRepoModelPkg *BackRepoModelPkgStruct) RestorePhaseTwo() {
 		// update databse with new index encoding
 		query := backRepoModelPkg.db.Model(modelpkgDB).Updates(*modelpkgDB)
 		if query.Error != nil {
-			log.Panic(query.Error)
+			log.Fatal(query.Error)
 		}
 	}
 

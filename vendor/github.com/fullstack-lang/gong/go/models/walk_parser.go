@@ -9,10 +9,14 @@ import (
 	"go/token"
 	"io/fs"
 	"log"
-	"os"
+	"math"
 	"path/filepath"
+	"slices"
 	"strings"
 	"unicode"
+
+	// to parse the .frontignore file
+	gitignore "github.com/sabhiram/go-gitignore"
 )
 
 func ParseEmbedModel(embeddedDir embed.FS, source string) map[string]*ast.Package {
@@ -54,7 +58,7 @@ func ParseEmbedModel(embeddedDir embed.FS, source string) map[string]*ast.Packag
 	return pkgs
 }
 
-func WalkParser(parserPkgs map[string]*ast.Package, modelPkg *ModelPkg) {
+func WalkParser(parserPkgs map[string]*ast.Package, modelPkg *ModelPkg, ignorePatterns *gitignore.GitIgnore) {
 
 	// this is to store struct that are not gongstruct
 	// but that can be embedded
@@ -83,20 +87,61 @@ func WalkParser(parserPkgs map[string]*ast.Package, modelPkg *ModelPkg) {
 		map_StructName_hasIgnoreStatement[t.Name] = strings.Contains(t.Doc, "swagger:ignore")
 	}
 
+	// in astPackage.Files is the map of filePath to file
+	// the filePath can be absolute of relative
+	// in order to compute at what level to the "models" directory we are
+	// we need to process all filePath and get the distance to the "models" directory
+	// given that "models" directory name is forbiden in the path
+	minFilePathLength := math.MaxInt
+	for filePath := range astPackage.Files {
+		// get directories to the file
+		directories := make([]string, 0)
+		workingFilePath := filePath
+		for {
+			dir := filepath.Dir(workingFilePath)
+			if dir == workingFilePath {
+				break
+			}
+			directories = append(directories, dir)
+			workingFilePath = dir
+		}
+
+		if len(directories) < minFilePathLength {
+			minFilePathLength = len(directories)
+		}
+	}
+
 	// first pass : get "type" definition for enum & struct
 	//
 	// search all files
 	for filePath, file := range astPackage.Files {
 
-		var fileName string
+		var isFileFrontIgnored bool
+		fileName := filepath.Base(filePath)
 
-		if strings.Contains(filePath, string(os.PathSeparator)) {
-			fileNames := strings.Split(filePath, string(os.PathSeparator))
-			fileName = fileNames[len(fileNames)-1]
+		// get directories to the file
+		directories := make([]string, 0)
+		workingFilePath := filePath
+		for {
+			dir := filepath.Dir(workingFilePath)
+			if dir == workingFilePath {
+				break
+			}
+			directories = append(directories, dir)
+			workingFilePath = dir
 		}
 
-		if fileName == "gong.go" {
+		// we do not take the files in the sub directories (yet)
+		if len(directories) > minFilePathLength {
 			continue
+		}
+
+		if slices.Contains(GeneratedModelFiles, filepath.Base(filePath)) {
+			continue
+		}
+
+		if ignorePatterns != nil && ignorePatterns.MatchesPath(fileName) {
+			isFileFrontIgnored = true
 		}
 
 		// for exploration
@@ -177,7 +222,10 @@ func WalkParser(parserPkgs map[string]*ast.Package, modelPkg *ModelPkg) {
 							hasIgnoreStatement := map_StructName_hasIgnoreStatement[typeSpec.Name.Name]
 
 							if hasNameField && !hasIgnoreStatement {
-								gongstruct := (&GongStruct{Name: typeSpec.Name.Name}).Stage(modelPkg.GetStage())
+								gongstruct := (&GongStruct{
+									Name:              typeSpec.Name.Name,
+									IsIgnoredForFront: isFileFrontIgnored}).
+									Stage(modelPkg.GetStage())
 								modelPkg.GongStructs[modelPkg.PkgPath+"."+typeSpec.Name.Name] = gongstruct
 							} else {
 								map_Structname_fieldList[typeSpec.Name.Name] = &_type.Fields.List
@@ -198,13 +246,7 @@ func WalkParser(parserPkgs map[string]*ast.Package, modelPkg *ModelPkg) {
 	// second pass
 	for filePath, file := range astPackage.Files {
 
-		var fileName string
-		if strings.Contains(filePath, string(os.PathSeparator)) {
-			fileNames := strings.Split(filePath, string(os.PathSeparator))
-			fileName = fileNames[len(fileNames)-1]
-		}
-
-		if fileName == "gong.go" {
+		if slices.Contains(GeneratedModelFiles, filepath.Base(filePath)) {
 			continue
 		}
 
@@ -313,14 +355,7 @@ func WalkParser(parserPkgs map[string]*ast.Package, modelPkg *ModelPkg) {
 	// pass to detect if there a function that matches the OnAfterUpdate signature
 	for filePath, file := range astPackage.Files {
 
-		var fileName string
-
-		if strings.Contains(filePath, string(os.PathSeparator)) {
-			fileNames := strings.Split(filePath, string(os.PathSeparator))
-			fileName = fileNames[len(fileNames)-1]
-		}
-
-		if fileName == "gong.go" {
+		if slices.Contains(GeneratedModelFiles, filepath.Base(filePath)) {
 			continue
 		}
 

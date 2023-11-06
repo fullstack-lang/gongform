@@ -65,6 +65,9 @@ func (controller *Controller) GetNodes(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtree/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoNode.GetDB()
 
 	query := db.Find(&nodeDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetNodes(c *gin.Context) {
 
 		// insertion point for updating fields
 		nodeAPI.ID = nodeDB.ID
-		nodeDB.CopyBasicFieldsToNode(&nodeAPI.Node)
-		nodeAPI.NodePointersEnconding = nodeDB.NodePointersEnconding
+		nodeDB.CopyBasicFieldsToNode_WOP(&nodeAPI.Node_WOP)
+		nodeAPI.NodePointersEncoding = nodeDB.NodePointersEncoding
 		nodeAPIs = append(nodeAPIs, nodeAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostNode(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtree/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoNode.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostNode(c *gin.Context) {
 
 	// Create node
 	nodeDB := orm.NodeDB{}
-	nodeDB.NodePointersEnconding = input.NodePointersEnconding
-	nodeDB.CopyBasicFieldsFromNode(&input.Node)
+	nodeDB.NodePointersEncoding = input.NodePointersEncoding
+	nodeDB.CopyBasicFieldsFromNode_WOP(&input.Node_WOP)
 
 	query := db.Create(&nodeDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetNode(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtree/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoNode.GetDB()
 
 	// Get nodeDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetNode(c *gin.Context) {
 
 	var nodeAPI orm.NodeAPI
 	nodeAPI.ID = nodeDB.ID
-	nodeAPI.NodePointersEnconding = nodeDB.NodePointersEnconding
-	nodeDB.CopyBasicFieldsToNode(&nodeAPI.Node)
+	nodeAPI.NodePointersEncoding = nodeDB.NodePointersEncoding
+	nodeDB.CopyBasicFieldsToNode_WOP(&nodeAPI.Node_WOP)
 
 	c.JSON(http.StatusOK, nodeAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateNode(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtree/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoNode.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateNode(c *gin.Context) {
 	}
 
 	// update
-	nodeDB.CopyBasicFieldsFromNode(&input.Node)
-	nodeDB.NodePointersEnconding = input.NodePointersEnconding
+	nodeDB.CopyBasicFieldsFromNode_WOP(&input.Node_WOP)
+	nodeDB.NodePointersEncoding = input.NodePointersEncoding
 
 	query = db.Model(&nodeDB).Updates(nodeDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteNode(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongtree/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoNode.GetDB()
 
 	// Get model if exist

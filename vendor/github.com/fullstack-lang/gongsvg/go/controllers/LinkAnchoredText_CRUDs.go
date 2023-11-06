@@ -65,6 +65,9 @@ func (controller *Controller) GetLinkAnchoredTexts(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoLinkAnchoredText.GetDB()
 
 	query := db.Find(&linkanchoredtextDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetLinkAnchoredTexts(c *gin.Context) {
 
 		// insertion point for updating fields
 		linkanchoredtextAPI.ID = linkanchoredtextDB.ID
-		linkanchoredtextDB.CopyBasicFieldsToLinkAnchoredText(&linkanchoredtextAPI.LinkAnchoredText)
-		linkanchoredtextAPI.LinkAnchoredTextPointersEnconding = linkanchoredtextDB.LinkAnchoredTextPointersEnconding
+		linkanchoredtextDB.CopyBasicFieldsToLinkAnchoredText_WOP(&linkanchoredtextAPI.LinkAnchoredText_WOP)
+		linkanchoredtextAPI.LinkAnchoredTextPointersEncoding = linkanchoredtextDB.LinkAnchoredTextPointersEncoding
 		linkanchoredtextAPIs = append(linkanchoredtextAPIs, linkanchoredtextAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostLinkAnchoredText(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoLinkAnchoredText.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostLinkAnchoredText(c *gin.Context) {
 
 	// Create linkanchoredtext
 	linkanchoredtextDB := orm.LinkAnchoredTextDB{}
-	linkanchoredtextDB.LinkAnchoredTextPointersEnconding = input.LinkAnchoredTextPointersEnconding
-	linkanchoredtextDB.CopyBasicFieldsFromLinkAnchoredText(&input.LinkAnchoredText)
+	linkanchoredtextDB.LinkAnchoredTextPointersEncoding = input.LinkAnchoredTextPointersEncoding
+	linkanchoredtextDB.CopyBasicFieldsFromLinkAnchoredText_WOP(&input.LinkAnchoredText_WOP)
 
 	query := db.Create(&linkanchoredtextDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetLinkAnchoredText(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoLinkAnchoredText.GetDB()
 
 	// Get linkanchoredtextDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetLinkAnchoredText(c *gin.Context) {
 
 	var linkanchoredtextAPI orm.LinkAnchoredTextAPI
 	linkanchoredtextAPI.ID = linkanchoredtextDB.ID
-	linkanchoredtextAPI.LinkAnchoredTextPointersEnconding = linkanchoredtextDB.LinkAnchoredTextPointersEnconding
-	linkanchoredtextDB.CopyBasicFieldsToLinkAnchoredText(&linkanchoredtextAPI.LinkAnchoredText)
+	linkanchoredtextAPI.LinkAnchoredTextPointersEncoding = linkanchoredtextDB.LinkAnchoredTextPointersEncoding
+	linkanchoredtextDB.CopyBasicFieldsToLinkAnchoredText_WOP(&linkanchoredtextAPI.LinkAnchoredText_WOP)
 
 	c.JSON(http.StatusOK, linkanchoredtextAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateLinkAnchoredText(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoLinkAnchoredText.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateLinkAnchoredText(c *gin.Context) {
 	}
 
 	// update
-	linkanchoredtextDB.CopyBasicFieldsFromLinkAnchoredText(&input.LinkAnchoredText)
-	linkanchoredtextDB.LinkAnchoredTextPointersEnconding = input.LinkAnchoredTextPointersEnconding
+	linkanchoredtextDB.CopyBasicFieldsFromLinkAnchoredText_WOP(&input.LinkAnchoredText_WOP)
+	linkanchoredtextDB.LinkAnchoredTextPointersEncoding = input.LinkAnchoredTextPointersEncoding
 
 	query = db.Model(&linkanchoredtextDB).Updates(linkanchoredtextDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteLinkAnchoredText(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongsvg/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoLinkAnchoredText.GetDB()
 
 	// Get model if exist

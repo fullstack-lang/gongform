@@ -921,6 +921,50 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 					// remove first and last char
 					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
 					__gong__map_ModelPkg[identifier].PkgPath = fielValue
+				case "PathToGoSubDirectory":
+					// remove first and last char
+					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
+					__gong__map_ModelPkg[identifier].PathToGoSubDirectory = fielValue
+				case "OrmPkgGenPath":
+					// remove first and last char
+					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
+					__gong__map_ModelPkg[identifier].OrmPkgGenPath = fielValue
+				case "ControllersPkgGenPath":
+					// remove first and last char
+					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
+					__gong__map_ModelPkg[identifier].ControllersPkgGenPath = fielValue
+				case "FullstackPkgGenPath":
+					// remove first and last char
+					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
+					__gong__map_ModelPkg[identifier].FullstackPkgGenPath = fielValue
+				case "StackPkgGenPath":
+					// remove first and last char
+					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
+					__gong__map_ModelPkg[identifier].StackPkgGenPath = fielValue
+				case "StaticPkgGenPath":
+					// remove first and last char
+					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
+					__gong__map_ModelPkg[identifier].StaticPkgGenPath = fielValue
+				case "ProbePkgGenPath":
+					// remove first and last char
+					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
+					__gong__map_ModelPkg[identifier].ProbePkgGenPath = fielValue
+				case "NgWorkspacePath":
+					// remove first and last char
+					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
+					__gong__map_ModelPkg[identifier].NgWorkspacePath = fielValue
+				case "NgDataLibrarySourceCodeDirectory":
+					// remove first and last char
+					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
+					__gong__map_ModelPkg[identifier].NgDataLibrarySourceCodeDirectory = fielValue
+				case "NgSpecificLibrarySourceCodeDirectory":
+					// remove first and last char
+					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
+					__gong__map_ModelPkg[identifier].NgSpecificLibrarySourceCodeDirectory = fielValue
+				case "MaterialLibDatamodelTargetPath":
+					// remove first and last char
+					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
+					__gong__map_ModelPkg[identifier].MaterialLibDatamodelTargetPath = fielValue
 				}
 			case "PointerToGongStructField":
 				switch fieldName {
@@ -987,6 +1031,13 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 						log.Fatalln(err)
 					}
 					__gong__map_GongBasicField[identifier].IsDocLink = fielValue
+				case "IsTextArea":
+					// convert string to boolean
+					fielValue, err := strconv.ParseBool(ident.Name)
+					if err != nil {
+						log.Fatalln(err)
+					}
+					__gong__map_GongBasicField[identifier].IsTextArea = fielValue
 				}
 			case "GongEnum":
 				switch fieldName {
@@ -1014,6 +1065,13 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 						log.Fatalln(err)
 					}
 					__gong__map_GongStruct[identifier].HasOnAfterUpdateSignature = fielValue
+				case "IsIgnoredForFront":
+					// convert string to boolean
+					fielValue, err := strconv.ParseBool(ident.Name)
+					if err != nil {
+						log.Fatalln(err)
+					}
+					__gong__map_GongStruct[identifier].IsIgnoredForFront = fielValue
 				}
 			case "GongTimeField":
 				switch fieldName {

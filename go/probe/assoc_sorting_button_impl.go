@@ -12,31 +12,34 @@ import (
 	"github.com/fullstack-lang/gongform/go/models"
 )
 
-func NewOnSortingEditon[FieldType models.PointerToGongstruct](
+func NewOnSortingEditon[InstanceType models.PointerToGongstruct, FieldType models.PointerToGongstruct](
+	instance InstanceType,
 	field *[]FieldType,
-	playground *Playground,
-) (onSortingEdition *OnSortingEditon[FieldType]) {
+	probe *Probe,
+) (onSortingEdition *OnSortingEditon[InstanceType, FieldType]) {
 
-	onSortingEdition = new(OnSortingEditon[FieldType])
+	onSortingEdition = new(OnSortingEditon[InstanceType, FieldType])
 
-	onSortingEdition.playground = playground
+	onSortingEdition.probe = probe
+	onSortingEdition.instance = instance
 	onSortingEdition.field = field
 
 	return
 }
 
-type OnSortingEditon[FieldType models.PointerToGongstruct] struct {
+type OnSortingEditon[InstanceType models.PointerToGongstruct, FieldType models.PointerToGongstruct] struct {
+	instance   InstanceType
 	field      *[]FieldType
-	playground *Playground
+	probe *Probe
 }
 
-func (onSortingEditon *OnSortingEditon[FieldType]) OnButtonPressed() {
+func (onSortingEditon *OnSortingEditon[InstanceType, FieldType]) OnButtonPressed() {
 
-	tableStackName := onSortingEditon.playground.formStage.GetPath() +
+	tableStackName := onSortingEditon.probe.formStage.GetPath() +
 		string(form.StackNamePostFixForTableForAssociationSorting)
 
 	// tableStackName supposed to be "test-form-table"
-	tableStageForSelection, _ := gongtable_fullstack.NewStackInstance(onSortingEditon.playground.r, tableStackName)
+	tableStageForSelection, _ := gongtable_fullstack.NewStackInstance(onSortingEditon.probe.r, tableStackName)
 
 	table := new(gongtable_models.Table).Stage(tableStageForSelection)
 	table.Name = string(form.TableSortExtraName)
@@ -73,36 +76,40 @@ func (onSortingEditon *OnSortingEditon[FieldType]) OnButtonPressed() {
 		}
 	}
 
-	table.Impl = NewTableSortSaver[FieldType](
+	table.Impl = NewTableSortSaver[InstanceType, FieldType](
+		onSortingEditon.instance,
 		onSortingEditon.field,
-		onSortingEditon.playground.stageOfInterest,
+		onSortingEditon.probe,
 		&map_RowID_instance)
 	tableStageForSelection.Commit()
 }
 
-func NewTableSortSaver[FieldType models.PointerToGongstruct](
+func NewTableSortSaver[InstanceType models.PointerToGongstruct, FieldType models.PointerToGongstruct](
+	instance InstanceType,
 	field *[]FieldType,
-	stageOfInterest *models.StageStruct,
+	probe *Probe,
 	map_RowID_instance *map[*gongtable_models.Row]FieldType,
-) (tableSortSaver *TableSortSaver[FieldType]) {
+) (tableSortSaver *TableSortSaver[InstanceType, FieldType]) {
 
-	tableSortSaver = new(TableSortSaver[FieldType])
+	tableSortSaver = new(TableSortSaver[InstanceType, FieldType])
+	tableSortSaver.instance = instance
 	tableSortSaver.field = field
-	tableSortSaver.stageOfInterest = stageOfInterest
+	tableSortSaver.probe = probe
 	tableSortSaver.map_RowID_instance = map_RowID_instance
 
 	return
 }
 
-type TableSortSaver[FieldType models.PointerToGongstruct] struct {
-	field           *[]FieldType
-	stageOfInterest *models.StageStruct
+type TableSortSaver[InstanceType models.PointerToGongstruct, FieldType models.PointerToGongstruct] struct {
+	instance   InstanceType
+	field      *[]FieldType
+	probe *Probe
 
 	// map giving the relation between the row ID and the instance
 	map_RowID_instance *map[*gongtable_models.Row]FieldType
 }
 
-func (tableSortSaver *TableSortSaver[FieldType]) TableUpdated(stage *form.StageStruct, table, updatedTable *form.Table) {
+func (tableSortSaver *TableSortSaver[InstanceType, FieldType]) TableUpdated(stage *form.StageStruct, table, updatedTable *form.Table) {
 	log.Println("TableSortSaver: TableUpdated")
 
 	// checkout to the stage to get the rows that have been checked and not
@@ -114,5 +121,11 @@ func (tableSortSaver *TableSortSaver[FieldType]) TableUpdated(stage *form.StageS
 		instance := (*tableSortSaver.map_RowID_instance)[row]
 		*tableSortSaver.field = append(*tableSortSaver.field, instance)
 	}
-	tableSortSaver.stageOfInterest.Commit()
+	tableSortSaver.probe.stageOfInterest.Commit()
+
+	// see the result
+	fillUpTablePointerToGongstruct[InstanceType](
+		tableSortSaver.probe,
+	)
+	tableSortSaver.probe.tableStage.Commit()
 }

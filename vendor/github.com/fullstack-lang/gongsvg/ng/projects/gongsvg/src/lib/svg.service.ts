@@ -12,8 +12,10 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { SVGDB } from './svg-db';
+import { FrontRepo, FrontRepoService } from './front-repo.service';
 
 // insertion point for imports
+import { LayerDB } from './layer-db'
 import { RectDB } from './rect-db'
 
 @Injectable({
@@ -43,20 +45,27 @@ export class SVGService {
   }
 
   /** GET svgs from the server */
-  getSVGs(GONG__StackPath: string): Observable<SVGDB[]> {
+  // gets is more robust to refactoring
+  gets(GONG__StackPath: string, frontRepo: FrontRepo): Observable<SVGDB[]> {
+    return this.getSVGs(GONG__StackPath, frontRepo)
+  }
+  getSVGs(GONG__StackPath: string, frontRepo: FrontRepo): Observable<SVGDB[]> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
     return this.http.get<SVGDB[]>(this.svgsUrl, { params: params })
       .pipe(
         tap(),
-		// tap(_ => this.log('fetched svgs')),
         catchError(this.handleError<SVGDB[]>('getSVGs', []))
       );
   }
 
   /** GET svg by id. Will 404 if id not found */
-  getSVG(id: number, GONG__StackPath: string): Observable<SVGDB> {
+  // more robust API to refactoring
+  get(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<SVGDB> {
+    return this.getSVG(id, GONG__StackPath, frontRepo)
+  }
+  getSVG(id: number, GONG__StackPath: string, frontRepo: FrontRepo): Observable<SVGDB> {
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
 
@@ -68,15 +77,27 @@ export class SVGService {
   }
 
   /** POST: add a new svg to the server */
-  postSVG(svgdb: SVGDB, GONG__StackPath: string): Observable<SVGDB> {
+  post(svgdb: SVGDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<SVGDB> {
+    return this.postSVG(svgdb, GONG__StackPath, frontRepo)
+  }
+  postSVG(svgdb: SVGDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<SVGDB> {
 
     // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let Layers = svgdb.Layers
+    svgdb.SVGPointersEncoding.Layers = []
+    for (let _layer of svgdb.Layers) {
+      svgdb.SVGPointersEncoding.Layers.push(_layer.ID)
+    }
     svgdb.Layers = []
-    let StartRect = svgdb.StartRect
-    svgdb.StartRect = new RectDB
-    let EndRect = svgdb.EndRect
-    svgdb.EndRect = new RectDB
+    if (svgdb.StartRect != undefined) {
+      svgdb.SVGPointersEncoding.StartRectID.Int64 = svgdb.StartRect.ID
+      svgdb.SVGPointersEncoding.StartRectID.Valid = true
+    }
+    svgdb.StartRect = undefined
+    if (svgdb.EndRect != undefined) {
+      svgdb.SVGPointersEncoding.EndRectID.Int64 = svgdb.EndRect.ID
+      svgdb.SVGPointersEncoding.EndRectID.Valid = true
+    }
+    svgdb.EndRect = undefined
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -87,7 +108,15 @@ export class SVGService {
     return this.http.post<SVGDB>(this.svgsUrl, svgdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-	      svgdb.Layers = Layers
+        svgdb.Layers = new Array<LayerDB>()
+        for (let _id of svgdb.SVGPointersEncoding.Layers) {
+          let _layer = frontRepo.Layers.get(_id)
+          if (_layer != undefined) {
+            svgdb.Layers.push(_layer!)
+          }
+        }
+        svgdb.StartRect = frontRepo.Rects.get(svgdb.SVGPointersEncoding.StartRectID.Int64)
+        svgdb.EndRect = frontRepo.Rects.get(svgdb.SVGPointersEncoding.EndRectID.Int64)
         // this.log(`posted svgdb id=${svgdb.ID}`)
       }),
       catchError(this.handleError<SVGDB>('postSVG'))
@@ -95,6 +124,9 @@ export class SVGService {
   }
 
   /** DELETE: delete the svgdb from the server */
+  delete(svgdb: SVGDB | number, GONG__StackPath: string): Observable<SVGDB> {
+    return this.deleteSVG(svgdb, GONG__StackPath)
+  }
   deleteSVG(svgdb: SVGDB | number, GONG__StackPath: string): Observable<SVGDB> {
     const id = typeof svgdb === 'number' ? svgdb : svgdb.ID;
     const url = `${this.svgsUrl}/${id}`;
@@ -112,17 +144,30 @@ export class SVGService {
   }
 
   /** PUT: update the svgdb on the server */
-  updateSVG(svgdb: SVGDB, GONG__StackPath: string): Observable<SVGDB> {
+  update(svgdb: SVGDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<SVGDB> {
+    return this.updateSVG(svgdb, GONG__StackPath, frontRepo)
+  }
+  updateSVG(svgdb: SVGDB, GONG__StackPath: string, frontRepo: FrontRepo): Observable<SVGDB> {
     const id = typeof svgdb === 'number' ? svgdb : svgdb.ID;
     const url = `${this.svgsUrl}/${id}`;
 
-    // insertion point for reset of pointers and reverse pointers (to avoid circular JSON)
-    let Layers = svgdb.Layers
+    // insertion point for reset of pointers (to avoid circular JSON)
+    // and encoding of pointers
+    svgdb.SVGPointersEncoding.Layers = []
+    for (let _layer of svgdb.Layers) {
+      svgdb.SVGPointersEncoding.Layers.push(_layer.ID)
+    }
     svgdb.Layers = []
-    let StartRect = svgdb.StartRect
-    svgdb.StartRect = new RectDB
-    let EndRect = svgdb.EndRect
-    svgdb.EndRect = new RectDB
+    if (svgdb.StartRect != undefined) {
+      svgdb.SVGPointersEncoding.StartRectID.Int64 = svgdb.StartRect.ID
+      svgdb.SVGPointersEncoding.StartRectID.Valid = true
+    }
+    svgdb.StartRect = undefined
+    if (svgdb.EndRect != undefined) {
+      svgdb.SVGPointersEncoding.EndRectID.Int64 = svgdb.EndRect.ID
+      svgdb.SVGPointersEncoding.EndRectID.Valid = true
+    }
+    svgdb.EndRect = undefined
 
     let params = new HttpParams().set("GONG__StackPath", GONG__StackPath)
     let httpOptions = {
@@ -133,7 +178,15 @@ export class SVGService {
     return this.http.put<SVGDB>(url, svgdb, httpOptions).pipe(
       tap(_ => {
         // insertion point for restoration of reverse pointers
-	      svgdb.Layers = Layers
+        svgdb.Layers = new Array<LayerDB>()
+        for (let _id of svgdb.SVGPointersEncoding.Layers) {
+          let _layer = frontRepo.Layers.get(_id)
+          if (_layer != undefined) {
+            svgdb.Layers.push(_layer!)
+          }
+        }
+        svgdb.StartRect = frontRepo.Rects.get(svgdb.SVGPointersEncoding.StartRectID.Int64)
+        svgdb.EndRect = frontRepo.Rects.get(svgdb.SVGPointersEncoding.EndRectID.Int64)
         // this.log(`updated svgdb id=${svgdb.ID}`)
       }),
       catchError(this.handleError<SVGDB>('updateSVG'))
@@ -161,6 +214,6 @@ export class SVGService {
   }
 
   private log(message: string) {
-      console.log(message)
+    console.log(message)
   }
 }

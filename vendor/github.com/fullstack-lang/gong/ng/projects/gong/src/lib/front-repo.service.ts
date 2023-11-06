@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core'
+import { HttpClient, HttpHeaders } from '@angular/common/http'
 
-import { Observable, combineLatest, BehaviorSubject } from 'rxjs';
+import { Observable, combineLatest, BehaviorSubject, of } from 'rxjs'
 
-// insertion point sub template for services imports 
+// insertion point sub template for services imports
 import { GongBasicFieldDB } from './gongbasicfield-db'
 import { GongBasicFieldService } from './gongbasicfield.service'
 
@@ -40,45 +40,126 @@ import { PointerToGongStructFieldService } from './pointertogongstructfield.serv
 import { SliceOfPointerToGongStructFieldDB } from './sliceofpointertogongstructfield-db'
 import { SliceOfPointerToGongStructFieldService } from './sliceofpointertogongstructfield.service'
 
+export const StackType = "github.com/fullstack-lang/gong/go/models"
 
 // FrontRepo stores all instances in a front repository (design pattern repository)
-export class FrontRepo { // insertion point sub template 
-  GongBasicFields_array = new Array<GongBasicFieldDB>(); // array of repo instances
-  GongBasicFields = new Map<number, GongBasicFieldDB>(); // map of repo instances
-  GongBasicFields_batch = new Map<number, GongBasicFieldDB>(); // same but only in last GET (for finding repo instances to delete)
-  GongEnums_array = new Array<GongEnumDB>(); // array of repo instances
-  GongEnums = new Map<number, GongEnumDB>(); // map of repo instances
-  GongEnums_batch = new Map<number, GongEnumDB>(); // same but only in last GET (for finding repo instances to delete)
-  GongEnumValues_array = new Array<GongEnumValueDB>(); // array of repo instances
-  GongEnumValues = new Map<number, GongEnumValueDB>(); // map of repo instances
-  GongEnumValues_batch = new Map<number, GongEnumValueDB>(); // same but only in last GET (for finding repo instances to delete)
-  GongLinks_array = new Array<GongLinkDB>(); // array of repo instances
-  GongLinks = new Map<number, GongLinkDB>(); // map of repo instances
-  GongLinks_batch = new Map<number, GongLinkDB>(); // same but only in last GET (for finding repo instances to delete)
-  GongNotes_array = new Array<GongNoteDB>(); // array of repo instances
-  GongNotes = new Map<number, GongNoteDB>(); // map of repo instances
-  GongNotes_batch = new Map<number, GongNoteDB>(); // same but only in last GET (for finding repo instances to delete)
-  GongStructs_array = new Array<GongStructDB>(); // array of repo instances
-  GongStructs = new Map<number, GongStructDB>(); // map of repo instances
-  GongStructs_batch = new Map<number, GongStructDB>(); // same but only in last GET (for finding repo instances to delete)
-  GongTimeFields_array = new Array<GongTimeFieldDB>(); // array of repo instances
-  GongTimeFields = new Map<number, GongTimeFieldDB>(); // map of repo instances
-  GongTimeFields_batch = new Map<number, GongTimeFieldDB>(); // same but only in last GET (for finding repo instances to delete)
-  Metas_array = new Array<MetaDB>(); // array of repo instances
-  Metas = new Map<number, MetaDB>(); // map of repo instances
-  Metas_batch = new Map<number, MetaDB>(); // same but only in last GET (for finding repo instances to delete)
-  MetaReferences_array = new Array<MetaReferenceDB>(); // array of repo instances
-  MetaReferences = new Map<number, MetaReferenceDB>(); // map of repo instances
-  MetaReferences_batch = new Map<number, MetaReferenceDB>(); // same but only in last GET (for finding repo instances to delete)
-  ModelPkgs_array = new Array<ModelPkgDB>(); // array of repo instances
-  ModelPkgs = new Map<number, ModelPkgDB>(); // map of repo instances
-  ModelPkgs_batch = new Map<number, ModelPkgDB>(); // same but only in last GET (for finding repo instances to delete)
-  PointerToGongStructFields_array = new Array<PointerToGongStructFieldDB>(); // array of repo instances
-  PointerToGongStructFields = new Map<number, PointerToGongStructFieldDB>(); // map of repo instances
-  PointerToGongStructFields_batch = new Map<number, PointerToGongStructFieldDB>(); // same but only in last GET (for finding repo instances to delete)
-  SliceOfPointerToGongStructFields_array = new Array<SliceOfPointerToGongStructFieldDB>(); // array of repo instances
-  SliceOfPointerToGongStructFields = new Map<number, SliceOfPointerToGongStructFieldDB>(); // map of repo instances
-  SliceOfPointerToGongStructFields_batch = new Map<number, SliceOfPointerToGongStructFieldDB>(); // same but only in last GET (for finding repo instances to delete)
+export class FrontRepo { // insertion point sub template
+  GongBasicFields_array = new Array<GongBasicFieldDB>() // array of repo instances
+  GongBasicFields = new Map<number, GongBasicFieldDB>() // map of repo instances
+  GongBasicFields_batch = new Map<number, GongBasicFieldDB>() // same but only in last GET (for finding repo instances to delete)
+
+  GongEnums_array = new Array<GongEnumDB>() // array of repo instances
+  GongEnums = new Map<number, GongEnumDB>() // map of repo instances
+  GongEnums_batch = new Map<number, GongEnumDB>() // same but only in last GET (for finding repo instances to delete)
+
+  GongEnumValues_array = new Array<GongEnumValueDB>() // array of repo instances
+  GongEnumValues = new Map<number, GongEnumValueDB>() // map of repo instances
+  GongEnumValues_batch = new Map<number, GongEnumValueDB>() // same but only in last GET (for finding repo instances to delete)
+
+  GongLinks_array = new Array<GongLinkDB>() // array of repo instances
+  GongLinks = new Map<number, GongLinkDB>() // map of repo instances
+  GongLinks_batch = new Map<number, GongLinkDB>() // same but only in last GET (for finding repo instances to delete)
+
+  GongNotes_array = new Array<GongNoteDB>() // array of repo instances
+  GongNotes = new Map<number, GongNoteDB>() // map of repo instances
+  GongNotes_batch = new Map<number, GongNoteDB>() // same but only in last GET (for finding repo instances to delete)
+
+  GongStructs_array = new Array<GongStructDB>() // array of repo instances
+  GongStructs = new Map<number, GongStructDB>() // map of repo instances
+  GongStructs_batch = new Map<number, GongStructDB>() // same but only in last GET (for finding repo instances to delete)
+
+  GongTimeFields_array = new Array<GongTimeFieldDB>() // array of repo instances
+  GongTimeFields = new Map<number, GongTimeFieldDB>() // map of repo instances
+  GongTimeFields_batch = new Map<number, GongTimeFieldDB>() // same but only in last GET (for finding repo instances to delete)
+
+  Metas_array = new Array<MetaDB>() // array of repo instances
+  Metas = new Map<number, MetaDB>() // map of repo instances
+  Metas_batch = new Map<number, MetaDB>() // same but only in last GET (for finding repo instances to delete)
+
+  MetaReferences_array = new Array<MetaReferenceDB>() // array of repo instances
+  MetaReferences = new Map<number, MetaReferenceDB>() // map of repo instances
+  MetaReferences_batch = new Map<number, MetaReferenceDB>() // same but only in last GET (for finding repo instances to delete)
+
+  ModelPkgs_array = new Array<ModelPkgDB>() // array of repo instances
+  ModelPkgs = new Map<number, ModelPkgDB>() // map of repo instances
+  ModelPkgs_batch = new Map<number, ModelPkgDB>() // same but only in last GET (for finding repo instances to delete)
+
+  PointerToGongStructFields_array = new Array<PointerToGongStructFieldDB>() // array of repo instances
+  PointerToGongStructFields = new Map<number, PointerToGongStructFieldDB>() // map of repo instances
+  PointerToGongStructFields_batch = new Map<number, PointerToGongStructFieldDB>() // same but only in last GET (for finding repo instances to delete)
+
+  SliceOfPointerToGongStructFields_array = new Array<SliceOfPointerToGongStructFieldDB>() // array of repo instances
+  SliceOfPointerToGongStructFields = new Map<number, SliceOfPointerToGongStructFieldDB>() // map of repo instances
+  SliceOfPointerToGongStructFields_batch = new Map<number, SliceOfPointerToGongStructFieldDB>() // same but only in last GET (for finding repo instances to delete)
+
+
+  // getArray allows for a get function that is robust to refactoring of the named struct name
+  // for instance frontRepo.getArray<Astruct>( Astruct.GONGSTRUCT_NAME), is robust to a refactoring of Astruct identifier
+  // contrary to frontRepo.Astructs_array which is not refactored when Astruct identifier is modified
+  getArray<Type>(gongStructName: string): Array<Type> {
+    switch (gongStructName) {
+      // insertion point
+      case 'GongBasicField':
+        return this.GongBasicFields_array as unknown as Array<Type>
+      case 'GongEnum':
+        return this.GongEnums_array as unknown as Array<Type>
+      case 'GongEnumValue':
+        return this.GongEnumValues_array as unknown as Array<Type>
+      case 'GongLink':
+        return this.GongLinks_array as unknown as Array<Type>
+      case 'GongNote':
+        return this.GongNotes_array as unknown as Array<Type>
+      case 'GongStruct':
+        return this.GongStructs_array as unknown as Array<Type>
+      case 'GongTimeField':
+        return this.GongTimeFields_array as unknown as Array<Type>
+      case 'Meta':
+        return this.Metas_array as unknown as Array<Type>
+      case 'MetaReference':
+        return this.MetaReferences_array as unknown as Array<Type>
+      case 'ModelPkg':
+        return this.ModelPkgs_array as unknown as Array<Type>
+      case 'PointerToGongStructField':
+        return this.PointerToGongStructFields_array as unknown as Array<Type>
+      case 'SliceOfPointerToGongStructField':
+        return this.SliceOfPointerToGongStructFields_array as unknown as Array<Type>
+      default:
+        throw new Error("Type not recognized");
+    }
+  }
+
+  // getMap allows for a get function that is robust to refactoring of the named struct name
+  getMap<Type>(gongStructName: string): Map<number, Type> {
+    switch (gongStructName) {
+      // insertion point
+      case 'GongBasicField':
+        return this.GongBasicFields_array as unknown as Map<number, Type>
+      case 'GongEnum':
+        return this.GongEnums_array as unknown as Map<number, Type>
+      case 'GongEnumValue':
+        return this.GongEnumValues_array as unknown as Map<number, Type>
+      case 'GongLink':
+        return this.GongLinks_array as unknown as Map<number, Type>
+      case 'GongNote':
+        return this.GongNotes_array as unknown as Map<number, Type>
+      case 'GongStruct':
+        return this.GongStructs_array as unknown as Map<number, Type>
+      case 'GongTimeField':
+        return this.GongTimeFields_array as unknown as Map<number, Type>
+      case 'Meta':
+        return this.Metas_array as unknown as Map<number, Type>
+      case 'MetaReference':
+        return this.MetaReferences_array as unknown as Map<number, Type>
+      case 'ModelPkg':
+        return this.ModelPkgs_array as unknown as Map<number, Type>
+      case 'PointerToGongStructField':
+        return this.PointerToGongStructFields_array as unknown as Map<number, Type>
+      case 'SliceOfPointerToGongStructField':
+        return this.SliceOfPointerToGongStructFields_array as unknown as Map<number, Type>
+      default:
+        throw new Error("Type not recognized");
+    }
+  }
 }
 
 // the table component is called in different ways
@@ -182,7 +263,9 @@ export class FrontRepoService {
   }
 
   // typing of observable can be messy in typescript. Therefore, one force the type
-  observableFrontRepo: [ // insertion point sub template 
+  observableFrontRepo: [
+    Observable<null>, // see below for the of(null) observable
+    // insertion point sub template 
     Observable<GongBasicFieldDB[]>,
     Observable<GongEnumDB[]>,
     Observable<GongEnumValueDB[]>,
@@ -195,19 +278,28 @@ export class FrontRepoService {
     Observable<ModelPkgDB[]>,
     Observable<PointerToGongStructFieldDB[]>,
     Observable<SliceOfPointerToGongStructFieldDB[]>,
-  ] = [ // insertion point sub template
-      this.gongbasicfieldService.getGongBasicFields(this.GONG__StackPath),
-      this.gongenumService.getGongEnums(this.GONG__StackPath),
-      this.gongenumvalueService.getGongEnumValues(this.GONG__StackPath),
-      this.gonglinkService.getGongLinks(this.GONG__StackPath),
-      this.gongnoteService.getGongNotes(this.GONG__StackPath),
-      this.gongstructService.getGongStructs(this.GONG__StackPath),
-      this.gongtimefieldService.getGongTimeFields(this.GONG__StackPath),
-      this.metaService.getMetas(this.GONG__StackPath),
-      this.metareferenceService.getMetaReferences(this.GONG__StackPath),
-      this.modelpkgService.getModelPkgs(this.GONG__StackPath),
-      this.pointertogongstructfieldService.getPointerToGongStructFields(this.GONG__StackPath),
-      this.sliceofpointertogongstructfieldService.getSliceOfPointerToGongStructFields(this.GONG__StackPath),
+  ] = [
+      // Using "combineLatest" with a placeholder observable.
+      //
+      // This allows the typescript compiler to pass when no GongStruct is present in the front API
+      //
+      // The "of(null)" is a "meaningless" observable that emits a single value (null) and completes.
+      // This is used as a workaround to satisfy TypeScript requirements and the "combineLatest" 
+      // expectation for a non-empty array of observables.
+      of(null), // 
+      // insertion point sub template
+      this.gongbasicfieldService.getGongBasicFields(this.GONG__StackPath, this.frontRepo),
+      this.gongenumService.getGongEnums(this.GONG__StackPath, this.frontRepo),
+      this.gongenumvalueService.getGongEnumValues(this.GONG__StackPath, this.frontRepo),
+      this.gonglinkService.getGongLinks(this.GONG__StackPath, this.frontRepo),
+      this.gongnoteService.getGongNotes(this.GONG__StackPath, this.frontRepo),
+      this.gongstructService.getGongStructs(this.GONG__StackPath, this.frontRepo),
+      this.gongtimefieldService.getGongTimeFields(this.GONG__StackPath, this.frontRepo),
+      this.metaService.getMetas(this.GONG__StackPath, this.frontRepo),
+      this.metareferenceService.getMetaReferences(this.GONG__StackPath, this.frontRepo),
+      this.modelpkgService.getModelPkgs(this.GONG__StackPath, this.frontRepo),
+      this.pointertogongstructfieldService.getPointerToGongStructFields(this.GONG__StackPath, this.frontRepo),
+      this.sliceofpointertogongstructfieldService.getSliceOfPointerToGongStructFields(this.GONG__StackPath, this.frontRepo),
     ];
 
   //
@@ -220,19 +312,21 @@ export class FrontRepoService {
 
     this.GONG__StackPath = GONG__StackPath
 
-    this.observableFrontRepo = [ // insertion point sub template
-      this.gongbasicfieldService.getGongBasicFields(this.GONG__StackPath),
-      this.gongenumService.getGongEnums(this.GONG__StackPath),
-      this.gongenumvalueService.getGongEnumValues(this.GONG__StackPath),
-      this.gonglinkService.getGongLinks(this.GONG__StackPath),
-      this.gongnoteService.getGongNotes(this.GONG__StackPath),
-      this.gongstructService.getGongStructs(this.GONG__StackPath),
-      this.gongtimefieldService.getGongTimeFields(this.GONG__StackPath),
-      this.metaService.getMetas(this.GONG__StackPath),
-      this.metareferenceService.getMetaReferences(this.GONG__StackPath),
-      this.modelpkgService.getModelPkgs(this.GONG__StackPath),
-      this.pointertogongstructfieldService.getPointerToGongStructFields(this.GONG__StackPath),
-      this.sliceofpointertogongstructfieldService.getSliceOfPointerToGongStructFields(this.GONG__StackPath),
+    this.observableFrontRepo = [
+      of(null), // see above for justification
+      // insertion point sub template
+      this.gongbasicfieldService.getGongBasicFields(this.GONG__StackPath, this.frontRepo),
+      this.gongenumService.getGongEnums(this.GONG__StackPath, this.frontRepo),
+      this.gongenumvalueService.getGongEnumValues(this.GONG__StackPath, this.frontRepo),
+      this.gonglinkService.getGongLinks(this.GONG__StackPath, this.frontRepo),
+      this.gongnoteService.getGongNotes(this.GONG__StackPath, this.frontRepo),
+      this.gongstructService.getGongStructs(this.GONG__StackPath, this.frontRepo),
+      this.gongtimefieldService.getGongTimeFields(this.GONG__StackPath, this.frontRepo),
+      this.metaService.getMetas(this.GONG__StackPath, this.frontRepo),
+      this.metareferenceService.getMetaReferences(this.GONG__StackPath, this.frontRepo),
+      this.modelpkgService.getModelPkgs(this.GONG__StackPath, this.frontRepo),
+      this.pointertogongstructfieldService.getPointerToGongStructFields(this.GONG__StackPath, this.frontRepo),
+      this.sliceofpointertogongstructfieldService.getSliceOfPointerToGongStructFields(this.GONG__StackPath, this.frontRepo),
     ]
 
     return new Observable<FrontRepo>(
@@ -240,7 +334,9 @@ export class FrontRepoService {
         combineLatest(
           this.observableFrontRepo
         ).subscribe(
-          ([ // insertion point sub template for declarations 
+          ([
+            ___of_null, // see above for the explanation about of
+            // insertion point sub template for declarations 
             gongbasicfields_,
             gongenums_,
             gongenumvalues_,
@@ -682,148 +778,122 @@ export class FrontRepoService {
 
 
             // 
-            // Second Step: redeem pointers between instances (thanks to maps in the First Step)
+            // Second Step: reddeem slice of pointers fields
             // insertion point sub template for redeem 
             gongbasicfields.forEach(
               gongbasicfield => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
                 // insertion point for pointer field GongEnum redeeming
                 {
-                  let _gongenum = this.frontRepo.GongEnums.get(gongbasicfield.GongEnumID.Int64)
+                  let _gongenum = this.frontRepo.GongEnums.get(gongbasicfield.GongBasicFieldPointersEncoding.GongEnumID.Int64)
                   if (_gongenum) {
                     gongbasicfield.GongEnum = _gongenum
                   }
                 }
-
-                // insertion point for redeeming ONE-MANY associations
-                // insertion point for slice of pointer field GongStruct.GongBasicFields redeeming
-                {
-                  let _gongstruct = this.frontRepo.GongStructs.get(gongbasicfield.GongStruct_GongBasicFieldsDBID.Int64)
-                  if (_gongstruct) {
-                    if (_gongstruct.GongBasicFields == undefined) {
-                      _gongstruct.GongBasicFields = new Array<GongBasicFieldDB>()
-                    }
-                    _gongstruct.GongBasicFields.push(gongbasicfield)
-                    if (gongbasicfield.GongStruct_GongBasicFields_reverse == undefined) {
-                      gongbasicfield.GongStruct_GongBasicFields_reverse = _gongstruct
-                    }
-                  }
-                }
+                // insertion point for pointers decoding
               }
             )
             gongenums.forEach(
               gongenum => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-
-                // insertion point for redeeming ONE-MANY associations
+                // insertion point for pointers decoding
+                gongenum.GongEnumValues = new Array<GongEnumValueDB>()
+                for (let _id of gongenum.GongEnumPointersEncoding.GongEnumValues) {
+                  let _gongenumvalue = this.frontRepo.GongEnumValues.get(_id)
+                  if (_gongenumvalue != undefined) {
+                    gongenum.GongEnumValues.push(_gongenumvalue!)
+                  }
+                }
               }
             )
             gongenumvalues.forEach(
               gongenumvalue => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-
-                // insertion point for redeeming ONE-MANY associations
-                // insertion point for slice of pointer field GongEnum.GongEnumValues redeeming
-                {
-                  let _gongenum = this.frontRepo.GongEnums.get(gongenumvalue.GongEnum_GongEnumValuesDBID.Int64)
-                  if (_gongenum) {
-                    if (_gongenum.GongEnumValues == undefined) {
-                      _gongenum.GongEnumValues = new Array<GongEnumValueDB>()
-                    }
-                    _gongenum.GongEnumValues.push(gongenumvalue)
-                    if (gongenumvalue.GongEnum_GongEnumValues_reverse == undefined) {
-                      gongenumvalue.GongEnum_GongEnumValues_reverse = _gongenum
-                    }
-                  }
-                }
+                // insertion point for pointers decoding
               }
             )
             gonglinks.forEach(
               gonglink => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-
-                // insertion point for redeeming ONE-MANY associations
-                // insertion point for slice of pointer field GongNote.Links redeeming
-                {
-                  let _gongnote = this.frontRepo.GongNotes.get(gonglink.GongNote_LinksDBID.Int64)
-                  if (_gongnote) {
-                    if (_gongnote.Links == undefined) {
-                      _gongnote.Links = new Array<GongLinkDB>()
-                    }
-                    _gongnote.Links.push(gonglink)
-                    if (gonglink.GongNote_Links_reverse == undefined) {
-                      gonglink.GongNote_Links_reverse = _gongnote
-                    }
-                  }
-                }
+                // insertion point for pointers decoding
               }
             )
             gongnotes.forEach(
               gongnote => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-
-                // insertion point for redeeming ONE-MANY associations
+                // insertion point for pointers decoding
+                gongnote.Links = new Array<GongLinkDB>()
+                for (let _id of gongnote.GongNotePointersEncoding.Links) {
+                  let _gonglink = this.frontRepo.GongLinks.get(_id)
+                  if (_gonglink != undefined) {
+                    gongnote.Links.push(_gonglink!)
+                  }
+                }
               }
             )
             gongstructs.forEach(
               gongstruct => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-
-                // insertion point for redeeming ONE-MANY associations
+                // insertion point for pointers decoding
+                gongstruct.GongBasicFields = new Array<GongBasicFieldDB>()
+                for (let _id of gongstruct.GongStructPointersEncoding.GongBasicFields) {
+                  let _gongbasicfield = this.frontRepo.GongBasicFields.get(_id)
+                  if (_gongbasicfield != undefined) {
+                    gongstruct.GongBasicFields.push(_gongbasicfield!)
+                  }
+                }
+                gongstruct.GongTimeFields = new Array<GongTimeFieldDB>()
+                for (let _id of gongstruct.GongStructPointersEncoding.GongTimeFields) {
+                  let _gongtimefield = this.frontRepo.GongTimeFields.get(_id)
+                  if (_gongtimefield != undefined) {
+                    gongstruct.GongTimeFields.push(_gongtimefield!)
+                  }
+                }
+                gongstruct.PointerToGongStructFields = new Array<PointerToGongStructFieldDB>()
+                for (let _id of gongstruct.GongStructPointersEncoding.PointerToGongStructFields) {
+                  let _pointertogongstructfield = this.frontRepo.PointerToGongStructFields.get(_id)
+                  if (_pointertogongstructfield != undefined) {
+                    gongstruct.PointerToGongStructFields.push(_pointertogongstructfield!)
+                  }
+                }
+                gongstruct.SliceOfPointerToGongStructFields = new Array<SliceOfPointerToGongStructFieldDB>()
+                for (let _id of gongstruct.GongStructPointersEncoding.SliceOfPointerToGongStructFields) {
+                  let _sliceofpointertogongstructfield = this.frontRepo.SliceOfPointerToGongStructFields.get(_id)
+                  if (_sliceofpointertogongstructfield != undefined) {
+                    gongstruct.SliceOfPointerToGongStructFields.push(_sliceofpointertogongstructfield!)
+                  }
+                }
               }
             )
             gongtimefields.forEach(
               gongtimefield => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-
-                // insertion point for redeeming ONE-MANY associations
-                // insertion point for slice of pointer field GongStruct.GongTimeFields redeeming
-                {
-                  let _gongstruct = this.frontRepo.GongStructs.get(gongtimefield.GongStruct_GongTimeFieldsDBID.Int64)
-                  if (_gongstruct) {
-                    if (_gongstruct.GongTimeFields == undefined) {
-                      _gongstruct.GongTimeFields = new Array<GongTimeFieldDB>()
-                    }
-                    _gongstruct.GongTimeFields.push(gongtimefield)
-                    if (gongtimefield.GongStruct_GongTimeFields_reverse == undefined) {
-                      gongtimefield.GongStruct_GongTimeFields_reverse = _gongstruct
-                    }
-                  }
-                }
+                // insertion point for pointers decoding
               }
             )
             metas.forEach(
               meta => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-
-                // insertion point for redeeming ONE-MANY associations
+                // insertion point for pointers decoding
+                meta.MetaReferences = new Array<MetaReferenceDB>()
+                for (let _id of meta.MetaPointersEncoding.MetaReferences) {
+                  let _metareference = this.frontRepo.MetaReferences.get(_id)
+                  if (_metareference != undefined) {
+                    meta.MetaReferences.push(_metareference!)
+                  }
+                }
               }
             )
             metareferences.forEach(
               metareference => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-
-                // insertion point for redeeming ONE-MANY associations
-                // insertion point for slice of pointer field Meta.MetaReferences redeeming
-                {
-                  let _meta = this.frontRepo.Metas.get(metareference.Meta_MetaReferencesDBID.Int64)
-                  if (_meta) {
-                    if (_meta.MetaReferences == undefined) {
-                      _meta.MetaReferences = new Array<MetaReferenceDB>()
-                    }
-                    _meta.MetaReferences.push(metareference)
-                    if (metareference.Meta_MetaReferences_reverse == undefined) {
-                      metareference.Meta_MetaReferences_reverse = _meta
-                    }
-                  }
-                }
+                // insertion point for pointers decoding
               }
             )
             modelpkgs.forEach(
               modelpkg => {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
-
-                // insertion point for redeeming ONE-MANY associations
+                // insertion point for pointers decoding
               }
             )
             pointertogongstructfields.forEach(
@@ -831,26 +901,12 @@ export class FrontRepoService {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
                 // insertion point for pointer field GongStruct redeeming
                 {
-                  let _gongstruct = this.frontRepo.GongStructs.get(pointertogongstructfield.GongStructID.Int64)
+                  let _gongstruct = this.frontRepo.GongStructs.get(pointertogongstructfield.PointerToGongStructFieldPointersEncoding.GongStructID.Int64)
                   if (_gongstruct) {
                     pointertogongstructfield.GongStruct = _gongstruct
                   }
                 }
-
-                // insertion point for redeeming ONE-MANY associations
-                // insertion point for slice of pointer field GongStruct.PointerToGongStructFields redeeming
-                {
-                  let _gongstruct = this.frontRepo.GongStructs.get(pointertogongstructfield.GongStruct_PointerToGongStructFieldsDBID.Int64)
-                  if (_gongstruct) {
-                    if (_gongstruct.PointerToGongStructFields == undefined) {
-                      _gongstruct.PointerToGongStructFields = new Array<PointerToGongStructFieldDB>()
-                    }
-                    _gongstruct.PointerToGongStructFields.push(pointertogongstructfield)
-                    if (pointertogongstructfield.GongStruct_PointerToGongStructFields_reverse == undefined) {
-                      pointertogongstructfield.GongStruct_PointerToGongStructFields_reverse = _gongstruct
-                    }
-                  }
-                }
+                // insertion point for pointers decoding
               }
             )
             sliceofpointertogongstructfields.forEach(
@@ -858,160 +914,12 @@ export class FrontRepoService {
                 // insertion point sub sub template for ONE-/ZERO-ONE associations pointers redeeming
                 // insertion point for pointer field GongStruct redeeming
                 {
-                  let _gongstruct = this.frontRepo.GongStructs.get(sliceofpointertogongstructfield.GongStructID.Int64)
+                  let _gongstruct = this.frontRepo.GongStructs.get(sliceofpointertogongstructfield.SliceOfPointerToGongStructFieldPointersEncoding.GongStructID.Int64)
                   if (_gongstruct) {
                     sliceofpointertogongstructfield.GongStruct = _gongstruct
                   }
                 }
-
-                // insertion point for redeeming ONE-MANY associations
-                // insertion point for slice of pointer field GongStruct.SliceOfPointerToGongStructFields redeeming
-                {
-                  let _gongstruct = this.frontRepo.GongStructs.get(sliceofpointertogongstructfield.GongStruct_SliceOfPointerToGongStructFieldsDBID.Int64)
-                  if (_gongstruct) {
-                    if (_gongstruct.SliceOfPointerToGongStructFields == undefined) {
-                      _gongstruct.SliceOfPointerToGongStructFields = new Array<SliceOfPointerToGongStructFieldDB>()
-                    }
-                    _gongstruct.SliceOfPointerToGongStructFields.push(sliceofpointertogongstructfield)
-                    if (sliceofpointertogongstructfield.GongStruct_SliceOfPointerToGongStructFields_reverse == undefined) {
-                      sliceofpointertogongstructfield.GongStruct_SliceOfPointerToGongStructFields_reverse = _gongstruct
-                    }
-                  }
-                }
-              }
-            )
-
-            // 
-            // Third Step: sort arrays (slices in go) according to their index
-            // insertion point sub template for redeem 
-            gongbasicfields.forEach(
-              gongbasicfield => {
-                // insertion point for sorting
-              }
-            )
-            gongenums.forEach(
-              gongenum => {
-                // insertion point for sorting
-                gongenum.GongEnumValues?.sort((t1, t2) => {
-                  if (t1.GongEnum_GongEnumValuesDBID_Index.Int64 > t2.GongEnum_GongEnumValuesDBID_Index.Int64) {
-                    return 1;
-                  }
-                  if (t1.GongEnum_GongEnumValuesDBID_Index.Int64 < t2.GongEnum_GongEnumValuesDBID_Index.Int64) {
-                    return -1;
-                  }
-                  return 0;
-                })
-
-              }
-            )
-            gongenumvalues.forEach(
-              gongenumvalue => {
-                // insertion point for sorting
-              }
-            )
-            gonglinks.forEach(
-              gonglink => {
-                // insertion point for sorting
-              }
-            )
-            gongnotes.forEach(
-              gongnote => {
-                // insertion point for sorting
-                gongnote.Links?.sort((t1, t2) => {
-                  if (t1.GongNote_LinksDBID_Index.Int64 > t2.GongNote_LinksDBID_Index.Int64) {
-                    return 1;
-                  }
-                  if (t1.GongNote_LinksDBID_Index.Int64 < t2.GongNote_LinksDBID_Index.Int64) {
-                    return -1;
-                  }
-                  return 0;
-                })
-
-              }
-            )
-            gongstructs.forEach(
-              gongstruct => {
-                // insertion point for sorting
-                gongstruct.GongBasicFields?.sort((t1, t2) => {
-                  if (t1.GongStruct_GongBasicFieldsDBID_Index.Int64 > t2.GongStruct_GongBasicFieldsDBID_Index.Int64) {
-                    return 1;
-                  }
-                  if (t1.GongStruct_GongBasicFieldsDBID_Index.Int64 < t2.GongStruct_GongBasicFieldsDBID_Index.Int64) {
-                    return -1;
-                  }
-                  return 0;
-                })
-
-                gongstruct.GongTimeFields?.sort((t1, t2) => {
-                  if (t1.GongStruct_GongTimeFieldsDBID_Index.Int64 > t2.GongStruct_GongTimeFieldsDBID_Index.Int64) {
-                    return 1;
-                  }
-                  if (t1.GongStruct_GongTimeFieldsDBID_Index.Int64 < t2.GongStruct_GongTimeFieldsDBID_Index.Int64) {
-                    return -1;
-                  }
-                  return 0;
-                })
-
-                gongstruct.PointerToGongStructFields?.sort((t1, t2) => {
-                  if (t1.GongStruct_PointerToGongStructFieldsDBID_Index.Int64 > t2.GongStruct_PointerToGongStructFieldsDBID_Index.Int64) {
-                    return 1;
-                  }
-                  if (t1.GongStruct_PointerToGongStructFieldsDBID_Index.Int64 < t2.GongStruct_PointerToGongStructFieldsDBID_Index.Int64) {
-                    return -1;
-                  }
-                  return 0;
-                })
-
-                gongstruct.SliceOfPointerToGongStructFields?.sort((t1, t2) => {
-                  if (t1.GongStruct_SliceOfPointerToGongStructFieldsDBID_Index.Int64 > t2.GongStruct_SliceOfPointerToGongStructFieldsDBID_Index.Int64) {
-                    return 1;
-                  }
-                  if (t1.GongStruct_SliceOfPointerToGongStructFieldsDBID_Index.Int64 < t2.GongStruct_SliceOfPointerToGongStructFieldsDBID_Index.Int64) {
-                    return -1;
-                  }
-                  return 0;
-                })
-
-              }
-            )
-            gongtimefields.forEach(
-              gongtimefield => {
-                // insertion point for sorting
-              }
-            )
-            metas.forEach(
-              meta => {
-                // insertion point for sorting
-                meta.MetaReferences?.sort((t1, t2) => {
-                  if (t1.Meta_MetaReferencesDBID_Index.Int64 > t2.Meta_MetaReferencesDBID_Index.Int64) {
-                    return 1;
-                  }
-                  if (t1.Meta_MetaReferencesDBID_Index.Int64 < t2.Meta_MetaReferencesDBID_Index.Int64) {
-                    return -1;
-                  }
-                  return 0;
-                })
-
-              }
-            )
-            metareferences.forEach(
-              metareference => {
-                // insertion point for sorting
-              }
-            )
-            modelpkgs.forEach(
-              modelpkg => {
-                // insertion point for sorting
-              }
-            )
-            pointertogongstructfields.forEach(
-              pointertogongstructfield => {
-                // insertion point for sorting
-              }
-            )
-            sliceofpointertogongstructfields.forEach(
-              sliceofpointertogongstructfield => {
-                // insertion point for sorting
+                // insertion point for pointers decoding
               }
             )
 
@@ -1030,7 +938,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.gongbasicfieldService.getGongBasicFields(this.GONG__StackPath)
+          this.gongbasicfieldService.getGongBasicFields(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             gongbasicfields,
@@ -1052,24 +960,9 @@ export class FrontRepoService {
                 // insertion point for redeeming ONE/ZERO-ONE associations
                 // insertion point for pointer field GongEnum redeeming
                 {
-                  let _gongenum = this.frontRepo.GongEnums.get(gongbasicfield.GongEnumID.Int64)
+                  let _gongenum = this.frontRepo.GongEnums.get(gongbasicfield.GongBasicFieldPointersEncoding.GongEnumID.Int64)
                   if (_gongenum) {
                     gongbasicfield.GongEnum = _gongenum
-                  }
-                }
-
-                // insertion point for redeeming ONE-MANY associations
-                // insertion point for slice of pointer field GongStruct.GongBasicFields redeeming
-                {
-                  let _gongstruct = this.frontRepo.GongStructs.get(gongbasicfield.GongStruct_GongBasicFieldsDBID.Int64)
-                  if (_gongstruct) {
-                    if (_gongstruct.GongBasicFields == undefined) {
-                      _gongstruct.GongBasicFields = new Array<GongBasicFieldDB>()
-                    }
-                    _gongstruct.GongBasicFields.push(gongbasicfield)
-                    if (gongbasicfield.GongStruct_GongBasicFields_reverse == undefined) {
-                      gongbasicfield.GongStruct_GongBasicFields_reverse = _gongstruct
-                    }
                   }
                 }
               }
@@ -1101,7 +994,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.gongenumService.getGongEnums(this.GONG__StackPath)
+          this.gongenumService.getGongEnums(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             gongenums,
@@ -1121,8 +1014,6 @@ export class FrontRepoService {
                 this.frontRepo.GongEnums_batch.set(gongenum.ID, gongenum)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
-
-                // insertion point for redeeming ONE-MANY associations
               }
             )
 
@@ -1152,7 +1043,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.gongenumvalueService.getGongEnumValues(this.GONG__StackPath)
+          this.gongenumvalueService.getGongEnumValues(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             gongenumvalues,
@@ -1172,21 +1063,6 @@ export class FrontRepoService {
                 this.frontRepo.GongEnumValues_batch.set(gongenumvalue.ID, gongenumvalue)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
-
-                // insertion point for redeeming ONE-MANY associations
-                // insertion point for slice of pointer field GongEnum.GongEnumValues redeeming
-                {
-                  let _gongenum = this.frontRepo.GongEnums.get(gongenumvalue.GongEnum_GongEnumValuesDBID.Int64)
-                  if (_gongenum) {
-                    if (_gongenum.GongEnumValues == undefined) {
-                      _gongenum.GongEnumValues = new Array<GongEnumValueDB>()
-                    }
-                    _gongenum.GongEnumValues.push(gongenumvalue)
-                    if (gongenumvalue.GongEnum_GongEnumValues_reverse == undefined) {
-                      gongenumvalue.GongEnum_GongEnumValues_reverse = _gongenum
-                    }
-                  }
-                }
               }
             )
 
@@ -1216,7 +1092,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.gonglinkService.getGongLinks(this.GONG__StackPath)
+          this.gonglinkService.getGongLinks(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             gonglinks,
@@ -1236,21 +1112,6 @@ export class FrontRepoService {
                 this.frontRepo.GongLinks_batch.set(gonglink.ID, gonglink)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
-
-                // insertion point for redeeming ONE-MANY associations
-                // insertion point for slice of pointer field GongNote.Links redeeming
-                {
-                  let _gongnote = this.frontRepo.GongNotes.get(gonglink.GongNote_LinksDBID.Int64)
-                  if (_gongnote) {
-                    if (_gongnote.Links == undefined) {
-                      _gongnote.Links = new Array<GongLinkDB>()
-                    }
-                    _gongnote.Links.push(gonglink)
-                    if (gonglink.GongNote_Links_reverse == undefined) {
-                      gonglink.GongNote_Links_reverse = _gongnote
-                    }
-                  }
-                }
               }
             )
 
@@ -1280,7 +1141,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.gongnoteService.getGongNotes(this.GONG__StackPath)
+          this.gongnoteService.getGongNotes(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             gongnotes,
@@ -1300,8 +1161,6 @@ export class FrontRepoService {
                 this.frontRepo.GongNotes_batch.set(gongnote.ID, gongnote)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
-
-                // insertion point for redeeming ONE-MANY associations
               }
             )
 
@@ -1331,7 +1190,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.gongstructService.getGongStructs(this.GONG__StackPath)
+          this.gongstructService.getGongStructs(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             gongstructs,
@@ -1351,8 +1210,6 @@ export class FrontRepoService {
                 this.frontRepo.GongStructs_batch.set(gongstruct.ID, gongstruct)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
-
-                // insertion point for redeeming ONE-MANY associations
               }
             )
 
@@ -1382,7 +1239,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.gongtimefieldService.getGongTimeFields(this.GONG__StackPath)
+          this.gongtimefieldService.getGongTimeFields(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             gongtimefields,
@@ -1402,21 +1259,6 @@ export class FrontRepoService {
                 this.frontRepo.GongTimeFields_batch.set(gongtimefield.ID, gongtimefield)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
-
-                // insertion point for redeeming ONE-MANY associations
-                // insertion point for slice of pointer field GongStruct.GongTimeFields redeeming
-                {
-                  let _gongstruct = this.frontRepo.GongStructs.get(gongtimefield.GongStruct_GongTimeFieldsDBID.Int64)
-                  if (_gongstruct) {
-                    if (_gongstruct.GongTimeFields == undefined) {
-                      _gongstruct.GongTimeFields = new Array<GongTimeFieldDB>()
-                    }
-                    _gongstruct.GongTimeFields.push(gongtimefield)
-                    if (gongtimefield.GongStruct_GongTimeFields_reverse == undefined) {
-                      gongtimefield.GongStruct_GongTimeFields_reverse = _gongstruct
-                    }
-                  }
-                }
               }
             )
 
@@ -1446,7 +1288,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.metaService.getMetas(this.GONG__StackPath)
+          this.metaService.getMetas(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             metas,
@@ -1466,8 +1308,6 @@ export class FrontRepoService {
                 this.frontRepo.Metas_batch.set(meta.ID, meta)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
-
-                // insertion point for redeeming ONE-MANY associations
               }
             )
 
@@ -1497,7 +1337,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.metareferenceService.getMetaReferences(this.GONG__StackPath)
+          this.metareferenceService.getMetaReferences(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             metareferences,
@@ -1517,21 +1357,6 @@ export class FrontRepoService {
                 this.frontRepo.MetaReferences_batch.set(metareference.ID, metareference)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
-
-                // insertion point for redeeming ONE-MANY associations
-                // insertion point for slice of pointer field Meta.MetaReferences redeeming
-                {
-                  let _meta = this.frontRepo.Metas.get(metareference.Meta_MetaReferencesDBID.Int64)
-                  if (_meta) {
-                    if (_meta.MetaReferences == undefined) {
-                      _meta.MetaReferences = new Array<MetaReferenceDB>()
-                    }
-                    _meta.MetaReferences.push(metareference)
-                    if (metareference.Meta_MetaReferences_reverse == undefined) {
-                      metareference.Meta_MetaReferences_reverse = _meta
-                    }
-                  }
-                }
               }
             )
 
@@ -1561,7 +1386,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.modelpkgService.getModelPkgs(this.GONG__StackPath)
+          this.modelpkgService.getModelPkgs(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             modelpkgs,
@@ -1581,8 +1406,6 @@ export class FrontRepoService {
                 this.frontRepo.ModelPkgs_batch.set(modelpkg.ID, modelpkg)
 
                 // insertion point for redeeming ONE/ZERO-ONE associations
-
-                // insertion point for redeeming ONE-MANY associations
               }
             )
 
@@ -1612,7 +1435,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.pointertogongstructfieldService.getPointerToGongStructFields(this.GONG__StackPath)
+          this.pointertogongstructfieldService.getPointerToGongStructFields(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             pointertogongstructfields,
@@ -1634,24 +1457,9 @@ export class FrontRepoService {
                 // insertion point for redeeming ONE/ZERO-ONE associations
                 // insertion point for pointer field GongStruct redeeming
                 {
-                  let _gongstruct = this.frontRepo.GongStructs.get(pointertogongstructfield.GongStructID.Int64)
+                  let _gongstruct = this.frontRepo.GongStructs.get(pointertogongstructfield.PointerToGongStructFieldPointersEncoding.GongStructID.Int64)
                   if (_gongstruct) {
                     pointertogongstructfield.GongStruct = _gongstruct
-                  }
-                }
-
-                // insertion point for redeeming ONE-MANY associations
-                // insertion point for slice of pointer field GongStruct.PointerToGongStructFields redeeming
-                {
-                  let _gongstruct = this.frontRepo.GongStructs.get(pointertogongstructfield.GongStruct_PointerToGongStructFieldsDBID.Int64)
-                  if (_gongstruct) {
-                    if (_gongstruct.PointerToGongStructFields == undefined) {
-                      _gongstruct.PointerToGongStructFields = new Array<PointerToGongStructFieldDB>()
-                    }
-                    _gongstruct.PointerToGongStructFields.push(pointertogongstructfield)
-                    if (pointertogongstructfield.GongStruct_PointerToGongStructFields_reverse == undefined) {
-                      pointertogongstructfield.GongStruct_PointerToGongStructFields_reverse = _gongstruct
-                    }
                   }
                 }
               }
@@ -1683,7 +1491,7 @@ export class FrontRepoService {
     return new Observable<FrontRepo>(
       (observer) => {
         combineLatest([
-          this.sliceofpointertogongstructfieldService.getSliceOfPointerToGongStructFields(this.GONG__StackPath)
+          this.sliceofpointertogongstructfieldService.getSliceOfPointerToGongStructFields(this.GONG__StackPath, this.frontRepo)
         ]).subscribe(
           ([ // insertion point sub template 
             sliceofpointertogongstructfields,
@@ -1705,24 +1513,9 @@ export class FrontRepoService {
                 // insertion point for redeeming ONE/ZERO-ONE associations
                 // insertion point for pointer field GongStruct redeeming
                 {
-                  let _gongstruct = this.frontRepo.GongStructs.get(sliceofpointertogongstructfield.GongStructID.Int64)
+                  let _gongstruct = this.frontRepo.GongStructs.get(sliceofpointertogongstructfield.SliceOfPointerToGongStructFieldPointersEncoding.GongStructID.Int64)
                   if (_gongstruct) {
                     sliceofpointertogongstructfield.GongStruct = _gongstruct
-                  }
-                }
-
-                // insertion point for redeeming ONE-MANY associations
-                // insertion point for slice of pointer field GongStruct.SliceOfPointerToGongStructFields redeeming
-                {
-                  let _gongstruct = this.frontRepo.GongStructs.get(sliceofpointertogongstructfield.GongStruct_SliceOfPointerToGongStructFieldsDBID.Int64)
-                  if (_gongstruct) {
-                    if (_gongstruct.SliceOfPointerToGongStructFields == undefined) {
-                      _gongstruct.SliceOfPointerToGongStructFields = new Array<SliceOfPointerToGongStructFieldDB>()
-                    }
-                    _gongstruct.SliceOfPointerToGongStructFields.push(sliceofpointertogongstructfield)
-                    if (sliceofpointertogongstructfield.GongStruct_SliceOfPointerToGongStructFields_reverse == undefined) {
-                      sliceofpointertogongstructfield.GongStruct_SliceOfPointerToGongStructFields_reverse = _gongstruct
-                    }
                   }
                 }
               }

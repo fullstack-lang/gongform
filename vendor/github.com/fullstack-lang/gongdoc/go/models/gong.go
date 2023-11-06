@@ -4,15 +4,25 @@ package models
 import (
 	"errors"
 	"fmt"
-	"sync"
+	"math"
 	"time"
 )
+
+func __Gong__Abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
 
 // errUnkownEnum is returns when a value cannot match enum values
 var errUnkownEnum = errors.New("unkown enum")
 
 // needed to avoid when fmt package is not needed by generated code
 var __dummy__fmt_variable fmt.Scanner
+
+// idem for math package when not need by generated code
+var __dummy_math_variable = math.E
 
 // swagger:ignore
 type __void any
@@ -38,6 +48,11 @@ type StageStruct struct {
 	Classdiagrams           map[*Classdiagram]any
 	Classdiagrams_mapString map[string]*Classdiagram
 
+	// insertion point for slice of pointers maps
+	Classdiagram_GongStructShapes_reverseMap map[*GongStructShape]*Classdiagram
+	Classdiagram_GongEnumShapes_reverseMap map[*GongEnumShape]*Classdiagram
+	Classdiagram_NoteShapes_reverseMap map[*NoteShape]*Classdiagram
+
 	OnAfterClassdiagramCreateCallback OnAfterCreateInterface[Classdiagram]
 	OnAfterClassdiagramUpdateCallback OnAfterUpdateInterface[Classdiagram]
 	OnAfterClassdiagramDeleteCallback OnAfterDeleteInterface[Classdiagram]
@@ -45,6 +60,10 @@ type StageStruct struct {
 
 	DiagramPackages           map[*DiagramPackage]any
 	DiagramPackages_mapString map[string]*DiagramPackage
+
+	// insertion point for slice of pointers maps
+	DiagramPackage_Classdiagrams_reverseMap map[*Classdiagram]*DiagramPackage
+	DiagramPackage_Umlscs_reverseMap map[*Umlsc]*DiagramPackage
 
 	OnAfterDiagramPackageCreateCallback OnAfterCreateInterface[DiagramPackage]
 	OnAfterDiagramPackageUpdateCallback OnAfterUpdateInterface[DiagramPackage]
@@ -54,6 +73,8 @@ type StageStruct struct {
 	Fields           map[*Field]any
 	Fields_mapString map[string]*Field
 
+	// insertion point for slice of pointers maps
+
 	OnAfterFieldCreateCallback OnAfterCreateInterface[Field]
 	OnAfterFieldUpdateCallback OnAfterUpdateInterface[Field]
 	OnAfterFieldDeleteCallback OnAfterDeleteInterface[Field]
@@ -61,6 +82,9 @@ type StageStruct struct {
 
 	GongEnumShapes           map[*GongEnumShape]any
 	GongEnumShapes_mapString map[string]*GongEnumShape
+
+	// insertion point for slice of pointers maps
+	GongEnumShape_GongEnumValueEntrys_reverseMap map[*GongEnumValueEntry]*GongEnumShape
 
 	OnAfterGongEnumShapeCreateCallback OnAfterCreateInterface[GongEnumShape]
 	OnAfterGongEnumShapeUpdateCallback OnAfterUpdateInterface[GongEnumShape]
@@ -70,6 +94,8 @@ type StageStruct struct {
 	GongEnumValueEntrys           map[*GongEnumValueEntry]any
 	GongEnumValueEntrys_mapString map[string]*GongEnumValueEntry
 
+	// insertion point for slice of pointers maps
+
 	OnAfterGongEnumValueEntryCreateCallback OnAfterCreateInterface[GongEnumValueEntry]
 	OnAfterGongEnumValueEntryUpdateCallback OnAfterUpdateInterface[GongEnumValueEntry]
 	OnAfterGongEnumValueEntryDeleteCallback OnAfterDeleteInterface[GongEnumValueEntry]
@@ -77,6 +103,10 @@ type StageStruct struct {
 
 	GongStructShapes           map[*GongStructShape]any
 	GongStructShapes_mapString map[string]*GongStructShape
+
+	// insertion point for slice of pointers maps
+	GongStructShape_Fields_reverseMap map[*Field]*GongStructShape
+	GongStructShape_Links_reverseMap map[*Link]*GongStructShape
 
 	OnAfterGongStructShapeCreateCallback OnAfterCreateInterface[GongStructShape]
 	OnAfterGongStructShapeUpdateCallback OnAfterUpdateInterface[GongStructShape]
@@ -86,6 +116,8 @@ type StageStruct struct {
 	Links           map[*Link]any
 	Links_mapString map[string]*Link
 
+	// insertion point for slice of pointers maps
+
 	OnAfterLinkCreateCallback OnAfterCreateInterface[Link]
 	OnAfterLinkUpdateCallback OnAfterUpdateInterface[Link]
 	OnAfterLinkDeleteCallback OnAfterDeleteInterface[Link]
@@ -93,6 +125,9 @@ type StageStruct struct {
 
 	NoteShapes           map[*NoteShape]any
 	NoteShapes_mapString map[string]*NoteShape
+
+	// insertion point for slice of pointers maps
+	NoteShape_NoteShapeLinks_reverseMap map[*NoteShapeLink]*NoteShape
 
 	OnAfterNoteShapeCreateCallback OnAfterCreateInterface[NoteShape]
 	OnAfterNoteShapeUpdateCallback OnAfterUpdateInterface[NoteShape]
@@ -102,6 +137,8 @@ type StageStruct struct {
 	NoteShapeLinks           map[*NoteShapeLink]any
 	NoteShapeLinks_mapString map[string]*NoteShapeLink
 
+	// insertion point for slice of pointers maps
+
 	OnAfterNoteShapeLinkCreateCallback OnAfterCreateInterface[NoteShapeLink]
 	OnAfterNoteShapeLinkUpdateCallback OnAfterUpdateInterface[NoteShapeLink]
 	OnAfterNoteShapeLinkDeleteCallback OnAfterDeleteInterface[NoteShapeLink]
@@ -109,6 +146,8 @@ type StageStruct struct {
 
 	Positions           map[*Position]any
 	Positions_mapString map[string]*Position
+
+	// insertion point for slice of pointers maps
 
 	OnAfterPositionCreateCallback OnAfterCreateInterface[Position]
 	OnAfterPositionUpdateCallback OnAfterUpdateInterface[Position]
@@ -118,6 +157,8 @@ type StageStruct struct {
 	UmlStates           map[*UmlState]any
 	UmlStates_mapString map[string]*UmlState
 
+	// insertion point for slice of pointers maps
+
 	OnAfterUmlStateCreateCallback OnAfterCreateInterface[UmlState]
 	OnAfterUmlStateUpdateCallback OnAfterUpdateInterface[UmlState]
 	OnAfterUmlStateDeleteCallback OnAfterDeleteInterface[UmlState]
@@ -126,6 +167,9 @@ type StageStruct struct {
 	Umlscs           map[*Umlsc]any
 	Umlscs_mapString map[string]*Umlsc
 
+	// insertion point for slice of pointers maps
+	Umlsc_States_reverseMap map[*UmlState]*Umlsc
+
 	OnAfterUmlscCreateCallback OnAfterCreateInterface[Umlsc]
 	OnAfterUmlscUpdateCallback OnAfterUpdateInterface[Umlsc]
 	OnAfterUmlscDeleteCallback OnAfterDeleteInterface[Umlsc]
@@ -133,6 +177,8 @@ type StageStruct struct {
 
 	Vertices           map[*Vertice]any
 	Vertices_mapString map[string]*Vertice
+
+	// insertion point for slice of pointers maps
 
 	OnAfterVerticeCreateCallback OnAfterCreateInterface[Vertice]
 	OnAfterVerticeUpdateCallback OnAfterUpdateInterface[Vertice]
@@ -161,6 +207,10 @@ type StageStruct struct {
 	// map to enable docLink renaming when an identifier is renamed
 	Map_DocLink_Renaming map[string]GONG__Identifier
 	// the to be removed stops here
+}
+
+func (stage *StageStruct) GetType() string {
+	return "github.com/fullstack-lang/gongdoc/go/models"
 }
 
 type GONG__Identifier struct {
@@ -233,17 +283,6 @@ type BackRepoInterface interface {
 	GetLastPushFromFrontNb() uint
 }
 
-var _stage *StageStruct
-
-var once sync.Once
-
-func GetDefaultStage() *StageStruct {
-	once.Do(func() {
-		_stage = NewStage("")
-	})
-	return _stage
-}
-
 func NewStage(path string) (stage *StageStruct) {
 
 	stage = &StageStruct{ // insertion point for array initiatialisation
@@ -312,6 +351,8 @@ func (stage *StageStruct) CommitWithSuspendedCallbacks() {
 }
 
 func (stage *StageStruct) Commit() {
+	stage.ComputeReverseMaps()
+
 	if stage.BackRepo != nil {
 		stage.BackRepo.Commit(stage)
 	}
@@ -338,6 +379,7 @@ func (stage *StageStruct) Checkout() {
 		stage.BackRepo.Checkout(stage)
 	}
 
+	stage.ComputeReverseMaps()
 	// insertion point for computing the map of number of instances per gongstruct
 	stage.Map_GongStructName_InstancesNb["Classdiagram"] = len(stage.Classdiagrams)
 	stage.Map_GongStructName_InstancesNb["DiagramPackage"] = len(stage.DiagramPackages)
@@ -399,6 +441,12 @@ func (classdiagram *Classdiagram) Unstage(stage *StageStruct) *Classdiagram {
 	return classdiagram
 }
 
+// UnstageVoid removes classdiagram off the model stage
+func (classdiagram *Classdiagram) UnstageVoid(stage *StageStruct) {
+	delete(stage.Classdiagrams, classdiagram)
+	delete(stage.Classdiagrams_mapString, classdiagram.Name)
+}
+
 // commit classdiagram to the back repo (if it is already staged)
 func (classdiagram *Classdiagram) Commit(stage *StageStruct) *Classdiagram {
 	if _, ok := stage.Classdiagrams[classdiagram]; ok {
@@ -441,6 +489,12 @@ func (diagrampackage *DiagramPackage) Unstage(stage *StageStruct) *DiagramPackag
 	delete(stage.DiagramPackages, diagrampackage)
 	delete(stage.DiagramPackages_mapString, diagrampackage.Name)
 	return diagrampackage
+}
+
+// UnstageVoid removes diagrampackage off the model stage
+func (diagrampackage *DiagramPackage) UnstageVoid(stage *StageStruct) {
+	delete(stage.DiagramPackages, diagrampackage)
+	delete(stage.DiagramPackages_mapString, diagrampackage.Name)
 }
 
 // commit diagrampackage to the back repo (if it is already staged)
@@ -487,6 +541,12 @@ func (field *Field) Unstage(stage *StageStruct) *Field {
 	return field
 }
 
+// UnstageVoid removes field off the model stage
+func (field *Field) UnstageVoid(stage *StageStruct) {
+	delete(stage.Fields, field)
+	delete(stage.Fields_mapString, field.Name)
+}
+
 // commit field to the back repo (if it is already staged)
 func (field *Field) Commit(stage *StageStruct) *Field {
 	if _, ok := stage.Fields[field]; ok {
@@ -529,6 +589,12 @@ func (gongenumshape *GongEnumShape) Unstage(stage *StageStruct) *GongEnumShape {
 	delete(stage.GongEnumShapes, gongenumshape)
 	delete(stage.GongEnumShapes_mapString, gongenumshape.Name)
 	return gongenumshape
+}
+
+// UnstageVoid removes gongenumshape off the model stage
+func (gongenumshape *GongEnumShape) UnstageVoid(stage *StageStruct) {
+	delete(stage.GongEnumShapes, gongenumshape)
+	delete(stage.GongEnumShapes_mapString, gongenumshape.Name)
 }
 
 // commit gongenumshape to the back repo (if it is already staged)
@@ -575,6 +641,12 @@ func (gongenumvalueentry *GongEnumValueEntry) Unstage(stage *StageStruct) *GongE
 	return gongenumvalueentry
 }
 
+// UnstageVoid removes gongenumvalueentry off the model stage
+func (gongenumvalueentry *GongEnumValueEntry) UnstageVoid(stage *StageStruct) {
+	delete(stage.GongEnumValueEntrys, gongenumvalueentry)
+	delete(stage.GongEnumValueEntrys_mapString, gongenumvalueentry.Name)
+}
+
 // commit gongenumvalueentry to the back repo (if it is already staged)
 func (gongenumvalueentry *GongEnumValueEntry) Commit(stage *StageStruct) *GongEnumValueEntry {
 	if _, ok := stage.GongEnumValueEntrys[gongenumvalueentry]; ok {
@@ -617,6 +689,12 @@ func (gongstructshape *GongStructShape) Unstage(stage *StageStruct) *GongStructS
 	delete(stage.GongStructShapes, gongstructshape)
 	delete(stage.GongStructShapes_mapString, gongstructshape.Name)
 	return gongstructshape
+}
+
+// UnstageVoid removes gongstructshape off the model stage
+func (gongstructshape *GongStructShape) UnstageVoid(stage *StageStruct) {
+	delete(stage.GongStructShapes, gongstructshape)
+	delete(stage.GongStructShapes_mapString, gongstructshape.Name)
 }
 
 // commit gongstructshape to the back repo (if it is already staged)
@@ -663,6 +741,12 @@ func (link *Link) Unstage(stage *StageStruct) *Link {
 	return link
 }
 
+// UnstageVoid removes link off the model stage
+func (link *Link) UnstageVoid(stage *StageStruct) {
+	delete(stage.Links, link)
+	delete(stage.Links_mapString, link.Name)
+}
+
 // commit link to the back repo (if it is already staged)
 func (link *Link) Commit(stage *StageStruct) *Link {
 	if _, ok := stage.Links[link]; ok {
@@ -705,6 +789,12 @@ func (noteshape *NoteShape) Unstage(stage *StageStruct) *NoteShape {
 	delete(stage.NoteShapes, noteshape)
 	delete(stage.NoteShapes_mapString, noteshape.Name)
 	return noteshape
+}
+
+// UnstageVoid removes noteshape off the model stage
+func (noteshape *NoteShape) UnstageVoid(stage *StageStruct) {
+	delete(stage.NoteShapes, noteshape)
+	delete(stage.NoteShapes_mapString, noteshape.Name)
 }
 
 // commit noteshape to the back repo (if it is already staged)
@@ -751,6 +841,12 @@ func (noteshapelink *NoteShapeLink) Unstage(stage *StageStruct) *NoteShapeLink {
 	return noteshapelink
 }
 
+// UnstageVoid removes noteshapelink off the model stage
+func (noteshapelink *NoteShapeLink) UnstageVoid(stage *StageStruct) {
+	delete(stage.NoteShapeLinks, noteshapelink)
+	delete(stage.NoteShapeLinks_mapString, noteshapelink.Name)
+}
+
 // commit noteshapelink to the back repo (if it is already staged)
 func (noteshapelink *NoteShapeLink) Commit(stage *StageStruct) *NoteShapeLink {
 	if _, ok := stage.NoteShapeLinks[noteshapelink]; ok {
@@ -793,6 +889,12 @@ func (position *Position) Unstage(stage *StageStruct) *Position {
 	delete(stage.Positions, position)
 	delete(stage.Positions_mapString, position.Name)
 	return position
+}
+
+// UnstageVoid removes position off the model stage
+func (position *Position) UnstageVoid(stage *StageStruct) {
+	delete(stage.Positions, position)
+	delete(stage.Positions_mapString, position.Name)
 }
 
 // commit position to the back repo (if it is already staged)
@@ -839,6 +941,12 @@ func (umlstate *UmlState) Unstage(stage *StageStruct) *UmlState {
 	return umlstate
 }
 
+// UnstageVoid removes umlstate off the model stage
+func (umlstate *UmlState) UnstageVoid(stage *StageStruct) {
+	delete(stage.UmlStates, umlstate)
+	delete(stage.UmlStates_mapString, umlstate.Name)
+}
+
 // commit umlstate to the back repo (if it is already staged)
 func (umlstate *UmlState) Commit(stage *StageStruct) *UmlState {
 	if _, ok := stage.UmlStates[umlstate]; ok {
@@ -883,6 +991,12 @@ func (umlsc *Umlsc) Unstage(stage *StageStruct) *Umlsc {
 	return umlsc
 }
 
+// UnstageVoid removes umlsc off the model stage
+func (umlsc *Umlsc) UnstageVoid(stage *StageStruct) {
+	delete(stage.Umlscs, umlsc)
+	delete(stage.Umlscs_mapString, umlsc.Name)
+}
+
 // commit umlsc to the back repo (if it is already staged)
 func (umlsc *Umlsc) Commit(stage *StageStruct) *Umlsc {
 	if _, ok := stage.Umlscs[umlsc]; ok {
@@ -925,6 +1039,12 @@ func (vertice *Vertice) Unstage(stage *StageStruct) *Vertice {
 	delete(stage.Vertices, vertice)
 	delete(stage.Vertices_mapString, vertice.Name)
 	return vertice
+}
+
+// UnstageVoid removes vertice off the model stage
+func (vertice *Vertice) UnstageVoid(stage *StageStruct) {
+	delete(stage.Vertices, vertice)
+	delete(stage.Vertices_mapString, vertice.Name)
 }
 
 // commit vertice to the back repo (if it is already staged)
@@ -1150,6 +1270,7 @@ type PointerToGongstruct interface {
 	*Classdiagram | *DiagramPackage | *Field | *GongEnumShape | *GongEnumValueEntry | *GongStructShape | *Link | *NoteShape | *NoteShapeLink | *Position | *UmlState | *Umlsc | *Vertice
 	GetName() string
 	CommitVoid(*StageStruct)
+	UnstageVoid(stage *StageStruct)
 }
 
 type GongstructSet interface {
@@ -1823,6 +1944,44 @@ func GetGongstructName[Type Gongstruct]() (res string) {
 	return res
 }
 
+// GetPointerToGongstructName returns the name of the Gongstruct
+// this can be usefull if one want program robust to refactoring
+func GetPointerToGongstructName[Type PointerToGongstruct]() (res string) {
+
+	var ret Type
+
+	switch any(ret).(type) {
+	// insertion point for generic get gongstruct name
+	case *Classdiagram:
+		res = "Classdiagram"
+	case *DiagramPackage:
+		res = "DiagramPackage"
+	case *Field:
+		res = "Field"
+	case *GongEnumShape:
+		res = "GongEnumShape"
+	case *GongEnumValueEntry:
+		res = "GongEnumValueEntry"
+	case *GongStructShape:
+		res = "GongStructShape"
+	case *Link:
+		res = "Link"
+	case *NoteShape:
+		res = "NoteShape"
+	case *NoteShapeLink:
+		res = "NoteShapeLink"
+	case *Position:
+		res = "Position"
+	case *UmlState:
+		res = "UmlState"
+	case *Umlsc:
+		res = "Umlsc"
+	case *Vertice:
+		res = "Vertice"
+	}
+	return res
+}
+
 // GetFields return the array of the fields
 func GetFields[Type Gongstruct]() (res []string) {
 
@@ -1856,6 +2015,93 @@ func GetFields[Type Gongstruct]() (res []string) {
 		res = []string{"Name", "States", "Activestate", "IsInDrawMode"}
 	case Vertice:
 		res = []string{"X", "Y", "Name"}
+	}
+	return
+}
+
+type ReverseField struct {
+	GongstructName string
+	Fieldname      string
+}
+
+func GetReverseFields[Type Gongstruct]() (res []ReverseField) {
+
+	res = make([]ReverseField, 0)
+
+	var ret Type
+
+	switch any(ret).(type) {
+
+	// insertion point for generic get gongstruct name
+	case Classdiagram:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "DiagramPackage"
+		rf.Fieldname = "Classdiagrams"
+		res = append(res, rf)
+	case DiagramPackage:
+		var rf ReverseField
+		_ = rf
+	case Field:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "GongStructShape"
+		rf.Fieldname = "Fields"
+		res = append(res, rf)
+	case GongEnumShape:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "Classdiagram"
+		rf.Fieldname = "GongEnumShapes"
+		res = append(res, rf)
+	case GongEnumValueEntry:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "GongEnumShape"
+		rf.Fieldname = "GongEnumValueEntrys"
+		res = append(res, rf)
+	case GongStructShape:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "Classdiagram"
+		rf.Fieldname = "GongStructShapes"
+		res = append(res, rf)
+	case Link:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "GongStructShape"
+		rf.Fieldname = "Links"
+		res = append(res, rf)
+	case NoteShape:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "Classdiagram"
+		rf.Fieldname = "NoteShapes"
+		res = append(res, rf)
+	case NoteShapeLink:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "NoteShape"
+		rf.Fieldname = "NoteShapeLinks"
+		res = append(res, rf)
+	case Position:
+		var rf ReverseField
+		_ = rf
+	case UmlState:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "Umlsc"
+		rf.Fieldname = "States"
+		res = append(res, rf)
+	case Umlsc:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "DiagramPackage"
+		rf.Fieldname = "Umlscs"
+		res = append(res, rf)
+	case Vertice:
+		var rf ReverseField
+		_ = rf
 	}
 	return
 }
@@ -2177,7 +2423,7 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 			res = inferedInstance.Name
 		}
 	default:
-		_ = inferedInstance	
+		_ = inferedInstance
 	}
 	return
 }
@@ -2462,7 +2708,7 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 			res = inferedInstance.Name
 		}
 	default:
-		_ = inferedInstance	
+		_ = inferedInstance
 	}
 	return
 }

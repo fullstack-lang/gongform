@@ -65,6 +65,9 @@ func (controller *Controller) GetNoteShapeLinks(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoNoteShapeLink.GetDB()
 
 	query := db.Find(&noteshapelinkDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetNoteShapeLinks(c *gin.Context) {
 
 		// insertion point for updating fields
 		noteshapelinkAPI.ID = noteshapelinkDB.ID
-		noteshapelinkDB.CopyBasicFieldsToNoteShapeLink(&noteshapelinkAPI.NoteShapeLink)
-		noteshapelinkAPI.NoteShapeLinkPointersEnconding = noteshapelinkDB.NoteShapeLinkPointersEnconding
+		noteshapelinkDB.CopyBasicFieldsToNoteShapeLink_WOP(&noteshapelinkAPI.NoteShapeLink_WOP)
+		noteshapelinkAPI.NoteShapeLinkPointersEncoding = noteshapelinkDB.NoteShapeLinkPointersEncoding
 		noteshapelinkAPIs = append(noteshapelinkAPIs, noteshapelinkAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostNoteShapeLink(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoNoteShapeLink.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostNoteShapeLink(c *gin.Context) {
 
 	// Create noteshapelink
 	noteshapelinkDB := orm.NoteShapeLinkDB{}
-	noteshapelinkDB.NoteShapeLinkPointersEnconding = input.NoteShapeLinkPointersEnconding
-	noteshapelinkDB.CopyBasicFieldsFromNoteShapeLink(&input.NoteShapeLink)
+	noteshapelinkDB.NoteShapeLinkPointersEncoding = input.NoteShapeLinkPointersEncoding
+	noteshapelinkDB.CopyBasicFieldsFromNoteShapeLink_WOP(&input.NoteShapeLink_WOP)
 
 	query := db.Create(&noteshapelinkDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetNoteShapeLink(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoNoteShapeLink.GetDB()
 
 	// Get noteshapelinkDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetNoteShapeLink(c *gin.Context) {
 
 	var noteshapelinkAPI orm.NoteShapeLinkAPI
 	noteshapelinkAPI.ID = noteshapelinkDB.ID
-	noteshapelinkAPI.NoteShapeLinkPointersEnconding = noteshapelinkDB.NoteShapeLinkPointersEnconding
-	noteshapelinkDB.CopyBasicFieldsToNoteShapeLink(&noteshapelinkAPI.NoteShapeLink)
+	noteshapelinkAPI.NoteShapeLinkPointersEncoding = noteshapelinkDB.NoteShapeLinkPointersEncoding
+	noteshapelinkDB.CopyBasicFieldsToNoteShapeLink_WOP(&noteshapelinkAPI.NoteShapeLink_WOP)
 
 	c.JSON(http.StatusOK, noteshapelinkAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateNoteShapeLink(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoNoteShapeLink.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateNoteShapeLink(c *gin.Context) {
 	}
 
 	// update
-	noteshapelinkDB.CopyBasicFieldsFromNoteShapeLink(&input.NoteShapeLink)
-	noteshapelinkDB.NoteShapeLinkPointersEnconding = input.NoteShapeLinkPointersEnconding
+	noteshapelinkDB.CopyBasicFieldsFromNoteShapeLink_WOP(&input.NoteShapeLink_WOP)
+	noteshapelinkDB.NoteShapeLinkPointersEncoding = input.NoteShapeLinkPointersEncoding
 
 	query = db.Model(&noteshapelinkDB).Updates(noteshapelinkDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteNoteShapeLink(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoNoteShapeLink.GetDB()
 
 	// Get model if exist

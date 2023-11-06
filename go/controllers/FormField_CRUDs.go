@@ -65,6 +65,9 @@ func (controller *Controller) GetFormFields(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongform/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormField.GetDB()
 
 	query := db.Find(&formfieldDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetFormFields(c *gin.Context) {
 
 		// insertion point for updating fields
 		formfieldAPI.ID = formfieldDB.ID
-		formfieldDB.CopyBasicFieldsToFormField(&formfieldAPI.FormField)
-		formfieldAPI.FormFieldPointersEnconding = formfieldDB.FormFieldPointersEnconding
+		formfieldDB.CopyBasicFieldsToFormField_WOP(&formfieldAPI.FormField_WOP)
+		formfieldAPI.FormFieldPointersEncoding = formfieldDB.FormFieldPointersEncoding
 		formfieldAPIs = append(formfieldAPIs, formfieldAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostFormField(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongform/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormField.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostFormField(c *gin.Context) {
 
 	// Create formfield
 	formfieldDB := orm.FormFieldDB{}
-	formfieldDB.FormFieldPointersEnconding = input.FormFieldPointersEnconding
-	formfieldDB.CopyBasicFieldsFromFormField(&input.FormField)
+	formfieldDB.FormFieldPointersEncoding = input.FormFieldPointersEncoding
+	formfieldDB.CopyBasicFieldsFromFormField_WOP(&input.FormField_WOP)
 
 	query := db.Create(&formfieldDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetFormField(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongform/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormField.GetDB()
 
 	// Get formfieldDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetFormField(c *gin.Context) {
 
 	var formfieldAPI orm.FormFieldAPI
 	formfieldAPI.ID = formfieldDB.ID
-	formfieldAPI.FormFieldPointersEnconding = formfieldDB.FormFieldPointersEnconding
-	formfieldDB.CopyBasicFieldsToFormField(&formfieldAPI.FormField)
+	formfieldAPI.FormFieldPointersEncoding = formfieldDB.FormFieldPointersEncoding
+	formfieldDB.CopyBasicFieldsToFormField_WOP(&formfieldAPI.FormField_WOP)
 
 	c.JSON(http.StatusOK, formfieldAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateFormField(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongform/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormField.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateFormField(c *gin.Context) {
 	}
 
 	// update
-	formfieldDB.CopyBasicFieldsFromFormField(&input.FormField)
-	formfieldDB.FormFieldPointersEnconding = input.FormFieldPointersEnconding
+	formfieldDB.CopyBasicFieldsFromFormField_WOP(&input.FormField_WOP)
+	formfieldDB.FormFieldPointersEncoding = input.FormFieldPointersEncoding
 
 	query = db.Model(&formfieldDB).Updates(formfieldDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteFormField(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongform/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoFormField.GetDB()
 
 	// Get model if exist

@@ -141,7 +141,8 @@ export class MaterialTableComponent implements OnInit {
 
         this.selectedTable = undefined
 
-        for (let table of this.gongtableFrontRepo.Tables_array) {
+        // use of the refactorable version
+        for (let table of this.gongtableFrontRepo.getArray<gongtable.TableDB>(gongtable.TableDB.GONGSTRUCT_NAME)) {
           if (table.Name == this.TableName) {
             this.selectedTable = table
           }
@@ -150,41 +151,6 @@ export class MaterialTableComponent implements OnInit {
         if (this.selectedTable == undefined) {
           return
         }
-
-        // sort rows according to their index
-        this.selectedTable.Rows?.sort((t1, t2) => {
-          let t1_revPointerID_Index = t1.Table_RowsDBID_Index
-          let t2_revPointerID_Index = t2.Table_RowsDBID_Index
-          if (t1_revPointerID_Index && t2_revPointerID_Index) {
-            if (t1_revPointerID_Index.Int64 > t2_revPointerID_Index.Int64) {
-              return 1;
-            }
-            if (t1_revPointerID_Index.Int64 < t2_revPointerID_Index.Int64) {
-              return -1;
-            }
-          }
-          return 0;
-        })
-
-        // sort cells according to their order
-        if (this.selectedTable.Rows) {
-          for (let row of this.selectedTable.Rows) {
-            row.Cells?.sort((t1, t2) => {
-              let t1_revPointerID_Index = t1.Row_CellsDBID_Index
-              let t2_revPointerID_Index = t2.Row_CellsDBID_Index
-              if (t1_revPointerID_Index && t2_revPointerID_Index) {
-                if (t1_revPointerID_Index.Int64 > t2_revPointerID_Index.Int64) {
-                  return 1;
-                }
-                if (t1_revPointerID_Index.Int64 < t2_revPointerID_Index.Int64) {
-                  return -1;
-                }
-              }
-              return 0;
-            })
-          }
-        }
-
 
         this.dataSource = new MatTableDataSource(this.selectedTable.Rows!)
 
@@ -197,20 +163,6 @@ export class MaterialTableComponent implements OnInit {
         if (this.selectedTable.DisplayedColumns == undefined) {
           return
         }
-
-        this.selectedTable.DisplayedColumns?.sort((t1, t2) => {
-          let t1_revPointerID_Index = t1.Table_DisplayedColumnsDBID_Index
-          let t2_revPointerID_Index = t2.Table_DisplayedColumnsDBID_Index
-          if (t1_revPointerID_Index && t2_revPointerID_Index) {
-            if (t1_revPointerID_Index.Int64 > t2_revPointerID_Index.Int64) {
-              return 1;
-            }
-            if (t1_revPointerID_Index.Int64 < t2_revPointerID_Index.Int64) {
-              return -1;
-            }
-          }
-          return 0;
-        })
 
         this.mapHeaderIdIndex = new Map<string, number>()
         let index = 0
@@ -355,7 +307,7 @@ export class MaterialTableComponent implements OnInit {
       // in case this component is called as a modal window (MatDialog)
       // exits,
       this.selectedTable.SavingInProgress = true
-      this.tableService.updateTable(this.selectedTable!, this.DataStack).subscribe(
+      this.tableService.update(this.selectedTable!, this.DataStack, this.gongtableFrontRepoService.frontRepo).subscribe(
         () => {
           // in case this component is called as a modal window (MatDialog)
           // exits,
@@ -373,14 +325,14 @@ export class MaterialTableComponent implements OnInit {
 
     const promises = []
     for (let row of modifiedRows) {
-      promises.push(this.rowService.updateRow(row, this.DataStack))
+      promises.push(this.rowService.updateRow(row, this.DataStack, this.gongtableFrontRepoService.frontRepo))
     }
 
     forkJoin(promises).subscribe(
       () => {
 
         this.selectedTable!.SavingInProgress = false
-        this.tableService.updateTable(this.selectedTable!, this.DataStack).subscribe(
+        this.tableService.update(this.selectedTable!, this.DataStack, this.gongtableFrontRepoService.frontRepo).subscribe(
           () => {
             // in case this component is called as a modal window (MatDialog)
             // exits,
@@ -401,16 +353,14 @@ export class MaterialTableComponent implements OnInit {
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.selectedTable?.Rows!, event.previousIndex, event.currentIndex)
 
-    const promises = []
-    let index = 0
-    for (let row of this.selectedTable?.Rows!) {
-      row.Table_RowsDBID_Index.Int64 = index++
-      promises.push(this.rowService.updateRow(row, this.DataStack))
-    }
-
-    forkJoin(promises).subscribe(
-      () => this.refresh()
-    )
+    this.tableService.update(
+      this.selectedTable!,
+      this.DataStack,
+      this.gongtableFrontRepoService.frontRepo).subscribe(
+        () => {
+          console.log("table", this.selectedTable?.Name, "rows shuffled")
+        }
+      )
   }
 
   isDraggableRow = (index: number, item: gongtable.RowDB) => this.selectedTable?.CanDragDropRows
@@ -424,13 +374,12 @@ export class MaterialTableComponent implements OnInit {
   // onClick performs an update of the clicked row (without any property change)
   // this minimalist design will hopefully be sufficient for the backend to interpret
   // that the row has been clicked
-  onClick(rowID: number) {
-    console.log("Material Table: onClick: Stack: `" + this.DataStack + "`table:`" + this.TableName + "`row:" + rowID)
+  onClick(row: gongtable.RowDB) {
+    console.log("Material Table: onClick: Stack: `" + this.DataStack + "`table:`" + this.TableName + "`row:" + row.Name)
 
-    let row: gongtable.RowDB = this.selectedTable?.Rows![rowID]!
     let cells = row.Cells
 
-    this.rowService.updateRow(row, this.DataStack).subscribe(
+    this.rowService.updateRow(row, this.DataStack, this.gongtableFrontRepoService.frontRepo).subscribe(
       () => {
         console.log("row updated")
         row.Cells = cells
@@ -455,7 +404,7 @@ export class MaterialTableComponent implements OnInit {
 
   onClickCellIcon(cellIcon: gongtable.CellIconDB) {
     console.log("Cell Icon clicked")
-    this.celliconService.updateCellIcon(cellIcon, this.DataStack).subscribe(
+    this.celliconService.updateCellIcon(cellIcon, this.DataStack, this.gongtableFrontRepoService.frontRepo).subscribe(
       () => {
 
       }

@@ -65,6 +65,9 @@ func (controller *Controller) GetSliceOfPointerToGongStructFields(c *gin.Context
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gong/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoSliceOfPointerToGongStructField.GetDB()
 
 	query := db.Find(&sliceofpointertogongstructfieldDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetSliceOfPointerToGongStructFields(c *gin.Context
 
 		// insertion point for updating fields
 		sliceofpointertogongstructfieldAPI.ID = sliceofpointertogongstructfieldDB.ID
-		sliceofpointertogongstructfieldDB.CopyBasicFieldsToSliceOfPointerToGongStructField(&sliceofpointertogongstructfieldAPI.SliceOfPointerToGongStructField)
-		sliceofpointertogongstructfieldAPI.SliceOfPointerToGongStructFieldPointersEnconding = sliceofpointertogongstructfieldDB.SliceOfPointerToGongStructFieldPointersEnconding
+		sliceofpointertogongstructfieldDB.CopyBasicFieldsToSliceOfPointerToGongStructField_WOP(&sliceofpointertogongstructfieldAPI.SliceOfPointerToGongStructField_WOP)
+		sliceofpointertogongstructfieldAPI.SliceOfPointerToGongStructFieldPointersEncoding = sliceofpointertogongstructfieldDB.SliceOfPointerToGongStructFieldPointersEncoding
 		sliceofpointertogongstructfieldAPIs = append(sliceofpointertogongstructfieldAPIs, sliceofpointertogongstructfieldAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostSliceOfPointerToGongStructField(c *gin.Context
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gong/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoSliceOfPointerToGongStructField.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostSliceOfPointerToGongStructField(c *gin.Context
 
 	// Create sliceofpointertogongstructfield
 	sliceofpointertogongstructfieldDB := orm.SliceOfPointerToGongStructFieldDB{}
-	sliceofpointertogongstructfieldDB.SliceOfPointerToGongStructFieldPointersEnconding = input.SliceOfPointerToGongStructFieldPointersEnconding
-	sliceofpointertogongstructfieldDB.CopyBasicFieldsFromSliceOfPointerToGongStructField(&input.SliceOfPointerToGongStructField)
+	sliceofpointertogongstructfieldDB.SliceOfPointerToGongStructFieldPointersEncoding = input.SliceOfPointerToGongStructFieldPointersEncoding
+	sliceofpointertogongstructfieldDB.CopyBasicFieldsFromSliceOfPointerToGongStructField_WOP(&input.SliceOfPointerToGongStructField_WOP)
 
 	query := db.Create(&sliceofpointertogongstructfieldDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetSliceOfPointerToGongStructField(c *gin.Context)
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gong/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoSliceOfPointerToGongStructField.GetDB()
 
 	// Get sliceofpointertogongstructfieldDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetSliceOfPointerToGongStructField(c *gin.Context)
 
 	var sliceofpointertogongstructfieldAPI orm.SliceOfPointerToGongStructFieldAPI
 	sliceofpointertogongstructfieldAPI.ID = sliceofpointertogongstructfieldDB.ID
-	sliceofpointertogongstructfieldAPI.SliceOfPointerToGongStructFieldPointersEnconding = sliceofpointertogongstructfieldDB.SliceOfPointerToGongStructFieldPointersEnconding
-	sliceofpointertogongstructfieldDB.CopyBasicFieldsToSliceOfPointerToGongStructField(&sliceofpointertogongstructfieldAPI.SliceOfPointerToGongStructField)
+	sliceofpointertogongstructfieldAPI.SliceOfPointerToGongStructFieldPointersEncoding = sliceofpointertogongstructfieldDB.SliceOfPointerToGongStructFieldPointersEncoding
+	sliceofpointertogongstructfieldDB.CopyBasicFieldsToSliceOfPointerToGongStructField_WOP(&sliceofpointertogongstructfieldAPI.SliceOfPointerToGongStructField_WOP)
 
 	c.JSON(http.StatusOK, sliceofpointertogongstructfieldAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdateSliceOfPointerToGongStructField(c *gin.Conte
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gong/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoSliceOfPointerToGongStructField.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdateSliceOfPointerToGongStructField(c *gin.Conte
 	}
 
 	// update
-	sliceofpointertogongstructfieldDB.CopyBasicFieldsFromSliceOfPointerToGongStructField(&input.SliceOfPointerToGongStructField)
-	sliceofpointertogongstructfieldDB.SliceOfPointerToGongStructFieldPointersEnconding = input.SliceOfPointerToGongStructFieldPointersEnconding
+	sliceofpointertogongstructfieldDB.CopyBasicFieldsFromSliceOfPointerToGongStructField_WOP(&input.SliceOfPointerToGongStructField_WOP)
+	sliceofpointertogongstructfieldDB.SliceOfPointerToGongStructFieldPointersEncoding = input.SliceOfPointerToGongStructFieldPointersEncoding
 
 	query = db.Model(&sliceofpointertogongstructfieldDB).Updates(sliceofpointertogongstructfieldDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeleteSliceOfPointerToGongStructField(c *gin.Conte
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gong/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoSliceOfPointerToGongStructField.GetDB()
 
 	// Get model if exist

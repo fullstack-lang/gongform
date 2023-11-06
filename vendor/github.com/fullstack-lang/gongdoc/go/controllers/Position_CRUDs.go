@@ -65,6 +65,9 @@ func (controller *Controller) GetPositions(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoPosition.GetDB()
 
 	query := db.Find(&positionDBs)
@@ -88,8 +91,8 @@ func (controller *Controller) GetPositions(c *gin.Context) {
 
 		// insertion point for updating fields
 		positionAPI.ID = positionDB.ID
-		positionDB.CopyBasicFieldsToPosition(&positionAPI.Position)
-		positionAPI.PositionPointersEnconding = positionDB.PositionPointersEnconding
+		positionDB.CopyBasicFieldsToPosition_WOP(&positionAPI.Position_WOP)
+		positionAPI.PositionPointersEncoding = positionDB.PositionPointersEncoding
 		positionAPIs = append(positionAPIs, positionAPI)
 	}
 
@@ -124,6 +127,9 @@ func (controller *Controller) PostPosition(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoPosition.GetDB()
 
 	// Validate input
@@ -141,8 +147,8 @@ func (controller *Controller) PostPosition(c *gin.Context) {
 
 	// Create position
 	positionDB := orm.PositionDB{}
-	positionDB.PositionPointersEnconding = input.PositionPointersEnconding
-	positionDB.CopyBasicFieldsFromPosition(&input.Position)
+	positionDB.PositionPointersEncoding = input.PositionPointersEncoding
+	positionDB.CopyBasicFieldsFromPosition_WOP(&input.Position_WOP)
 
 	query := db.Create(&positionDB)
 	if query.Error != nil {
@@ -193,6 +199,9 @@ func (controller *Controller) GetPosition(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoPosition.GetDB()
 
 	// Get positionDB in DB
@@ -208,8 +217,8 @@ func (controller *Controller) GetPosition(c *gin.Context) {
 
 	var positionAPI orm.PositionAPI
 	positionAPI.ID = positionDB.ID
-	positionAPI.PositionPointersEnconding = positionDB.PositionPointersEnconding
-	positionDB.CopyBasicFieldsToPosition(&positionAPI.Position)
+	positionAPI.PositionPointersEncoding = positionDB.PositionPointersEncoding
+	positionDB.CopyBasicFieldsToPosition_WOP(&positionAPI.Position_WOP)
 
 	c.JSON(http.StatusOK, positionAPI)
 }
@@ -238,6 +247,9 @@ func (controller *Controller) UpdatePosition(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoPosition.GetDB()
 
 	// Validate input
@@ -264,8 +276,8 @@ func (controller *Controller) UpdatePosition(c *gin.Context) {
 	}
 
 	// update
-	positionDB.CopyBasicFieldsFromPosition(&input.Position)
-	positionDB.PositionPointersEnconding = input.PositionPointersEnconding
+	positionDB.CopyBasicFieldsFromPosition_WOP(&input.Position_WOP)
+	positionDB.PositionPointersEncoding = input.PositionPointersEncoding
 
 	query = db.Model(&positionDB).Updates(positionDB)
 	if query.Error != nil {
@@ -322,6 +334,9 @@ func (controller *Controller) DeletePosition(c *gin.Context) {
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
+	if backRepo == nil {
+		log.Panic("Stack github.com/fullstack-lang/gongdoc/go/models, Unkown stack", stackPath)
+	}
 	db := backRepo.BackRepoPosition.GetDB()
 
 	// Get model if exist
