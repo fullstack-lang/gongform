@@ -4,15 +4,8 @@ import { Observable, combineLatest, timer } from 'rxjs'
 
 import * as gongdoc from 'gongdoc'
 import * as gongform from 'gongform'
-
-import { GongdocModule } from 'gongdoc'
-import { GongdocspecificModule } from 'gongdocspecific'
-
-import { GongtreeModule } from 'gongtree'
-import { GongtreespecificModule } from 'gongtreespecific'
-
 import * as gongtable from 'gongtable'
-import { GongtablespecificModule } from 'gongtablespecific'
+
 
 @Component({
   selector: 'app-root',
@@ -21,19 +14,22 @@ import { GongtablespecificModule } from 'gongtablespecific'
 export class AppComponent implements OnInit {
 
   default = 'Gongform Data/Model'
-  view = this.default
+  form_view = "Form"
+  view = this.form_view
 
-  views: string[] = [this.default];
+  views: string[] = [this.form_view, this.default];
 
   scrollStyle = {
     'overflow- x': 'auto',
     'width': '100%',  // Ensure the div takes the full width of its parent container
   }
 
-  StackName = "gongform"
-  StackType = "github.com/fullstack-lang/gongform/go/models"
+  FormName = "Form 1"
+  StackType = gongform.StackType
+  StackNames = gongform.StacksNames
 
   TableExtraPathEnum = gongtable.TableExtraPathEnum
+
 
   constructor(
   ) {
