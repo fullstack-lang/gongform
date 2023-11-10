@@ -3,10 +3,10 @@ module github.com/fullstack-lang/gongform
 go 1.21.0
 
 require (
-	github.com/fullstack-lang/gong v0.0.0-20231105222858-f744c873627a
+	github.com/fullstack-lang/gong v0.0.0-20231107065929-8d7e443a0d93
 	github.com/fullstack-lang/gongdoc v0.0.0-20231105141252-021e9db855fa
 	github.com/fullstack-lang/gongtable v0.0.0-20231106055058-44f76ebdef9e
-	github.com/fullstack-lang/gongtree v0.0.0-20231105223842-98f7960923c5
+	github.com/fullstack-lang/gongtree v0.0.0-20231107130507-dbcbdbe3de50
 	github.com/fullstack-lang/maticons v0.0.0-20230823061653-70c364fbdd00
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-contrib/static v0.0.1
@@ -14,6 +14,7 @@ require (
 	github.com/glebarez/sqlite v1.10.0
 	github.com/tealeg/xlsx/v3 v3.3.4
 	github.com/xuri/excelize/v2 v2.8.0
+	golang.org/x/exp v0.0.0-20231108232855-2478ac86f678
 	gorm.io/gorm v1.25.5
 )
 
@@ -23,7 +24,7 @@ require (
 	github.com/chenzhuoyu/iasm v0.9.1 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/frankban/quicktest v1.14.6 // indirect
-	github.com/fullstack-lang/gongsvg v0.0.0-20231105223842-7b0d9eb0e27a // indirect
+	github.com/fullstack-lang/gongsvg v0.0.0-20231109043251-3bc5386b6722 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/glebarez/go-sqlite v1.21.2 // indirect
@@ -37,7 +38,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/klauspost/cpuid/v2 v2.2.5 // indirect
+	github.com/klauspost/cpuid/v2 v2.2.6 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
@@ -59,14 +60,14 @@ require (
 	github.com/xuri/efp v0.0.0-20231025114914-d1ff6096ae53 // indirect
 	github.com/xuri/nfp v0.0.0-20230919160717-d98342af3f05 // indirect
 	golang.org/x/arch v0.6.0 // indirect
-	golang.org/x/crypto v0.14.0 // indirect
+	golang.org/x/crypto v0.15.0 // indirect
 	golang.org/x/mod v0.14.0 // indirect
-	golang.org/x/net v0.17.0 // indirect
+	golang.org/x/net v0.18.0 // indirect
 	golang.org/x/sys v0.14.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	modernc.org/libc v1.30.0 // indirect
+	modernc.org/libc v1.32.0 // indirect
 	modernc.org/mathutil v1.6.0 // indirect
 	modernc.org/memory v1.7.2 // indirect
 	modernc.org/sqlite v1.27.0 // indirect
