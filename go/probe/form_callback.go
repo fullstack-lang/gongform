@@ -500,6 +500,8 @@ func (formfielddateFormCallback *FormFieldDateFormCallback) OnSave() {
 		// insertion point per field
 		case "Name":
 			FormDivBasicFieldToField(&(formfielddate_.Name), formDiv)
+		case "Value":
+			FormDivBasicFieldToField(&(formfielddate_.Value), formDiv)
 		}
 	}
 
@@ -570,6 +572,8 @@ func (formfielddatetimeFormCallback *FormFieldDateTimeFormCallback) OnSave() {
 		// insertion point per field
 		case "Name":
 			FormDivBasicFieldToField(&(formfielddatetime_.Name), formDiv)
+		case "Value":
+			FormDivBasicFieldToField(&(formfielddatetime_.Value), formDiv)
 		}
 	}
 
@@ -948,6 +952,8 @@ func (formfieldtimeFormCallback *FormFieldTimeFormCallback) OnSave() {
 		// insertion point per field
 		case "Name":
 			FormDivBasicFieldToField(&(formfieldtime_.Name), formDiv)
+		case "Value":
+			FormDivBasicFieldToField(&(formfieldtime_.Value), formDiv)
 		case "Step":
 			FormDivBasicFieldToField(&(formfieldtime_.Step), formDiv)
 		}
