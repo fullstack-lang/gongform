@@ -5,45 +5,59 @@ import { Observable, combineLatest, BehaviorSubject, of } from 'rxjs'
 
 // insertion point sub template for services imports
 import { CheckBoxDB } from './checkbox-db'
+import { CheckBox, CopyCheckBoxDBToCheckBox } from './checkbox'
 import { CheckBoxService } from './checkbox.service'
 
 import { FormDivDB } from './formdiv-db'
+import { FormDiv, CopyFormDivDBToFormDiv } from './formdiv'
 import { FormDivService } from './formdiv.service'
 
 import { FormEditAssocButtonDB } from './formeditassocbutton-db'
+import { FormEditAssocButton, CopyFormEditAssocButtonDBToFormEditAssocButton } from './formeditassocbutton'
 import { FormEditAssocButtonService } from './formeditassocbutton.service'
 
 import { FormFieldDB } from './formfield-db'
+import { FormField, CopyFormFieldDBToFormField } from './formfield'
 import { FormFieldService } from './formfield.service'
 
 import { FormFieldDateDB } from './formfielddate-db'
+import { FormFieldDate, CopyFormFieldDateDBToFormFieldDate } from './formfielddate'
 import { FormFieldDateService } from './formfielddate.service'
 
 import { FormFieldDateTimeDB } from './formfielddatetime-db'
+import { FormFieldDateTime, CopyFormFieldDateTimeDBToFormFieldDateTime } from './formfielddatetime'
 import { FormFieldDateTimeService } from './formfielddatetime.service'
 
 import { FormFieldFloat64DB } from './formfieldfloat64-db'
+import { FormFieldFloat64, CopyFormFieldFloat64DBToFormFieldFloat64 } from './formfieldfloat64'
 import { FormFieldFloat64Service } from './formfieldfloat64.service'
 
 import { FormFieldIntDB } from './formfieldint-db'
+import { FormFieldInt, CopyFormFieldIntDBToFormFieldInt } from './formfieldint'
 import { FormFieldIntService } from './formfieldint.service'
 
 import { FormFieldSelectDB } from './formfieldselect-db'
+import { FormFieldSelect, CopyFormFieldSelectDBToFormFieldSelect } from './formfieldselect'
 import { FormFieldSelectService } from './formfieldselect.service'
 
 import { FormFieldStringDB } from './formfieldstring-db'
+import { FormFieldString, CopyFormFieldStringDBToFormFieldString } from './formfieldstring'
 import { FormFieldStringService } from './formfieldstring.service'
 
 import { FormFieldTimeDB } from './formfieldtime-db'
+import { FormFieldTime, CopyFormFieldTimeDBToFormFieldTime } from './formfieldtime'
 import { FormFieldTimeService } from './formfieldtime.service'
 
 import { FormGroupDB } from './formgroup-db'
+import { FormGroup, CopyFormGroupDBToFormGroup } from './formgroup'
 import { FormGroupService } from './formgroup.service'
 
 import { FormSortAssocButtonDB } from './formsortassocbutton-db'
+import { FormSortAssocButton, CopyFormSortAssocButtonDBToFormSortAssocButton } from './formsortassocbutton'
 import { FormSortAssocButtonService } from './formsortassocbutton.service'
 
 import { OptionDB } from './option-db'
+import { Option, CopyOptionDBToOption } from './option'
 import { OptionService } from './option.service'
 
 export const StackType = "github.com/fullstack-lang/gongform/go/models"
@@ -54,64 +68,106 @@ export class FrontRepo { // insertion point sub template
   CheckBoxs = new Map<number, CheckBoxDB>() // map of repo instances
   CheckBoxs_batch = new Map<number, CheckBoxDB>() // same but only in last GET (for finding repo instances to delete)
 
+  array_CheckBoxs = new Array<CheckBox>() // array of front instances
+  map_ID_CheckBox = new Map<number, CheckBox>() // map of front instances
+
   FormDivs_array = new Array<FormDivDB>() // array of repo instances
   FormDivs = new Map<number, FormDivDB>() // map of repo instances
   FormDivs_batch = new Map<number, FormDivDB>() // same but only in last GET (for finding repo instances to delete)
+
+  array_FormDivs = new Array<FormDiv>() // array of front instances
+  map_ID_FormDiv = new Map<number, FormDiv>() // map of front instances
 
   FormEditAssocButtons_array = new Array<FormEditAssocButtonDB>() // array of repo instances
   FormEditAssocButtons = new Map<number, FormEditAssocButtonDB>() // map of repo instances
   FormEditAssocButtons_batch = new Map<number, FormEditAssocButtonDB>() // same but only in last GET (for finding repo instances to delete)
 
+  array_FormEditAssocButtons = new Array<FormEditAssocButton>() // array of front instances
+  map_ID_FormEditAssocButton = new Map<number, FormEditAssocButton>() // map of front instances
+
   FormFields_array = new Array<FormFieldDB>() // array of repo instances
   FormFields = new Map<number, FormFieldDB>() // map of repo instances
   FormFields_batch = new Map<number, FormFieldDB>() // same but only in last GET (for finding repo instances to delete)
+
+  array_FormFields = new Array<FormField>() // array of front instances
+  map_ID_FormField = new Map<number, FormField>() // map of front instances
 
   FormFieldDates_array = new Array<FormFieldDateDB>() // array of repo instances
   FormFieldDates = new Map<number, FormFieldDateDB>() // map of repo instances
   FormFieldDates_batch = new Map<number, FormFieldDateDB>() // same but only in last GET (for finding repo instances to delete)
 
+  array_FormFieldDates = new Array<FormFieldDate>() // array of front instances
+  map_ID_FormFieldDate = new Map<number, FormFieldDate>() // map of front instances
+
   FormFieldDateTimes_array = new Array<FormFieldDateTimeDB>() // array of repo instances
   FormFieldDateTimes = new Map<number, FormFieldDateTimeDB>() // map of repo instances
   FormFieldDateTimes_batch = new Map<number, FormFieldDateTimeDB>() // same but only in last GET (for finding repo instances to delete)
+
+  array_FormFieldDateTimes = new Array<FormFieldDateTime>() // array of front instances
+  map_ID_FormFieldDateTime = new Map<number, FormFieldDateTime>() // map of front instances
 
   FormFieldFloat64s_array = new Array<FormFieldFloat64DB>() // array of repo instances
   FormFieldFloat64s = new Map<number, FormFieldFloat64DB>() // map of repo instances
   FormFieldFloat64s_batch = new Map<number, FormFieldFloat64DB>() // same but only in last GET (for finding repo instances to delete)
 
+  array_FormFieldFloat64s = new Array<FormFieldFloat64>() // array of front instances
+  map_ID_FormFieldFloat64 = new Map<number, FormFieldFloat64>() // map of front instances
+
   FormFieldInts_array = new Array<FormFieldIntDB>() // array of repo instances
   FormFieldInts = new Map<number, FormFieldIntDB>() // map of repo instances
   FormFieldInts_batch = new Map<number, FormFieldIntDB>() // same but only in last GET (for finding repo instances to delete)
+
+  array_FormFieldInts = new Array<FormFieldInt>() // array of front instances
+  map_ID_FormFieldInt = new Map<number, FormFieldInt>() // map of front instances
 
   FormFieldSelects_array = new Array<FormFieldSelectDB>() // array of repo instances
   FormFieldSelects = new Map<number, FormFieldSelectDB>() // map of repo instances
   FormFieldSelects_batch = new Map<number, FormFieldSelectDB>() // same but only in last GET (for finding repo instances to delete)
 
+  array_FormFieldSelects = new Array<FormFieldSelect>() // array of front instances
+  map_ID_FormFieldSelect = new Map<number, FormFieldSelect>() // map of front instances
+
   FormFieldStrings_array = new Array<FormFieldStringDB>() // array of repo instances
   FormFieldStrings = new Map<number, FormFieldStringDB>() // map of repo instances
   FormFieldStrings_batch = new Map<number, FormFieldStringDB>() // same but only in last GET (for finding repo instances to delete)
+
+  array_FormFieldStrings = new Array<FormFieldString>() // array of front instances
+  map_ID_FormFieldString = new Map<number, FormFieldString>() // map of front instances
 
   FormFieldTimes_array = new Array<FormFieldTimeDB>() // array of repo instances
   FormFieldTimes = new Map<number, FormFieldTimeDB>() // map of repo instances
   FormFieldTimes_batch = new Map<number, FormFieldTimeDB>() // same but only in last GET (for finding repo instances to delete)
 
+  array_FormFieldTimes = new Array<FormFieldTime>() // array of front instances
+  map_ID_FormFieldTime = new Map<number, FormFieldTime>() // map of front instances
+
   FormGroups_array = new Array<FormGroupDB>() // array of repo instances
   FormGroups = new Map<number, FormGroupDB>() // map of repo instances
   FormGroups_batch = new Map<number, FormGroupDB>() // same but only in last GET (for finding repo instances to delete)
+
+  array_FormGroups = new Array<FormGroup>() // array of front instances
+  map_ID_FormGroup = new Map<number, FormGroup>() // map of front instances
 
   FormSortAssocButtons_array = new Array<FormSortAssocButtonDB>() // array of repo instances
   FormSortAssocButtons = new Map<number, FormSortAssocButtonDB>() // map of repo instances
   FormSortAssocButtons_batch = new Map<number, FormSortAssocButtonDB>() // same but only in last GET (for finding repo instances to delete)
 
+  array_FormSortAssocButtons = new Array<FormSortAssocButton>() // array of front instances
+  map_ID_FormSortAssocButton = new Map<number, FormSortAssocButton>() // map of front instances
+
   Options_array = new Array<OptionDB>() // array of repo instances
   Options = new Map<number, OptionDB>() // map of repo instances
   Options_batch = new Map<number, OptionDB>() // same but only in last GET (for finding repo instances to delete)
+
+  array_Options = new Array<Option>() // array of front instances
+  map_ID_Option = new Map<number, Option>() // map of front instances
 
 
   // getArray allows for a get function that is robust to refactoring of the named struct name
   // for instance frontRepo.getArray<Astruct>( Astruct.GONGSTRUCT_NAME), is robust to a refactoring of Astruct identifier
   // contrary to frontRepo.Astructs_array which is not refactored when Astruct identifier is modified
   getArray<Type>(gongStructName: string): Array<Type> {
-    switch (gongStructName) {
+    switch (gongStructName) { // deprecated
       // insertion point
       case 'CheckBox':
         return this.CheckBoxs_array as unknown as Array<Type>
@@ -146,8 +202,44 @@ export class FrontRepo { // insertion point sub template
     }
   }
 
+  getFrontArray<Type>(gongStructName: string): Array<Type> {
+    switch (gongStructName) {
+      // insertion point
+      case 'CheckBox':
+        return this.array_CheckBoxs as unknown as Array<Type>
+      case 'FormDiv':
+        return this.array_FormDivs as unknown as Array<Type>
+      case 'FormEditAssocButton':
+        return this.array_FormEditAssocButtons as unknown as Array<Type>
+      case 'FormField':
+        return this.array_FormFields as unknown as Array<Type>
+      case 'FormFieldDate':
+        return this.array_FormFieldDates as unknown as Array<Type>
+      case 'FormFieldDateTime':
+        return this.array_FormFieldDateTimes as unknown as Array<Type>
+      case 'FormFieldFloat64':
+        return this.array_FormFieldFloat64s as unknown as Array<Type>
+      case 'FormFieldInt':
+        return this.array_FormFieldInts as unknown as Array<Type>
+      case 'FormFieldSelect':
+        return this.array_FormFieldSelects as unknown as Array<Type>
+      case 'FormFieldString':
+        return this.array_FormFieldStrings as unknown as Array<Type>
+      case 'FormFieldTime':
+        return this.array_FormFieldTimes as unknown as Array<Type>
+      case 'FormGroup':
+        return this.array_FormGroups as unknown as Array<Type>
+      case 'FormSortAssocButton':
+        return this.array_FormSortAssocButtons as unknown as Array<Type>
+      case 'Option':
+        return this.array_Options as unknown as Array<Type>
+      default:
+        throw new Error("Type not recognized");
+    }
+  }
+
   // getMap allows for a get function that is robust to refactoring of the named struct name
-  getMap<Type>(gongStructName: string): Map<number, Type> {
+  getMap<Type>(gongStructName: string): Map<number, Type> { // deprecated
     switch (gongStructName) {
       // insertion point
       case 'CheckBox':
@@ -178,6 +270,42 @@ export class FrontRepo { // insertion point sub template
         return this.FormSortAssocButtons as unknown as Map<number, Type>
       case 'Option':
         return this.Options as unknown as Map<number, Type>
+      default:
+        throw new Error("Type not recognized");
+    }
+  }
+  
+  getFrontMap<Type>(gongStructName: string): Map<number, Type> {
+    switch (gongStructName) {
+      // insertion point
+      case 'CheckBox':
+        return this.map_ID_CheckBox as unknown as Map<number, Type>
+      case 'FormDiv':
+        return this.map_ID_FormDiv as unknown as Map<number, Type>
+      case 'FormEditAssocButton':
+        return this.map_ID_FormEditAssocButton as unknown as Map<number, Type>
+      case 'FormField':
+        return this.map_ID_FormField as unknown as Map<number, Type>
+      case 'FormFieldDate':
+        return this.map_ID_FormFieldDate as unknown as Map<number, Type>
+      case 'FormFieldDateTime':
+        return this.map_ID_FormFieldDateTime as unknown as Map<number, Type>
+      case 'FormFieldFloat64':
+        return this.map_ID_FormFieldFloat64 as unknown as Map<number, Type>
+      case 'FormFieldInt':
+        return this.map_ID_FormFieldInt as unknown as Map<number, Type>
+      case 'FormFieldSelect':
+        return this.map_ID_FormFieldSelect as unknown as Map<number, Type>
+      case 'FormFieldString':
+        return this.map_ID_FormFieldString as unknown as Map<number, Type>
+      case 'FormFieldTime':
+        return this.map_ID_FormFieldTime as unknown as Map<number, Type>
+      case 'FormGroup':
+        return this.map_ID_FormGroup as unknown as Map<number, Type>
+      case 'FormSortAssocButton':
+        return this.map_ID_FormSortAssocButton as unknown as Map<number, Type>
+      case 'Option':
+        return this.map_ID_Option as unknown as Map<number, Type>
       default:
         throw new Error("Type not recognized");
     }
@@ -423,17 +551,17 @@ export class FrontRepoService {
             this.frontRepo.CheckBoxs_batch.clear()
 
             checkboxs.forEach(
-              checkbox => {
-                this.frontRepo.CheckBoxs.set(checkbox.ID, checkbox)
-                this.frontRepo.CheckBoxs_batch.set(checkbox.ID, checkbox)
+              checkboxDB => {
+                this.frontRepo.CheckBoxs.set(checkboxDB.ID, checkboxDB)
+                this.frontRepo.CheckBoxs_batch.set(checkboxDB.ID, checkboxDB)
               }
             )
 
             // clear checkboxs that are absent from the batch
             this.frontRepo.CheckBoxs.forEach(
-              checkbox => {
-                if (this.frontRepo.CheckBoxs_batch.get(checkbox.ID) == undefined) {
-                  this.frontRepo.CheckBoxs.delete(checkbox.ID)
+              checkboxDB => {
+                if (this.frontRepo.CheckBoxs_batch.get(checkboxDB.ID) == undefined) {
+                  this.frontRepo.CheckBoxs.delete(checkboxDB.ID)
                 }
               }
             )
@@ -456,17 +584,17 @@ export class FrontRepoService {
             this.frontRepo.FormDivs_batch.clear()
 
             formdivs.forEach(
-              formdiv => {
-                this.frontRepo.FormDivs.set(formdiv.ID, formdiv)
-                this.frontRepo.FormDivs_batch.set(formdiv.ID, formdiv)
+              formdivDB => {
+                this.frontRepo.FormDivs.set(formdivDB.ID, formdivDB)
+                this.frontRepo.FormDivs_batch.set(formdivDB.ID, formdivDB)
               }
             )
 
             // clear formdivs that are absent from the batch
             this.frontRepo.FormDivs.forEach(
-              formdiv => {
-                if (this.frontRepo.FormDivs_batch.get(formdiv.ID) == undefined) {
-                  this.frontRepo.FormDivs.delete(formdiv.ID)
+              formdivDB => {
+                if (this.frontRepo.FormDivs_batch.get(formdivDB.ID) == undefined) {
+                  this.frontRepo.FormDivs.delete(formdivDB.ID)
                 }
               }
             )
@@ -489,17 +617,17 @@ export class FrontRepoService {
             this.frontRepo.FormEditAssocButtons_batch.clear()
 
             formeditassocbuttons.forEach(
-              formeditassocbutton => {
-                this.frontRepo.FormEditAssocButtons.set(formeditassocbutton.ID, formeditassocbutton)
-                this.frontRepo.FormEditAssocButtons_batch.set(formeditassocbutton.ID, formeditassocbutton)
+              formeditassocbuttonDB => {
+                this.frontRepo.FormEditAssocButtons.set(formeditassocbuttonDB.ID, formeditassocbuttonDB)
+                this.frontRepo.FormEditAssocButtons_batch.set(formeditassocbuttonDB.ID, formeditassocbuttonDB)
               }
             )
 
             // clear formeditassocbuttons that are absent from the batch
             this.frontRepo.FormEditAssocButtons.forEach(
-              formeditassocbutton => {
-                if (this.frontRepo.FormEditAssocButtons_batch.get(formeditassocbutton.ID) == undefined) {
-                  this.frontRepo.FormEditAssocButtons.delete(formeditassocbutton.ID)
+              formeditassocbuttonDB => {
+                if (this.frontRepo.FormEditAssocButtons_batch.get(formeditassocbuttonDB.ID) == undefined) {
+                  this.frontRepo.FormEditAssocButtons.delete(formeditassocbuttonDB.ID)
                 }
               }
             )
@@ -522,17 +650,17 @@ export class FrontRepoService {
             this.frontRepo.FormFields_batch.clear()
 
             formfields.forEach(
-              formfield => {
-                this.frontRepo.FormFields.set(formfield.ID, formfield)
-                this.frontRepo.FormFields_batch.set(formfield.ID, formfield)
+              formfieldDB => {
+                this.frontRepo.FormFields.set(formfieldDB.ID, formfieldDB)
+                this.frontRepo.FormFields_batch.set(formfieldDB.ID, formfieldDB)
               }
             )
 
             // clear formfields that are absent from the batch
             this.frontRepo.FormFields.forEach(
-              formfield => {
-                if (this.frontRepo.FormFields_batch.get(formfield.ID) == undefined) {
-                  this.frontRepo.FormFields.delete(formfield.ID)
+              formfieldDB => {
+                if (this.frontRepo.FormFields_batch.get(formfieldDB.ID) == undefined) {
+                  this.frontRepo.FormFields.delete(formfieldDB.ID)
                 }
               }
             )
@@ -555,17 +683,17 @@ export class FrontRepoService {
             this.frontRepo.FormFieldDates_batch.clear()
 
             formfielddates.forEach(
-              formfielddate => {
-                this.frontRepo.FormFieldDates.set(formfielddate.ID, formfielddate)
-                this.frontRepo.FormFieldDates_batch.set(formfielddate.ID, formfielddate)
+              formfielddateDB => {
+                this.frontRepo.FormFieldDates.set(formfielddateDB.ID, formfielddateDB)
+                this.frontRepo.FormFieldDates_batch.set(formfielddateDB.ID, formfielddateDB)
               }
             )
 
             // clear formfielddates that are absent from the batch
             this.frontRepo.FormFieldDates.forEach(
-              formfielddate => {
-                if (this.frontRepo.FormFieldDates_batch.get(formfielddate.ID) == undefined) {
-                  this.frontRepo.FormFieldDates.delete(formfielddate.ID)
+              formfielddateDB => {
+                if (this.frontRepo.FormFieldDates_batch.get(formfielddateDB.ID) == undefined) {
+                  this.frontRepo.FormFieldDates.delete(formfielddateDB.ID)
                 }
               }
             )
@@ -588,17 +716,17 @@ export class FrontRepoService {
             this.frontRepo.FormFieldDateTimes_batch.clear()
 
             formfielddatetimes.forEach(
-              formfielddatetime => {
-                this.frontRepo.FormFieldDateTimes.set(formfielddatetime.ID, formfielddatetime)
-                this.frontRepo.FormFieldDateTimes_batch.set(formfielddatetime.ID, formfielddatetime)
+              formfielddatetimeDB => {
+                this.frontRepo.FormFieldDateTimes.set(formfielddatetimeDB.ID, formfielddatetimeDB)
+                this.frontRepo.FormFieldDateTimes_batch.set(formfielddatetimeDB.ID, formfielddatetimeDB)
               }
             )
 
             // clear formfielddatetimes that are absent from the batch
             this.frontRepo.FormFieldDateTimes.forEach(
-              formfielddatetime => {
-                if (this.frontRepo.FormFieldDateTimes_batch.get(formfielddatetime.ID) == undefined) {
-                  this.frontRepo.FormFieldDateTimes.delete(formfielddatetime.ID)
+              formfielddatetimeDB => {
+                if (this.frontRepo.FormFieldDateTimes_batch.get(formfielddatetimeDB.ID) == undefined) {
+                  this.frontRepo.FormFieldDateTimes.delete(formfielddatetimeDB.ID)
                 }
               }
             )
@@ -621,17 +749,17 @@ export class FrontRepoService {
             this.frontRepo.FormFieldFloat64s_batch.clear()
 
             formfieldfloat64s.forEach(
-              formfieldfloat64 => {
-                this.frontRepo.FormFieldFloat64s.set(formfieldfloat64.ID, formfieldfloat64)
-                this.frontRepo.FormFieldFloat64s_batch.set(formfieldfloat64.ID, formfieldfloat64)
+              formfieldfloat64DB => {
+                this.frontRepo.FormFieldFloat64s.set(formfieldfloat64DB.ID, formfieldfloat64DB)
+                this.frontRepo.FormFieldFloat64s_batch.set(formfieldfloat64DB.ID, formfieldfloat64DB)
               }
             )
 
             // clear formfieldfloat64s that are absent from the batch
             this.frontRepo.FormFieldFloat64s.forEach(
-              formfieldfloat64 => {
-                if (this.frontRepo.FormFieldFloat64s_batch.get(formfieldfloat64.ID) == undefined) {
-                  this.frontRepo.FormFieldFloat64s.delete(formfieldfloat64.ID)
+              formfieldfloat64DB => {
+                if (this.frontRepo.FormFieldFloat64s_batch.get(formfieldfloat64DB.ID) == undefined) {
+                  this.frontRepo.FormFieldFloat64s.delete(formfieldfloat64DB.ID)
                 }
               }
             )
@@ -654,17 +782,17 @@ export class FrontRepoService {
             this.frontRepo.FormFieldInts_batch.clear()
 
             formfieldints.forEach(
-              formfieldint => {
-                this.frontRepo.FormFieldInts.set(formfieldint.ID, formfieldint)
-                this.frontRepo.FormFieldInts_batch.set(formfieldint.ID, formfieldint)
+              formfieldintDB => {
+                this.frontRepo.FormFieldInts.set(formfieldintDB.ID, formfieldintDB)
+                this.frontRepo.FormFieldInts_batch.set(formfieldintDB.ID, formfieldintDB)
               }
             )
 
             // clear formfieldints that are absent from the batch
             this.frontRepo.FormFieldInts.forEach(
-              formfieldint => {
-                if (this.frontRepo.FormFieldInts_batch.get(formfieldint.ID) == undefined) {
-                  this.frontRepo.FormFieldInts.delete(formfieldint.ID)
+              formfieldintDB => {
+                if (this.frontRepo.FormFieldInts_batch.get(formfieldintDB.ID) == undefined) {
+                  this.frontRepo.FormFieldInts.delete(formfieldintDB.ID)
                 }
               }
             )
@@ -687,17 +815,17 @@ export class FrontRepoService {
             this.frontRepo.FormFieldSelects_batch.clear()
 
             formfieldselects.forEach(
-              formfieldselect => {
-                this.frontRepo.FormFieldSelects.set(formfieldselect.ID, formfieldselect)
-                this.frontRepo.FormFieldSelects_batch.set(formfieldselect.ID, formfieldselect)
+              formfieldselectDB => {
+                this.frontRepo.FormFieldSelects.set(formfieldselectDB.ID, formfieldselectDB)
+                this.frontRepo.FormFieldSelects_batch.set(formfieldselectDB.ID, formfieldselectDB)
               }
             )
 
             // clear formfieldselects that are absent from the batch
             this.frontRepo.FormFieldSelects.forEach(
-              formfieldselect => {
-                if (this.frontRepo.FormFieldSelects_batch.get(formfieldselect.ID) == undefined) {
-                  this.frontRepo.FormFieldSelects.delete(formfieldselect.ID)
+              formfieldselectDB => {
+                if (this.frontRepo.FormFieldSelects_batch.get(formfieldselectDB.ID) == undefined) {
+                  this.frontRepo.FormFieldSelects.delete(formfieldselectDB.ID)
                 }
               }
             )
@@ -720,17 +848,17 @@ export class FrontRepoService {
             this.frontRepo.FormFieldStrings_batch.clear()
 
             formfieldstrings.forEach(
-              formfieldstring => {
-                this.frontRepo.FormFieldStrings.set(formfieldstring.ID, formfieldstring)
-                this.frontRepo.FormFieldStrings_batch.set(formfieldstring.ID, formfieldstring)
+              formfieldstringDB => {
+                this.frontRepo.FormFieldStrings.set(formfieldstringDB.ID, formfieldstringDB)
+                this.frontRepo.FormFieldStrings_batch.set(formfieldstringDB.ID, formfieldstringDB)
               }
             )
 
             // clear formfieldstrings that are absent from the batch
             this.frontRepo.FormFieldStrings.forEach(
-              formfieldstring => {
-                if (this.frontRepo.FormFieldStrings_batch.get(formfieldstring.ID) == undefined) {
-                  this.frontRepo.FormFieldStrings.delete(formfieldstring.ID)
+              formfieldstringDB => {
+                if (this.frontRepo.FormFieldStrings_batch.get(formfieldstringDB.ID) == undefined) {
+                  this.frontRepo.FormFieldStrings.delete(formfieldstringDB.ID)
                 }
               }
             )
@@ -753,17 +881,17 @@ export class FrontRepoService {
             this.frontRepo.FormFieldTimes_batch.clear()
 
             formfieldtimes.forEach(
-              formfieldtime => {
-                this.frontRepo.FormFieldTimes.set(formfieldtime.ID, formfieldtime)
-                this.frontRepo.FormFieldTimes_batch.set(formfieldtime.ID, formfieldtime)
+              formfieldtimeDB => {
+                this.frontRepo.FormFieldTimes.set(formfieldtimeDB.ID, formfieldtimeDB)
+                this.frontRepo.FormFieldTimes_batch.set(formfieldtimeDB.ID, formfieldtimeDB)
               }
             )
 
             // clear formfieldtimes that are absent from the batch
             this.frontRepo.FormFieldTimes.forEach(
-              formfieldtime => {
-                if (this.frontRepo.FormFieldTimes_batch.get(formfieldtime.ID) == undefined) {
-                  this.frontRepo.FormFieldTimes.delete(formfieldtime.ID)
+              formfieldtimeDB => {
+                if (this.frontRepo.FormFieldTimes_batch.get(formfieldtimeDB.ID) == undefined) {
+                  this.frontRepo.FormFieldTimes.delete(formfieldtimeDB.ID)
                 }
               }
             )
@@ -786,17 +914,17 @@ export class FrontRepoService {
             this.frontRepo.FormGroups_batch.clear()
 
             formgroups.forEach(
-              formgroup => {
-                this.frontRepo.FormGroups.set(formgroup.ID, formgroup)
-                this.frontRepo.FormGroups_batch.set(formgroup.ID, formgroup)
+              formgroupDB => {
+                this.frontRepo.FormGroups.set(formgroupDB.ID, formgroupDB)
+                this.frontRepo.FormGroups_batch.set(formgroupDB.ID, formgroupDB)
               }
             )
 
             // clear formgroups that are absent from the batch
             this.frontRepo.FormGroups.forEach(
-              formgroup => {
-                if (this.frontRepo.FormGroups_batch.get(formgroup.ID) == undefined) {
-                  this.frontRepo.FormGroups.delete(formgroup.ID)
+              formgroupDB => {
+                if (this.frontRepo.FormGroups_batch.get(formgroupDB.ID) == undefined) {
+                  this.frontRepo.FormGroups.delete(formgroupDB.ID)
                 }
               }
             )
@@ -819,17 +947,17 @@ export class FrontRepoService {
             this.frontRepo.FormSortAssocButtons_batch.clear()
 
             formsortassocbuttons.forEach(
-              formsortassocbutton => {
-                this.frontRepo.FormSortAssocButtons.set(formsortassocbutton.ID, formsortassocbutton)
-                this.frontRepo.FormSortAssocButtons_batch.set(formsortassocbutton.ID, formsortassocbutton)
+              formsortassocbuttonDB => {
+                this.frontRepo.FormSortAssocButtons.set(formsortassocbuttonDB.ID, formsortassocbuttonDB)
+                this.frontRepo.FormSortAssocButtons_batch.set(formsortassocbuttonDB.ID, formsortassocbuttonDB)
               }
             )
 
             // clear formsortassocbuttons that are absent from the batch
             this.frontRepo.FormSortAssocButtons.forEach(
-              formsortassocbutton => {
-                if (this.frontRepo.FormSortAssocButtons_batch.get(formsortassocbutton.ID) == undefined) {
-                  this.frontRepo.FormSortAssocButtons.delete(formsortassocbutton.ID)
+              formsortassocbuttonDB => {
+                if (this.frontRepo.FormSortAssocButtons_batch.get(formsortassocbuttonDB.ID) == undefined) {
+                  this.frontRepo.FormSortAssocButtons.delete(formsortassocbuttonDB.ID)
                 }
               }
             )
@@ -852,17 +980,17 @@ export class FrontRepoService {
             this.frontRepo.Options_batch.clear()
 
             options.forEach(
-              option => {
-                this.frontRepo.Options.set(option.ID, option)
-                this.frontRepo.Options_batch.set(option.ID, option)
+              optionDB => {
+                this.frontRepo.Options.set(optionDB.ID, optionDB)
+                this.frontRepo.Options_batch.set(optionDB.ID, optionDB)
               }
             )
 
             // clear options that are absent from the batch
             this.frontRepo.Options.forEach(
-              option => {
-                if (this.frontRepo.Options_batch.get(option.ID) == undefined) {
-                  this.frontRepo.Options.delete(option.ID)
+              optionDB => {
+                if (this.frontRepo.Options_batch.get(optionDB.ID) == undefined) {
+                  this.frontRepo.Options.delete(optionDB.ID)
                 }
               }
             )
@@ -1064,6 +1192,193 @@ export class FrontRepoService {
                 // insertion point for pointers decoding
               }
             )
+
+            // 
+            // Third Step: reddeem front objects
+            // insertion point sub template for redeem 
+            
+            // init front objects
+            this.frontRepo.array_CheckBoxs = []
+            this.frontRepo.map_ID_CheckBox.clear()
+            this.frontRepo.CheckBoxs_array.forEach(
+              checkboxDB => {
+                let checkbox = new CheckBox
+                CopyCheckBoxDBToCheckBox(checkboxDB, checkbox, this.frontRepo)
+                this.frontRepo.array_CheckBoxs.push(checkbox)
+                this.frontRepo.map_ID_CheckBox.set(checkbox.ID, checkbox)
+              }
+            )
+
+            
+            // init front objects
+            this.frontRepo.array_FormDivs = []
+            this.frontRepo.map_ID_FormDiv.clear()
+            this.frontRepo.FormDivs_array.forEach(
+              formdivDB => {
+                let formdiv = new FormDiv
+                CopyFormDivDBToFormDiv(formdivDB, formdiv, this.frontRepo)
+                this.frontRepo.array_FormDivs.push(formdiv)
+                this.frontRepo.map_ID_FormDiv.set(formdiv.ID, formdiv)
+              }
+            )
+
+            
+            // init front objects
+            this.frontRepo.array_FormEditAssocButtons = []
+            this.frontRepo.map_ID_FormEditAssocButton.clear()
+            this.frontRepo.FormEditAssocButtons_array.forEach(
+              formeditassocbuttonDB => {
+                let formeditassocbutton = new FormEditAssocButton
+                CopyFormEditAssocButtonDBToFormEditAssocButton(formeditassocbuttonDB, formeditassocbutton, this.frontRepo)
+                this.frontRepo.array_FormEditAssocButtons.push(formeditassocbutton)
+                this.frontRepo.map_ID_FormEditAssocButton.set(formeditassocbutton.ID, formeditassocbutton)
+              }
+            )
+
+            
+            // init front objects
+            this.frontRepo.array_FormFields = []
+            this.frontRepo.map_ID_FormField.clear()
+            this.frontRepo.FormFields_array.forEach(
+              formfieldDB => {
+                let formfield = new FormField
+                CopyFormFieldDBToFormField(formfieldDB, formfield, this.frontRepo)
+                this.frontRepo.array_FormFields.push(formfield)
+                this.frontRepo.map_ID_FormField.set(formfield.ID, formfield)
+              }
+            )
+
+            
+            // init front objects
+            this.frontRepo.array_FormFieldDates = []
+            this.frontRepo.map_ID_FormFieldDate.clear()
+            this.frontRepo.FormFieldDates_array.forEach(
+              formfielddateDB => {
+                let formfielddate = new FormFieldDate
+                CopyFormFieldDateDBToFormFieldDate(formfielddateDB, formfielddate, this.frontRepo)
+                this.frontRepo.array_FormFieldDates.push(formfielddate)
+                this.frontRepo.map_ID_FormFieldDate.set(formfielddate.ID, formfielddate)
+              }
+            )
+
+            
+            // init front objects
+            this.frontRepo.array_FormFieldDateTimes = []
+            this.frontRepo.map_ID_FormFieldDateTime.clear()
+            this.frontRepo.FormFieldDateTimes_array.forEach(
+              formfielddatetimeDB => {
+                let formfielddatetime = new FormFieldDateTime
+                CopyFormFieldDateTimeDBToFormFieldDateTime(formfielddatetimeDB, formfielddatetime, this.frontRepo)
+                this.frontRepo.array_FormFieldDateTimes.push(formfielddatetime)
+                this.frontRepo.map_ID_FormFieldDateTime.set(formfielddatetime.ID, formfielddatetime)
+              }
+            )
+
+            
+            // init front objects
+            this.frontRepo.array_FormFieldFloat64s = []
+            this.frontRepo.map_ID_FormFieldFloat64.clear()
+            this.frontRepo.FormFieldFloat64s_array.forEach(
+              formfieldfloat64DB => {
+                let formfieldfloat64 = new FormFieldFloat64
+                CopyFormFieldFloat64DBToFormFieldFloat64(formfieldfloat64DB, formfieldfloat64, this.frontRepo)
+                this.frontRepo.array_FormFieldFloat64s.push(formfieldfloat64)
+                this.frontRepo.map_ID_FormFieldFloat64.set(formfieldfloat64.ID, formfieldfloat64)
+              }
+            )
+
+            
+            // init front objects
+            this.frontRepo.array_FormFieldInts = []
+            this.frontRepo.map_ID_FormFieldInt.clear()
+            this.frontRepo.FormFieldInts_array.forEach(
+              formfieldintDB => {
+                let formfieldint = new FormFieldInt
+                CopyFormFieldIntDBToFormFieldInt(formfieldintDB, formfieldint, this.frontRepo)
+                this.frontRepo.array_FormFieldInts.push(formfieldint)
+                this.frontRepo.map_ID_FormFieldInt.set(formfieldint.ID, formfieldint)
+              }
+            )
+
+            
+            // init front objects
+            this.frontRepo.array_FormFieldSelects = []
+            this.frontRepo.map_ID_FormFieldSelect.clear()
+            this.frontRepo.FormFieldSelects_array.forEach(
+              formfieldselectDB => {
+                let formfieldselect = new FormFieldSelect
+                CopyFormFieldSelectDBToFormFieldSelect(formfieldselectDB, formfieldselect, this.frontRepo)
+                this.frontRepo.array_FormFieldSelects.push(formfieldselect)
+                this.frontRepo.map_ID_FormFieldSelect.set(formfieldselect.ID, formfieldselect)
+              }
+            )
+
+            
+            // init front objects
+            this.frontRepo.array_FormFieldStrings = []
+            this.frontRepo.map_ID_FormFieldString.clear()
+            this.frontRepo.FormFieldStrings_array.forEach(
+              formfieldstringDB => {
+                let formfieldstring = new FormFieldString
+                CopyFormFieldStringDBToFormFieldString(formfieldstringDB, formfieldstring, this.frontRepo)
+                this.frontRepo.array_FormFieldStrings.push(formfieldstring)
+                this.frontRepo.map_ID_FormFieldString.set(formfieldstring.ID, formfieldstring)
+              }
+            )
+
+            
+            // init front objects
+            this.frontRepo.array_FormFieldTimes = []
+            this.frontRepo.map_ID_FormFieldTime.clear()
+            this.frontRepo.FormFieldTimes_array.forEach(
+              formfieldtimeDB => {
+                let formfieldtime = new FormFieldTime
+                CopyFormFieldTimeDBToFormFieldTime(formfieldtimeDB, formfieldtime, this.frontRepo)
+                this.frontRepo.array_FormFieldTimes.push(formfieldtime)
+                this.frontRepo.map_ID_FormFieldTime.set(formfieldtime.ID, formfieldtime)
+              }
+            )
+
+            
+            // init front objects
+            this.frontRepo.array_FormGroups = []
+            this.frontRepo.map_ID_FormGroup.clear()
+            this.frontRepo.FormGroups_array.forEach(
+              formgroupDB => {
+                let formgroup = new FormGroup
+                CopyFormGroupDBToFormGroup(formgroupDB, formgroup, this.frontRepo)
+                this.frontRepo.array_FormGroups.push(formgroup)
+                this.frontRepo.map_ID_FormGroup.set(formgroup.ID, formgroup)
+              }
+            )
+
+            
+            // init front objects
+            this.frontRepo.array_FormSortAssocButtons = []
+            this.frontRepo.map_ID_FormSortAssocButton.clear()
+            this.frontRepo.FormSortAssocButtons_array.forEach(
+              formsortassocbuttonDB => {
+                let formsortassocbutton = new FormSortAssocButton
+                CopyFormSortAssocButtonDBToFormSortAssocButton(formsortassocbuttonDB, formsortassocbutton, this.frontRepo)
+                this.frontRepo.array_FormSortAssocButtons.push(formsortassocbutton)
+                this.frontRepo.map_ID_FormSortAssocButton.set(formsortassocbutton.ID, formsortassocbutton)
+              }
+            )
+
+            
+            // init front objects
+            this.frontRepo.array_Options = []
+            this.frontRepo.map_ID_Option.clear()
+            this.frontRepo.Options_array.forEach(
+              optionDB => {
+                let option = new Option
+                CopyOptionDBToOption(optionDB, option, this.frontRepo)
+                this.frontRepo.array_Options.push(option)
+                this.frontRepo.map_ID_Option.set(option.ID, option)
+              }
+            )
+
+
 
             // hand over control flow to observer
             observer.next(this.frontRepo)
